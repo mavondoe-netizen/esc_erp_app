@@ -1,0 +1,143 @@
+/* Sales Bot - Premium Floating UI */
+.sales-bot-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 10000;
+    font-family: 'Inter', sans-serif;
+}
+
+.sales-bot-bubble {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(110, 142, 251, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sales-bot-bubble:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(110, 142, 251, 0.6);
+}
+
+.sales-bot-window {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 450px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom right;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.sales-bot-window.active {
+    display: flex;
+    animation: slideUp 0.4s ease forwards;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.8); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.sales-bot-header {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sales-bot-header h4 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.sales-bot-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bot-msg, .user-msg {
+    max-width: 85%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+
+.bot-msg {
+    background: #f0f2f5;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.user-msg {
+    background: #6e8efb;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.sales-bot-input-area {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+.sales-bot-input-area input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 8px 15px;
+    outline: none;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.sales-bot-input-area button {
+    background: #6e8efb;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.sales-bot-input-area button:hover {
+    background: #5a7be0;
+}
+
+.bot-typing {
+    font-size: 0.8em;
+    color: #999;
+    margin-bottom: 5px;
+    display: none;
+}

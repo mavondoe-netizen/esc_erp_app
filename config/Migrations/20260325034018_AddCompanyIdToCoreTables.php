@@ -1,0 +1,35 @@
+<?php
+declare(strict_types=1);
+
+use Migrations\AbstractMigration;
+
+class AddCompanyIdToCoreTables extends AbstractMigration
+{
+    /**
+     * Change Method.
+     *
+     * More information on this method is available here:
+     * https://book.cakephp.org/phinx/0/en/migrations.html#the-change-method
+     * @return void
+     */
+    public function change(): void
+    {
+        $tables = [
+            'users', 'employees', 'invoices', 'customers', 
+            'transactions', 'payslips', 'payslip_items', 
+            'products', 'accounts'
+        ];
+
+        foreach ($tables as $tableName) {
+            $table = $this->table($tableName);
+            if (!$table->hasColumn('company_id')) {
+                $table->addColumn('company_id', 'integer', [
+                    'default' => null,
+                    'limit' => 11,
+                    'null' => true,
+                ]);
+                $table->update();
+            }
+        }
+    }
+}
