@@ -69,6 +69,7 @@ class InvoicesController extends AppController
                 $zarRate = 18.5;
 
                 foreach ($invoice->invoice_items as $item) {
+                    $txGroup = \Cake\Utility\Text::uuid();
                     if ($invoice->currency === 'ZAR') {
                         $zwgAmount = round((float)$item->line_total / (float)$zarRate, 2);
                         $transaction1 = $transactionsTable->newEntity([
@@ -81,6 +82,7 @@ class InvoicesController extends AppController
                             'account_id'  => 1,
                             'company_id'  => $companyId,
                             'type'        => '2',
+                            'transaction_group' => $txGroup,
                         ]);
                         $transaction2 = $transactionsTable->newEntity([
                             'date'        => $invoice->date,
@@ -91,6 +93,7 @@ class InvoicesController extends AppController
                             'account_id'  => $item->account_id,
                             'company_id'  => $companyId,
                             'type'        => '1',
+                            'transaction_group' => $txGroup,
                         ]);
                     } elseif ($invoice->currency === 'USD') {
                         $transaction1 = $transactionsTable->newEntity([
@@ -103,6 +106,7 @@ class InvoicesController extends AppController
                             'account_id'  => 1,
                             'company_id'  => $companyId,
                             'type'        => '2',
+                            'transaction_group' => $txGroup,
                         ]);
                         $transaction2 = $transactionsTable->newEntity([
                             'date'        => $invoice->date,
@@ -113,6 +117,7 @@ class InvoicesController extends AppController
                             'account_id'  => $item->account_id,
                             'company_id'  => $companyId,
                             'type'        => '1',
+                            'transaction_group' => $txGroup,
                         ]);
                     } else {
                         continue; // unknown currency — skip
@@ -180,6 +185,7 @@ class InvoicesController extends AppController
                         // First time reaching paid/sent — post the ledger entries
                         $zarRate = 18.5;
                         foreach ($invoice->invoice_items as $item) {
+                            $txGroup = \Cake\Utility\Text::uuid();
                             if ($invoice->currency === 'ZAR') {
                                 $zwgAmount = round((float)$item->line_total / (float)$zarRate, 2);
                                 $transaction1 = $transactionsTable->newEntity([
@@ -192,6 +198,7 @@ class InvoicesController extends AppController
                                     'account_id'  => 1,
                                     'company_id'  => $companyId,
                                     'type'        => '2',
+                                    'transaction_group' => $txGroup,
                                 ]);
                                 $transaction2 = $transactionsTable->newEntity([
                                     'date'        => $invoice->date,
@@ -202,6 +209,7 @@ class InvoicesController extends AppController
                                     'account_id'  => $item->account_id,
                                     'company_id'  => $companyId,
                                     'type'        => '1',
+                                    'transaction_group' => $txGroup,
                                 ]);
                             } elseif ($invoice->currency === 'USD') {
                                 $transaction1 = $transactionsTable->newEntity([
@@ -214,6 +222,7 @@ class InvoicesController extends AppController
                                     'account_id'  => 1,
                                     'company_id'  => $companyId,
                                     'type'        => '2',
+                                    'transaction_group' => $txGroup,
                                 ]);
                                 $transaction2 = $transactionsTable->newEntity([
                                     'date'        => $invoice->date,
@@ -224,6 +233,7 @@ class InvoicesController extends AppController
                                     'account_id'  => $item->account_id,
                                     'company_id'  => $companyId,
                                     'type'        => '1',
+                                    'transaction_group' => $txGroup,
                                 ]);
                             } else {
                                 continue; // Unknown currency — skip

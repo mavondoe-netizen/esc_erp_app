@@ -33,7 +33,7 @@ class CustomersController extends AppController
      */
     public function view($id = null)
     {
-        $customer = $this->fetchTable('Customers')->get($id, contain: ['Contacts', 'Inspections', 'Invoices']);
+        $customer = $this->fetchTable('Customers')->get($id, contain: ['Contacts', 'Inspections', 'Invoices', 'Payments', 'Transactions']);
         $this->set(compact('customer'));
     }
 

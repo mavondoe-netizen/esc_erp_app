@@ -216,4 +216,19 @@ class TransactionsTable extends Table
 
         return $rules;
     }
+
+    /**
+     * After delete callback.
+     * Enforces strict ledger double-entry integrity by cascading deletes
+     * to any transaction that shares the exact same transaction_group UUID.
+     */
+    public function afterDelete(\Cake\Event\EventInterface $event, \Cake\Datasource\EntityInterface $entity, \ArrayObject $options): void
+    {
+        if (!empty($entity->transaction_group)) {
+            $this->deleteAll([
+                'transaction_group' => $entity->transaction_group,
+                'id !=' => $entity->id
+            ]);
+        }
+    }
 }

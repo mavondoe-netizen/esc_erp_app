@@ -107,6 +107,38 @@
                 </div>
                 <?php endif; ?>
             </div>
+            <div class="related">
+                <h4><?= __('Related Payments') ?></h4>
+                <?php if (!empty($customer->payments)) : ?>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th><?= __('Id') ?></th>
+                            <th><?= __('Date') ?></th>
+                            <th><?= __('Amount') ?></th>
+                            <th><?= __('Currency') ?></th>
+                            <th><?= __('Mode') ?></th>
+                            <th><?= __('Reference') ?></th>
+                            <th class="actions"><?= __('Actions') ?></th>
+                        </tr>
+                        <?php foreach ($customer->payments as $payment) : ?>
+                        <tr>
+                            <td><?= h($payment->id) ?></td>
+                            <td><?= h($payment->date) ?></td>
+                            <td><?= h($payment->amount) ?></td>
+                            <td><?= h($payment->currency) ?></td>
+                            <td><?= h($payment->payment_mode) ?></td>
+                            <td><?= h($payment->reference) ?></td>
+                            <td class="actions">
+                                <?= $this->Html->link(__('View'), ['controller' => 'Payments', 'action' => 'view', $payment->id]) ?>
+                                <?= $this->Html->link(__('Edit'), ['controller' => 'Payments', 'action' => 'edit', $payment->id]) ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                </div>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 </div>

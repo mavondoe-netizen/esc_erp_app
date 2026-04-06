@@ -26,6 +26,7 @@ use Cake\ORM\Entity;
  * @property int|null $payperiod_id
  * @property int|null $bill_id
  * @property int|null $invoice_id
+ * @property string|null $transaction_group
  *
  * @property \App\Model\Entity\Account $account
  * @property \App\Model\Entity\Department $department
@@ -43,11 +44,7 @@ use Cake\ORM\Entity;
 class Transaction extends Entity
 {
     /**
-     * Fields that can be mass assigned using newEntity() or patchEntity().
-     *
-     * Note that when '*' is set to true, this allows all unspecified fields to
-     * be mass assigned. For security purposes, it is advised to set '*' to false
-     * (or remove it), and explicitly make individual fields accessible as needed.
+     * Fields that can be mass assigned using newEntity() or patchEntity()
      *
      * @var array<string, bool>
      */
@@ -69,6 +66,7 @@ class Transaction extends Entity
         'payperiod_id' => true,
         'bill_id' => true,
         'invoice_id' => true,
+        'transaction_group' => true,
         'account' => true,
         'department' => true,
         'building' => true,
