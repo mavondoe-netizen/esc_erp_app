@@ -116,41 +116,201 @@ $cakeDescription = 'ESCerp App - Premium ERP';
         <div class="app-body">
             <!-- Sidebar -->
             <aside class="app-sidebar">
-                <div class="sidebar-heading">Navigation</div>
-                <ul class="nav-menu">
-                    <li class="nav-item"><?= $this->Html->link('Dashboard', '/Dashboard', ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link('Bank Reconciliation', ['controller' => 'BankTransactions', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link('ZIMRA Tax Return', ['controller' => 'ZimraReports', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link('Estimates', ['controller' => 'Estimates', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link('Debit Notes', ['controller' => 'DebitNotes', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link('Credit Notes', ['controller' => 'CreditNotes', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link(__('Database Backups'), ['controller' => 'Backups', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <li class="nav-item"><?= $this->Html->link(__('Exchange Rates'), ['controller' => 'ExchangeRates', 'action' => 'index'], ['class' => 'nav-link']) ?></li>
-                    <?php if (!empty($isAdminOrSuper)): ?>
-                    <li class="nav-item"><a href="/sandbox" class="nav-link" style="display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fa fa-flask"></i> Sandbox
-                        </a>
-                    </li>
-                    <?php endif; ?>
-                    <li class="nav-item">
-                        <a href="/transactions/bulk-add" class="nav-link" style="display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fas fa-book-open"></i> Post Bulk Journals
-                        </a>
-                    </li>
+                <div class="sidebar-brand">
+                    <i class="fas fa-th-large"></i>
+                    <span>ESCerp</span>
+                </div>
+                <nav class="sidebar-nav">
+
+                    <!-- Dashboard -->
+                    <a href="/Dashboard" class="sidebar-link sidebar-home <?= ($this->request->getParam('controller') === 'Dashboard') ? 'active' : '' ?>">
+                        <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    </a>
+
                     <?php
+                    $ctrl = $this->request->getParam('controller');
                     $identity = $this->request->getAttribute('identity');
-                    if ($identity && !empty($identity->employee_id)):
+
+                    // Helper: detect if any of the given controllers is the current one
+                    $groupActive = function(array $controllers) use ($ctrl) {
+                        return in_array($ctrl, $controllers) ? 'open' : '';
+                    };
                     ?>
-                    <li class="nav-item">
-                        <a href="/portal/dashboard" class="nav-link" style="display:flex; align-items:center; gap:0.4rem;">
-                            <i class="fa fa-id-card-clip"></i> My Portal
-                        </a>
-                    </li>
+
+                    <!-- ACCOUNTING -->
+                    <?php $ga = $groupActive(['Transactions','BankTransactions','Accounts','ExchangeRates','Reports','ZimraReports','Budgets']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-calculator"></i> Accounting</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-list"></i> Transactions', ['controller' => 'Transactions', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Transactions' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-university"></i> Bank Reconciliation', ['controller' => 'BankTransactions', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'BankTransactions' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-book"></i> Chart of Accounts', ['controller' => 'Accounts', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Accounts' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-book-open"></i> Bulk Journals', '/transactions/bulk-add', ['escape' => false, 'class' => 'nav-sub-link']) ?>
+                            <?= $this->Html->link('<i class="fas fa-chart-bar"></i> Reports', ['controller' => 'Reports', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Reports' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-landmark"></i> ZIMRA Tax Return', ['controller' => 'ZimraReports', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ZimraReports' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-exchange-alt"></i> Exchange Rates', ['controller' => 'ExchangeRates', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ExchangeRates' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-chart-pie"></i> Budgets', ['controller' => 'Budgets', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Budgets' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- LOANS -->
+                    <?php $ga = $groupActive(['Loans','LoanApplications','LoanClients','LoanProducts','LoanSchedules','LoanRepayments','LoanDisbursements','LoanDeductions','LoanRestructures','LoanWriteoffs','DelinquencyFlags','ClientScores']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-hand-holding-usd"></i> Loans</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-tachometer-alt"></i> Loan Dashboard', ['controller' => 'Loans', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Loans' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-alt"></i> Applications', ['controller' => 'LoanApplications', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanApplications' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-users"></i> Loan Clients', ['controller' => 'LoanClients', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanClients' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-box"></i> Loan Products', ['controller' => 'LoanProducts', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanProducts' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-money-bill-wave"></i> Repayments', ['controller' => 'LoanRepayments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanRepayments' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-paper-plane"></i> Disbursements', ['controller' => 'LoanDisbursements', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanDisbursements' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-exclamation-triangle"></i> Delinquency', ['controller' => 'DelinquencyFlags', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'DelinquencyFlags' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-sync-alt"></i> Restructures', ['controller' => 'LoanRestructures', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanRestructures' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-trash-alt"></i> Write-offs', ['controller' => 'LoanWriteoffs', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LoanWriteoffs' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-star"></i> Credit Scores', ['controller' => 'ClientScores', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ClientScores' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- INVOICING / SALES -->
+                    <?php $ga = $groupActive(['Invoices','Payments','Receipts','Estimates','DebitNotes','CreditNotes']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-file-invoice-dollar"></i> Invoicing</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-file-invoice"></i> Invoices', ['controller' => 'Invoices', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Invoices' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-money-bill-wave"></i> Payments', ['controller' => 'Payments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Payments' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-receipt"></i> Receipts', ['controller' => 'Receipts', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Receipts' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-alt"></i> Estimates/Quotes', ['controller' => 'Estimates', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Estimates' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-minus"></i> Credit Notes', ['controller' => 'CreditNotes', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'CreditNotes' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-plus"></i> Debit Notes', ['controller' => 'DebitNotes', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'DebitNotes' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- CRM -->
+                    <?php $ga = $groupActive(['Customers','Suppliers','Contacts','Deals','DealRequests','Tasks','Meetings','Events']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-users"></i> CRM</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-user-tie"></i> Customers', ['controller' => 'Customers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Customers' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-truck"></i> Suppliers', ['controller' => 'Suppliers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Suppliers' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-address-book"></i> Contacts', ['controller' => 'Contacts', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Contacts' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-handshake"></i> Deals', ['controller' => 'Deals', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Deals' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-tasks"></i> Tasks', ['controller' => 'Tasks', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Tasks' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-calendar-alt"></i> Meetings', ['controller' => 'Meetings', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Meetings' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-calendar-day"></i> Events', ['controller' => 'Events', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Events' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- PAYROLL -->
+                    <?php $ga = $groupActive(['Payslips','PayPeriods','Employees','SalaryStructures','Earnings','Deductions','TaxTables','LeaveApplications','LeaveBalances','LeaveTypes','EmployeeProfiles']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-money-check-alt"></i> Payroll</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-file-signature"></i> Payslips', ['controller' => 'Payslips', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Payslips' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-calendar-week"></i> Pay Periods', ['controller' => 'PayPeriods', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'PayPeriods' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-users-cog"></i> Employees', ['controller' => 'Employees', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Employees' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-sitemap"></i> Salary Structures', ['controller' => 'SalaryStructures', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SalaryStructures' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-plus-circle"></i> Earnings', ['controller' => 'Earnings', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Earnings' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-minus-circle"></i> Deductions', ['controller' => 'Deductions', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Deductions' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-percent"></i> Tax Tables', ['controller' => 'TaxTables', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'TaxTables' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-umbrella-beach"></i> Leave Applications', ['controller' => 'LeaveApplications', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LeaveApplications' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-balance-scale"></i> Leave Balances', ['controller' => 'LeaveBalances', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LeaveBalances' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- PROPERTIES -->
+                    <?php $ga = $groupActive(['Buildings','Units','Tenants','Enrolments','LeasePayments','Levies','Repairs','Inspections']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-building"></i> Properties</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-city"></i> Buildings', ['controller' => 'Buildings', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Buildings' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-door-open"></i> Units', ['controller' => 'Units', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Units' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-user-friends"></i> Tenants', ['controller' => 'Tenants', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Tenants' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-contract"></i> Leases', ['controller' => 'Enrolments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Enrolments' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-hand-holding-usd"></i> Rental Payments', ['controller' => 'LeasePayments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LeasePayments' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-tags"></i> Levies', ['controller' => 'Levies', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Levies' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-tools"></i> Repairs', ['controller' => 'Repairs', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Repairs' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-clipboard-check"></i> Inspections', ['controller' => 'Inspections', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Inspections' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- INVENTORY / PRODUCTS -->
+                    <?php $ga = $groupActive(['Products','Bills','BillItems']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-boxes"></i> Inventory</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-box-open"></i> Products', ['controller' => 'Products', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Products' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-purchase"></i> Bills', ['controller' => 'Bills', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Bills' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- RISK & COMPLIANCE -->
+                    <?php $ga = $groupActive(['Risks','RiskAssessments','Kris','AuditPlans','Audits','AuditFindings','AuditActions','Regulations','ComplianceObligations','ComplianceChecks','Incidents','LossEvents','Controls','ControlTests','Documents']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-shield-alt"></i> Risk & Compliance</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-exclamation-triangle"></i> Risk Register', ['controller' => 'Risks', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Risks' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-clipboard-check"></i> Audit Plans', ['controller' => 'AuditPlans', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AuditPlans' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-clipboard-list"></i> Audits', ['controller' => 'Audits', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Audits' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-book"></i> Regulations', ['controller' => 'Regulations', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Regulations' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-bell"></i> Incidents', ['controller' => 'Incidents', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Incidents' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-lock"></i> Controls', ['controller' => 'Controls', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Controls' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-pdf"></i> Documents', ['controller' => 'Documents', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Documents' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN -->
+                    <?php $ga = $groupActive(['Users','Roles','Permissions','Companies','Departments','Modules','ApprovalFlows','ApprovalLevels','Backups','Settings']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-cogs"></i> Admin</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-user-shield"></i> Users', ['controller' => 'Users', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Users' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-user-tag"></i> Roles', ['controller' => 'Roles', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Roles' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-lock"></i> Permissions', ['controller' => 'Permissions', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Permissions' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-sitemap"></i> Departments', ['controller' => 'Departments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Departments' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-puzzle-piece"></i> Modules', ['controller' => 'Modules', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Modules' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-project-diagram"></i> Approval Flows', ['controller' => 'ApprovalFlows', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ApprovalFlows' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-database"></i> Database Backups', ['controller' => 'Backups', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Backups' ? ' active' : '')]) ?>
+                            <?php if (!empty($isAdminOrSuper)): ?>
+                            <a href="/sandbox" class="nav-sub-link"><i class="fas fa-flask"></i> Sandbox</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- MY PORTAL (if linked employee) -->
+                    <?php if ($identity && !empty($identity->employee_id)): ?>
+                    <a href="/portal/dashboard" class="sidebar-link <?= ($ctrl === 'Portal') ? 'active' : '' ?>">
+                        <i class="fas fa-id-card"></i> <span>My Portal</span>
+                    </a>
                     <?php endif; ?>
-                </ul>
-                <ul>
-                    <?= $this->cell('Navigation') ?>
-                </ul>
+
+                </nav>
             </aside>
 
             <!-- Main Content Area -->
@@ -215,6 +375,18 @@ $cakeDescription = 'ESCerp App - Premium ERP';
 
     <?= $this->fetch('script') ?>
     
+    <!-- Grouped Sidebar Toggle -->
+    <script>
+    function toggleGroup(header) {
+        const group = header.parentElement;
+        group.classList.toggle('open');
+    }
+    // Auto-open any pre-marked open groups on load (no animation flash)
+    document.querySelectorAll('.nav-group.open .nav-group-body').forEach(function(el) {
+        el.style.display = 'block';
+    });
+    </script>
+
     <!-- Global Bulk & DataTables Logic -->
     <script>
         $(document).ready(function() {
@@ -242,8 +414,14 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                 buttons: [
                     'copy', 'csv', 'excel', 'pdf', 'print',
                     {
-                        text: 'Import CSV',
+                        text: '<i class="fas fa-file-upload"></i> Import CSV',
                         action: function ( e, dt, node, config ) { $('#global-import-input').click(); }
+                    },
+                    {
+                        text: '<i class="fas fa-file-download"></i> Download Template',
+                        action: function ( e, dt, node, config ) { 
+                            window.location.href = controllerUrl + '/download-template'; 
+                        }
                     }
                 ]
             });
@@ -373,11 +551,20 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                         contentType: false,
                         headers: { 'X-CSRF-Token': csrfToken },
                         success: function(response) {
-                            alert('Import successful! Page will refresh.');
+                            alert(response.message || 'Import successful! Page will refresh.');
                             window.location.reload();
                         },
                         error: function(xhr) {
-                            alert('Import failed: ' + (xhr.responseJSON?.message || 'Check server logs'));
+                            const res = xhr.responseJSON;
+                            let msg = res?.message || 'Import failed. Please check server logs.';
+                            
+                            if (res?.errors && res.errors.length > 0) {
+                                msg += "\n\nValidation Details:\n" + res.errors.slice(0, 15).join("\n");
+                                if (res.errors.length > 15) {
+                                    msg += "\n... and " + (res.errors.length - 15) + " more errors.";
+                                }
+                            }
+                            alert(msg);
                         }
                     });
                 }

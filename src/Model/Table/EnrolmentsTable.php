@@ -53,6 +53,12 @@ class EnrolmentsTable extends Table
             'foreignKey' => 'unit_id',
             'joinType' => 'INNER',
         ]);
+        $this->hasMany('LeasePayments', [
+            'foreignKey' => 'enrolment_id',
+        ]);
+        $this->hasMany('Levies', [
+            'foreignKey' => 'enrolment_id',
+        ]);
     }
 
     /**

@@ -1,0 +1,39 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Document $document
+ * @var string[]|\Cake\Collection\CollectionInterface $companies
+ */
+?>
+<div class="row">
+    <aside class="column">
+        <div class="side-nav">
+            <h4 class="heading"><?= __('Actions') ?></h4>
+            <?= $this->Form->postLink(
+                __('Delete'),
+                ['action' => 'delete', $document->id],
+                ['confirm' => __('Are you sure you want to delete # {0}?', $document->id), 'class' => 'side-nav-item']
+            ) ?>
+            <?= $this->Html->link(__('List Documents'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+        </div>
+    </aside>
+    <div class="column column-80">
+        <div class="documents form content">
+            <?= $this->Form->create($document) ?>
+            <fieldset>
+                <legend><?= __('Edit Document') ?></legend>
+                <?php
+                    echo $this->Form->control('company_id', ['options' => $companies, 'empty' => true]);
+                    echo $this->Form->control('entity_type');
+                    echo $this->Form->control('entity_id');
+                    echo $this->Form->control('file_path');
+                    echo $this->Form->control('file_name');
+                    echo $this->Form->control('uploaded_by');
+                    echo $this->Form->control('uploaded_at', ['empty' => true]);
+                ?>
+            </fieldset>
+            <?= $this->Form->button(__('Submit')) ?>
+            <?= $this->Form->end() ?>
+        </div>
+    </div>
+</div>

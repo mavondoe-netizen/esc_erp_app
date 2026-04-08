@@ -88,6 +88,29 @@ class DashboardController extends AppController
             $deductionsData[] = $convert($row->total_deductions, $pDate);
         }
 
+        // ---- PROPERTY MANAGEMENT WIDGETS ----
+        $unitsTable       = $this->fetchTable('Units');
+        $enrolmentsTable  = $this->fetchTable('Enrolments');
+        $leasePaymentsTable = $this->fetchTable('LeasePayments');
+        $repairsTable     = $this->fetchTable('Repairs');
+        $leviesTable      = $this->fetchTable('Levies');
+
+        $totalUnits   = $unitsTable->find()->count();
+        $occupiedCount = $enrolmentsTable->find()->where(['status' => 'Active'])->count();
+        $vacantCount  = max(0, $totalUnits - $occupiedCount);
+        $occupancyRate = $totalUnits > 0 ? round(($occupiedCount / $totalUnits) * 100, 1) : 0;
+
+        // Rental income this calendar month
+        $monthStart = date('Y-m-01');
+        $monthEnd   = date('Y-m-t');
+        $monthlyRentalIncome = $leasePaymentsTable->find()
+            ->select(['total' => $leasePaymentsTable->find()->func()->sum('amount')])
+            ->where(['date >=' => $monthStart, 'date <=' => $monthEnd, 'currency' => 'USD'])
+            ->first()->total ?? 0;
+
+        $openRepairs  = $repairsTable->find()->where(['status IN' => ['Reported', 'In Progress']])->count();
+        $outstandingLevies = $leviesTable->find()->where(['paid' => false])->count();
+
         $this->set(compact(
             'totalGross',
             'totalDeductions',
@@ -97,7 +120,14 @@ class DashboardController extends AppController
             'grossData',
             'deductionsData',
             'allModules',
-            'targetCurrency'
+            'targetCurrency',
+            'totalUnits',
+            'occupiedCount',
+            'vacantCount',
+            'occupancyRate',
+            'monthlyRentalIncome',
+            'openRepairs',
+            'outstandingLevies'
         ));
     }
 }

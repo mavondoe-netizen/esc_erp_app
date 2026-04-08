@@ -288,42 +288,114 @@ class AppController extends Controller
         
         $file = $this->request->getData('import_file');
         if (!$file || $file->getError() !== UPLOAD_ERR_OK) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Invalid or missing CSV file']));
+            return $this->response->withType('application/json')
+                ->withStatus(400)
+                ->withStringBody(json_encode(['message' => 'Invalid or missing CSV file']));
         }
 
-        $tmpName = $file->getStream()->getMetadata('uri');
-        $csvData = array_map('str_getcsv', file($tmpName));
-        
-        if (empty($csvData)) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'CSV is empty']));
+        $tmpPath = $file->getStream()->getMetadata('uri');
+        $content = file_get_contents($tmpPath);
+
+        // 1. Strip UTF-8 BOM if present
+        if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+            $content = substr($content, 3);
         }
 
-        // Assume first row is headers (columns)
-        $headers = array_shift($csvData);
-        $modelName = $this->getName(); // e.g., 'Customers'
-        
-        try {
-            $table = $this->fetchTable($modelName);
-            $entities = [];
+        // 2. Detect & handle encoding (basic cleanup)
+        $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
+
+        // 3. Use in-memory stream for parsing
+        $tempHandle = fopen('php://temp', 'r+');
+        fwrite($tempHandle, $content);
+        rewind($tempHandle);
+
+        $headers = fgetcsv($tempHandle);
+        if (!$headers) {
+            fclose($tempHandle);
+            return $this->response->withType('application/json')
+                ->withStatus(400)
+                ->withStringBody(json_encode(['message' => 'CSV file is empty or invalid']));
+        }
+
+        // 4. Normalize headers (trim, lower, snake_case) to match table columns
+        $cleanHeaders = array_map(function($h) {
+            $h = strtolower(trim((string)$h));
+            $h = str_replace([' ', '-'], '_', $h);
+            $h = preg_replace('/[^a-z0-9_]/', '', $h);
             
-            foreach ($csvData as $row) {
-                // Ensure row length matches headers
-                if (count($row) !== count($headers)) continue;
+            // Common Aliases to help user mapping
+            $aliases = [
+                'full_name'      => 'name',
+                'contact_name'   => 'name',
+                'phone'          => 'mobile',
+                'telephone'      => 'mobile',
+                'cell'           => 'mobile',
+                'cell_phone'     => 'mobile',
+                'email_address'  => 'email',
+                'mail'           => 'email',
+            ];
+            return $aliases[$h] ?? $h;
+        }, $headers);
+
+        $modelName = $this->getName();
+        $table = $this->fetchTable($modelName);
+        
+        $successCount = 0;
+        $errors = [];
+        $lineNum = 1; // Index 1 was headers
+
+        // 5. Atomic transaction for the batch (optional, but safer)
+        $table->getConnection()->transactional(function () use ($table, $tempHandle, $cleanHeaders, &$successCount, &$errors, &$lineNum) {
+            while (($row = fgetcsv($tempHandle)) !== false) {
+                $lineNum++;
                 
-                $data = array_combine($headers, $row);
-                // Try to create entity
-                $entities[] = $table->newEntity($data);
+                // Skip empty rows
+                if (empty(array_filter($row))) continue;
+
+                if (count($row) !== count($cleanHeaders)) {
+                    $errors[] = "Line {$lineNum}: Column count mismatch (Expected ".count($cleanHeaders).", got ".count($row).")";
+                    continue;
+                }
+
+                $data = array_combine($cleanHeaders, $row);
+                $entity = $table->newEntity($data);
+                
+                if ($table->save($entity, ['atomic' => false])) {
+                    $successCount++;
+                } else {
+                    $fieldErrors = [];
+                    foreach ($entity->getErrors() as $field => $msgs) {
+                        $fieldErrors[] = $field . ": " . implode(', ', $msgs);
+                    }
+                    $errors[] = "Line {$lineNum}: " . implode('; ', $fieldErrors);
+                }
             }
-            
-            if ($table->saveMany($entities)) {
-                $this->Flash->success(__('{0} records imported successfully.', count($entities)));
-                return $this->response->withStatus(200)->withStringBody(json_encode(['status' => 'success']));
-            } else {
-                return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Failed to save imported rows. Check validation rules.']));
+        });
+
+        fclose($tempHandle);
+
+        if ($successCount > 0) {
+            $msg = __("{0} records imported successfully.", $successCount);
+            if (!empty($errors)) {
+                $msg .= " " . __("{0} rows failed.", count($errors));
             }
-        } catch (\Exception $e) {
-            return $this->response->withStatus(500)->withStringBody(json_encode(['message' => 'Server Error: ' . $e->getMessage()]));
+            $this->Flash->success($msg);
+            return $this->response->withType('application/json')
+                ->withStatus(200)
+                ->withStringBody(json_encode([
+                    'status' => 'success', 
+                    'message' => $msg, 
+                    'errors' => $errors
+                ]));
         }
+
+        return $this->response->withType('application/json')
+            ->withStatus(422)
+            ->withStringBody(json_encode([
+                'status' => 'error',
+                'message' => __('No records were imported. Please check for errors.'),
+                'errors' => $errors
+            ]));
     }
 
     /**
@@ -413,5 +485,72 @@ class AppController extends Controller
 
         return $this->response->withType('application/json')
             ->withStringBody(json_encode(['success' => false, 'message' => 'Invalid action.']));
+    }
+
+    /**
+     * Global Generic CSV Template Downloader
+     * Generates a template based on the current model's database schema.
+     */
+    public function downloadTemplate()
+    {
+        $modelName = $this->getName();
+        try {
+            $table = $this->fetchTable($modelName);
+            $schema = $table->getSchema();
+            $columns = $schema->columns();
+            
+            /**
+             * Columns to exclude from the template.
+             * These are system fields that usually shouldn't be touched by bulk imports.
+             */
+            $ignore = [
+                'id', 'company_id', 'created', 'modified', 'updated', 
+                'created_at', 'updated_at', 'uuid', 'status', 'is_deleted',
+                'tenant_id', 'last_login'
+            ];
+            
+            // Use property override if defined in the specific child controller
+            if (property_exists($this, 'templateHeaders') && is_array($this->templateHeaders)) {
+                $headers = $this->templateHeaders;
+            } else {
+                // Filter and keep only relevant columns
+                $headers = array_filter($columns, function($col) use ($ignore) {
+                    return !in_array($col, $ignore) && !str_ends_with($col, '_id');
+                });
+
+                $headers = array_values($headers);
+            }
+
+            if (empty($headers)) {
+                throw new \Exception(__('No importable columns found for this model.'));
+            }
+
+            $fileName = strtolower($modelName) . '_template.csv';
+            
+            $handle = fopen('php://temp', 'r+');
+            fputcsv($handle, $headers);
+            
+            // Add a sample dummy row to show format
+            $sampleRow = [];
+            foreach ($headers as $h) {
+                if (str_contains($h, 'email')) $sampleRow[] = 'sample@example.com';
+                elseif (str_contains($h, 'date')) $sampleRow[] = date('Y-m-d');
+                elseif (str_contains($h, 'amount') || str_contains($h, 'price')) $sampleRow[] = '100.00';
+                else $sampleRow[] = 'Sample Data';
+            }
+            fputcsv($handle, $sampleRow);
+            
+            rewind($handle);
+            $csv = stream_get_contents($handle);
+            fclose($handle);
+
+            return $this->response->withType('text/csv')
+                ->withDownload($fileName)
+                ->withStringBody($csv);
+
+        } catch (\Exception $e) {
+            $this->Flash->error(__('Could not generate template: ') . $e->getMessage());
+            return $this->redirect($this->referer(['action' => 'index']));
+        }
     }
 }

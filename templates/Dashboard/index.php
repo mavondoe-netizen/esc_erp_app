@@ -34,6 +34,58 @@ $this->Html->script('https://cdn.jsdelivr.net/npm/chart.js', ['block' => true]);
                     </div>
                 </div>
             </div>
+
+            <!-- ===================== PROPERTY MANAGEMENT ===================== -->
+            <h4 style="margin:2rem 0 1rem;color:#444;border-bottom:2px solid #e8ecf0;padding-bottom:6px">
+                🏢 Property Management
+                <a href="<?= $this->Url->build(['controller' => 'Enrolments', 'action' => 'index']) ?>" style="font-size:0.8rem;margin-left:12px">View Leases</a> &nbsp;
+                <a href="<?= $this->Url->build(['controller' => 'LeasePayments', 'action' => 'index']) ?>" style="font-size:0.8rem;margin-right:8px">Payments</a>
+                <a href="<?= $this->Url->build(['controller' => 'Repairs', 'action' => 'index']) ?>" style="font-size:0.8rem;margin-right:8px">Repairs</a>
+                <a href="<?= $this->Url->build(['controller' => 'Levies', 'action' => 'index']) ?>" style="font-size:0.8rem">Levies</a>
+            </h4>
+            <div class="row">
+                <div class="column">
+                    <div class="card" style="padding:20px;background:#f0f8ff;border-left:5px solid #2196f3;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:20px">
+                        <h5 style="color:#666;margin-bottom:8px;font-size:0.9rem">Total Units</h5>
+                        <h2 style="margin:0;color:#333"><?= $totalUnits ?></h2>
+                        <small style="color:#888"><?= $occupiedCount ?> occupied / <?= $vacantCount ?> vacant</small>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card" style="padding:20px;background:#f0fff4;border-left:5px solid #4caf50;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:20px">
+                        <h5 style="color:#666;margin-bottom:8px;font-size:0.9rem">Occupancy Rate</h5>
+                        <h2 style="margin:0;color:#333"><?= $occupancyRate ?>%</h2>
+                        <div style="background:#ddd;border-radius:4px;height:6px;margin-top:8px">
+                            <div style="background:#4caf50;width:<?= $occupancyRate ?>%;height:6px;border-radius:4px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card" style="padding:20px;background:#fffbf0;border-left:5px solid #ff9800;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:20px">
+                        <h5 style="color:#666;margin-bottom:8px;font-size:0.9rem">Rental Income (This Month)</h5>
+                        <h2 style="margin:0;color:#333">USD <?= number_format((float)$monthlyRentalIncome, 2) ?></h2>
+                    </div>
+                </div>
+                <div class="column">
+                    <a href="<?= $this->Url->build(['controller' => 'Repairs', 'action' => 'index']) ?>" style="text-decoration:none">
+                        <div class="card" style="padding:20px;background:<?= $openRepairs > 0 ? '#fff5f5' : '#f5fff5' ?>;border-left:5px solid <?= $openRepairs > 0 ? '#f44336' : '#4caf50' ?>;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:20px">
+                            <h5 style="color:#666;margin-bottom:8px;font-size:0.9rem">Open Repairs</h5>
+                            <h2 style="margin:0;color:<?= $openRepairs > 0 ? '#f44336' : '#4caf50' ?>"><?= $openRepairs ?></h2>
+                            <small style="color:#888">Reported or In Progress</small>
+                        </div>
+                    </a>
+                </div>
+                <div class="column">
+                    <a href="<?= $this->Url->build(['controller' => 'Levies', 'action' => 'index']) ?>" style="text-decoration:none">
+                        <div class="card" style="padding:20px;background:<?= $outstandingLevies > 0 ? '#fffbf0' : '#f5fff5' ?>;border-left:5px solid <?= $outstandingLevies > 0 ? '#ff9800' : '#4caf50' ?>;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.1);margin-bottom:20px">
+                            <h5 style="color:#666;margin-bottom:8px;font-size:0.9rem">Outstanding Levies</h5>
+                            <h2 style="margin:0;color:<?= $outstandingLevies > 0 ? '#ff9800' : '#4caf50' ?>"><?= $outstandingLevies ?></h2>
+                            <small style="color:#888">Unpaid levy charges</small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!-- =================== END PROPERTY MANAGEMENT =================== -->
             
             <div class="row" style="margin-top: 2rem;">
                 <div class="column column-100">

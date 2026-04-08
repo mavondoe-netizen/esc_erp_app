@@ -32,7 +32,7 @@ class ContactsController extends AppController
      */
     public function view($id = null)
     {
-        $contact = $this->fetchTable('Contacts')->get($id, contain: ['Customers', 'Emails', 'Investors', 'Meetings', 'Suppliers', 'Tenants']);
+        $contact = $this->fetchTable('Contacts')->get($id, contain: ['Customers', 'Emails', 'Meetings', 'Suppliers', 'Tenants']);
         $this->set(compact('contact'));
     }
 

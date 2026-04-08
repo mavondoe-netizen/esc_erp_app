@@ -97,33 +97,7 @@
                 </div>
                 <?php endif; ?>
             </div>
-            <div class="related">
-                <h4><?= __('Related Investors') ?></h4>
-                <?php if (!empty($contact->investors)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Name') ?></th>
-                            <th><?= __('Contact Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($contact->investors as $investor) : ?>
-                        <tr>
-                            <td><?= h($investor->id) ?></td>
-                            <td><?= h($investor->name) ?></td>
-                            <td><?= h($investor->contact_id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Investors', 'action' => 'view', $investor->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Investors', 'action' => 'edit', $investor->id]) ?>
-                                <?= $this->Form->postLink(__('Delete'), ['controller' => 'Investors', 'action' => 'delete', $investor->id], ['confirm' => __('Are you sure you want to delete # {0}?', $investor->id)]) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
+          
             <div class="related">
                 <h4><?= __('Related Meetings') ?></h4>
                 <?php if (!empty($contact->meetings)) : ?>
