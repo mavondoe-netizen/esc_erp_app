@@ -264,6 +264,24 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                         </div>
                     </div>
 
+                    <!-- ASSET MANAGEMENT -->
+                    <?php $ga = $groupActive(['Assets','AssetCategories','AssetClassifications','Offices','AssetDepreciation','AssetAssignments','AssetTransfers','AssetRepairs','AssetDisposals','AssetLogs']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-cubes"></i> Asset Management</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-list-alt"></i> Master Register', ['controller' => 'Assets', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Assets' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-map-marker-alt"></i> Offices', ['controller' => 'Offices', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Offices' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-chart-line"></i> Depreciation', ['controller' => 'AssetDepreciation', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetDepreciation' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-exchange-alt"></i> Transfers', ['controller' => 'AssetTransfers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetTransfers' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-tools"></i> Repairs', ['controller' => 'AssetRepairs', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetRepairs' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-trash-alt"></i> Disposals', ['controller' => 'AssetDisposals', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetDisposals' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-cogs"></i> Configuration', ['controller' => 'AssetCategories', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetCategories' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+
                     <!-- RISK & COMPLIANCE -->
                     <?php $ga = $groupActive(['Risks','RiskAssessments','Kris','AuditPlans','Audits','AuditFindings','AuditActions','Regulations','ComplianceObligations','ComplianceChecks','Incidents','LossEvents','Controls','ControlTests','Documents']); ?>
                     <div class="nav-group <?= $ga ?>">
