@@ -340,6 +340,77 @@ class BankTransactionsController extends AppController
     }
 
     /**
+     * AJAX: Bulk Categorize on the fly
+     */
+    public function apiBulkCategorize()
+    {
+        $this->request->allowMethod(['post']);
+        $data = $this->request->getData();
+        $ids = $data['ids'] ?? [];
+        $accountId = $data['account_id'] ?? null;
+
+        if (empty($ids) || !$accountId) {
+            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing data']));
+        }
+
+        $transactionsTable = $this->fetchTable('Transactions');
+        $conn = $transactionsTable->getConnection();
+        $successCount = 0;
+        $errors = [];
+
+        foreach ($ids as $bankTxId) {
+            $bankTx = $this->BankTransactions->find()->where(['id' => $bankTxId, 'reconciled' => false])->first();
+            if (!$bankTx) continue;
+
+            try {
+                $conn->transactional(function () use ($bankTx, $accountId, $transactionsTable, $bankTxId) {
+                    // Leg 1: Target Account
+                    $txTarget = $transactionsTable->newEntity([
+                        'date' => $bankTx->get('date'),
+                        'description' => $bankTx->get('description'),
+                        'amount' => abs((float)$bankTx->get('amount')),
+                        'currency' => 'USD', 
+                        'zwg' => 0, 
+                        'type' => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
+                        'account_id' => $accountId,
+                        'bank_transaction_id' => $bankTxId,
+                        'company_id' => $bankTx->get('company_id')
+                    ]);
+                    $transactionsTable->saveOrFail($txTarget);
+
+                    // Leg 2: Bank Account
+                    $txBank = $transactionsTable->newEntity([
+                        'date' => $bankTx->get('date'),
+                        'description' => $bankTx->get('description'),
+                        'amount' => abs((float)$bankTx->get('amount')),
+                        'currency' => 'USD',
+                        'zwg' => 0,
+                        'type' => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
+                        'account_id' => $bankTx->get('bank_account_id'),
+                        'bank_transaction_id' => $bankTxId,
+                        'company_id' => $bankTx->get('company_id')
+                    ]);
+                    $transactionsTable->saveOrFail($txBank);
+
+                    // Mark as reconciled
+                    $bankTx->set('reconciled', true);
+                    $bankTx->set('transaction_id', $txTarget->id);
+                    $this->BankTransactions->saveOrFail($bankTx);
+                });
+                $successCount++;
+            } catch (\Exception $e) {
+                $errors[] = "ID {$bankTxId}: " . $e->getMessage();
+            }
+        }
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode([
+                'success' => true, 
+                'message' => "Reconciled {$successCount} transactions. " . implode(', ', $errors)
+            ]));
+    }
+
+    /**
      * AJAX: Split Categorize
      */
     public function apiSplitCategorize()

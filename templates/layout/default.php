@@ -213,7 +213,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                     </div>
 
                     <!-- PAYROLL -->
-                    <?php $ga = $groupActive(['Payslips','PayPeriods','Employees','SalaryStructures','Earnings','Deductions','TaxTables','LeaveApplications','LeaveBalances','LeaveTypes','EmployeeProfiles']); ?>
+                    <?php $ga = $groupActive(['Payslips','PayPeriods','Employees','SalaryStructures','Earnings','Deductions','TaxTables','ZimraReconciliations','LeaveApplications','LeaveBalances','LeaveTypes','EmployeeProfiles']); ?>
                     <div class="nav-group <?= $ga ?>">
                         <div class="nav-group-header" onclick="toggleGroup(this)">
                             <span><i class="fas fa-money-check-alt"></i> Payroll</span>
@@ -227,6 +227,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                             <?= $this->Html->link('<i class="fas fa-plus-circle"></i> Earnings', ['controller' => 'Earnings', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Earnings' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-minus-circle"></i> Deductions', ['controller' => 'Deductions', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Deductions' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-percent"></i> Tax Tables', ['controller' => 'TaxTables', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'TaxTables' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-balance-scale-left"></i> ZIMRA Reconciliations', ['controller' => 'ZimraReconciliations', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ZimraReconciliations' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-umbrella-beach"></i> Leave Applications', ['controller' => 'LeaveApplications', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LeaveApplications' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-balance-scale"></i> Leave Balances', ['controller' => 'LeaveBalances', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'LeaveBalances' ? ' active' : '')]) ?>
                         </div>
