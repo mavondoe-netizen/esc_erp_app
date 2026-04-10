@@ -143,7 +143,10 @@ class TransactionsController extends AppController
         $tenants = $this->fetchTable('Transactions')->Tenants->find('list', limit: 200)->all();
         $suppliers = $this->fetchTable('Transactions')->Suppliers->find('list', limit: 200)->all();
         $customers = $this->fetchTable('Transactions')->Customers->find('list', limit: 200)->all();
+        $bills = $this->fetchTable('Transactions')->Bills->find('list', limit: 200)->all();
+        $invoices = $this->fetchTable('Transactions')->Invoices->find('list', limit: 200)->all();
         $receipts = $this->fetchTable('Transactions')->Receipts->find('list', limit: 200)->all();
+        $departments = $this->fetchTable('Departments')->find('list')->all();
         $bankTransactions = $this->fetchTable('Transactions')->BankTransactions->find('list')->all();
         $this->set(compact('transaction', 'accounts', 'buildings', 'tenants', 'suppliers', 'customers', 'bills', 'invoices', 'receipts', 'departments', 'bankTransactions'));
     }
