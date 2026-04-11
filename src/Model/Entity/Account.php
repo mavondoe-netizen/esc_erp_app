@@ -36,6 +36,7 @@ class Account extends Entity
         'category' => true,
         'type' => true,
         'subcategory' => true,
+        'opening_balance' => true,
         'benefits' => true,
         'bill_items' => true,
         'invoice_items' => true,

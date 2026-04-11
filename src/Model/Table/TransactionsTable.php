@@ -214,7 +214,64 @@ class TransactionsTable extends Table
         $rules->add($rules->existsIn(['bill_id'], 'Bills'), ['errorField' => 'bill_id']);
         $rules->add($rules->existsIn(['invoice_id'], 'Invoices'), ['errorField' => 'invoice_id']);
 
+        $rules->add(function ($entity, $options) {
+            if (isset($options['check_balance']) && $options['check_balance'] === false) {
+                return true;
+            }
+            if (empty($entity->transaction_group)) {
+                return true; // Will be generated in beforeSave
+            }
+
+            // We check the balance of the entire group.
+            // Note: This might be tricky during saveMany if rows are saved sequentially.
+            // If the user is using bulkAdd, we validate there too.
+            // This rule is a final safeguard.
+            $total = $this->find()
+                ->where(['transaction_group' => $entity->transaction_group])
+                ->all()
+                ->reduce(function ($acc, $row) {
+                    $isDebit = in_array(strtolower(trim((string)$row->type)), ['2', 'debit']);
+                    return $acc + ($isDebit ? (float)$row->zwg : -(float)$row->zwg);
+                }, 0.0);
+
+            // Add the current entity's impact (if not already in the DB)
+            $isEntityDebit = in_array(strtolower(trim((string)$entity->type)), ['2', 'debit']);
+            $entityImpact = $isEntityDebit ? (float)$entity->zwg : -(float)$entity->zwg;
+
+            // If it's an update, subtract old value
+            if (!$entity->isNew()) {
+                $original = $this->get($entity->id);
+                $isOldDebit = in_array(strtolower(trim((string)$original->type)), ['2', 'debit']);
+                $total -= ($isOldDebit ? (float)$original->zwg : -(float)$original->zwg);
+            }
+
+            $finalTotal = $total + $entityImpact;
+
+            // We allow a small epsilon for floating point issues
+            // Actually, for a single row save, this will fail unless it's a self-balancing row (zero amount).
+            // That's why we usually save groups together.
+            return abs($finalTotal) < 0.001;
+        }, 'checkZeroSum', [
+            'errorField' => 'zwg',
+            'message' => 'The transaction group must balance to zero (Total Debits = Total Credits).'
+        ]);
+
         return $rules;
+    }
+
+    /**
+     * Before save callback.
+     *
+     * @param \Cake\Event\EventInterface $event The event.
+     * @param \Cake\Datasource\EntityInterface $entity The entity.
+     * @param \ArrayObject $options The options.
+     * @return void
+     */
+    public function beforeSave(\Cake\Event\EventInterface $event, \Cake\Datasource\EntityInterface $entity, \ArrayObject $options): void
+    {
+        if (empty($entity->transaction_group)) {
+            $entity->transaction_group = \Cake\Utility\Text::uuid();
+        }
     }
 
     /**

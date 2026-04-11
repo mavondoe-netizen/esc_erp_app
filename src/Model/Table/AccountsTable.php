@@ -104,6 +104,52 @@ class AccountsTable extends Table
             ->maxLength('subcategory', 255)
             ->allowEmptyString('subcategory');
 
+        $validator
+            ->numeric('opening_balance')
+            ->allowEmptyString('opening_balance');
+
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add(function ($entity, $options) {
+            // We only check if opening_balance is actually being set or changed
+            if (!$entity->isDirty('opening_balance')) {
+                return true;
+            }
+
+            $total = $this->find()
+                ->where(['company_id' => $entity->company_id])
+                ->sumOf('opening_balance');
+
+            // Find current value in DB to subtract it (since sumOf includes it if it's already saved)
+            // Or if it's a new entity, it's not in the sum yet.
+            $currentInDb = 0;
+            if (!$entity->isNew()) {
+                $original = $this->get($entity->id);
+                $currentInDb = (float)$original->opening_balance;
+            }
+
+            $newTotal = ($total - $currentInDb) + (float)$entity->opening_balance;
+
+            if (abs($newTotal) > 0.001) {
+                return false;
+            }
+
+            return true;
+        }, 'checkOpeningBalancesBalance', [
+            'errorField' => 'opening_balance',
+            'message' => 'The sum of all opening balances must be zero.'
+        ]);
+
+        return $rules;
     }
 }

@@ -167,7 +167,13 @@ $this->assign('title', 'Post Bulk Journal Entries');
     <button type="button" id="add-row-btn" class="btn-add-row">
         <i class="fas fa-plus-circle"></i> Add Row
     </button>
-    <button type="submit" class="btn-post">
+    <div style="flex-grow: 1;"></div>
+    <div id="balance-indicator" style="padding: 0.75rem 1.5rem; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.75rem;">
+        <span style="color: #64748b;">Net Balance:</span>
+        <span id="running-total">0.00</span>
+        <i id="balance-status" class="fas fa-circle-exclamation" style="color: #f59e0b;"></i>
+    </div>
+    <button type="submit" id="submit-btn" class="btn-post">
         <i class="fas fa-paper-plane"></i> Post All Journals
     </button>
     <?= $this->Html->link('<i class="fas fa-times"></i> Cancel', ['action' => 'index'], [
@@ -282,6 +288,19 @@ $this->assign('title', 'Post Bulk Journal Entries');
         if (rows.length === 0) {
             e.preventDefault();
             alert('Please add at least one journal row before posting.');
+            return;
+        }
+
+        let total = 0;
+        rows.forEach(tr => {
+            const val = parseFloat(tr.querySelector('.zwg-input').value) || 0;
+            const isDebit = tr.querySelector('.type-select').value === '2';
+            total += isDebit ? val : -val;
+        });
+
+        if (Math.abs(total) > 0.001) {
+            e.preventDefault();
+            alert('The journal entry is unbalanced (Balance: ' + total.toFixed(2) + '). Net balance must be 0.00.');
         }
     });
 

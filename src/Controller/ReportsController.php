@@ -408,20 +408,30 @@ class ReportsController extends AppController
             $amount = $convert((float)$txn->amount, $txn->date->format('Y-m-d'));
 
             $sub = $txn->account->subcategory ?: 'Other';
-
-            // We must allow null or empty sub array key
             if (!$sub) $sub = 'Other';
 
+            // Initialize account row with opening balance if not exists
+            if (!isset($report['Assets'][$sub][$name]) && $cat === 'Asset') {
+                $ob = (float)($txn->account->opening_balance ?? 0);
+                $report['Assets'][$sub][$name] = ['actual' => $ob, 'account_id' => $txn->account_id];
+                $totals['total_assets'] += $ob;
+            } elseif (!isset($report['Liabilities'][$sub][$name]) && $cat === 'Liability') {
+                $ob = (float)($txn->account->opening_balance ?? 0);
+                $report['Liabilities'][$sub][$name] = ['actual' => $ob, 'account_id' => $txn->account_id];
+                $totals['total_liabilities'] += $ob;
+            } elseif (!isset($report['Equity'][$sub][$name]) && $cat === 'Equity') {
+                $ob = (float)($txn->account->opening_balance ?? 0);
+                $report['Equity'][$sub][$name] = ['actual' => $ob, 'account_id' => $txn->account_id];
+                $totals['total_equity'] += $ob;
+            }
+
             if ($cat === 'Asset') { // Assets (Normal Debit Balance)
-                if (!isset($report['Assets'][$sub][$name])) $report['Assets'][$sub][$name] = ['actual' => 0, 'account_id' => $txn->account_id];
                 $report['Assets'][$sub][$name]['actual'] += $isDebit ? $amount : -$amount;
                 $totals['total_assets'] += $isDebit ? $amount : -$amount;
             } elseif ($cat === 'Liability') { // Liabilities (Normal Credit Balance)
-                if (!isset($report['Liabilities'][$sub][$name])) $report['Liabilities'][$sub][$name] = ['actual' => 0, 'account_id' => $txn->account_id];
                 $report['Liabilities'][$sub][$name]['actual'] += $isCredit ? $amount : -$amount;
                 $totals['total_liabilities'] += $isCredit ? $amount : -$amount;
             } elseif ($cat === 'Equity') { // Equity (Normal Credit Balance)
-                if (!isset($report['Equity'][$sub][$name])) $report['Equity'][$sub][$name] = ['actual' => 0, 'account_id' => $txn->account_id];
                 $report['Equity'][$sub][$name]['actual'] += $isCredit ? $amount : -$amount;
                 $totals['total_equity'] += $isCredit ? $amount : -$amount;
             } elseif (in_array($cat, ['Revenue', 'Expense'])) {
@@ -430,6 +440,35 @@ class ReportsController extends AppController
                     $totals['retained_earnings'] += $isCredit ? $amount : -$amount;
                 } elseif ($cat === 'Expense') { // Expenses/COGS (Debit)
                     $totals['retained_earnings'] -= $isDebit ? $amount : -$amount;
+                }
+            }
+        }
+
+        // Catch accounts that HAVE an opening balance but NO transactions in this range
+        $allAccountsWithOb = $this->fetchTable('Accounts')->find()
+            ->where(['opening_balance !=' => 0])
+            ->all();
+        
+        foreach ($allAccountsWithOb as $acc) {
+            $cat = $acc->category;
+            $sub = $acc->subcategory ?: 'Other';
+            $name = $acc->name;
+            $ob = (float)$acc->opening_balance;
+            
+            if ($cat === 'Asset') {
+                if (!isset($report['Assets'][$sub][$name])) {
+                    $report['Assets'][$sub][$name] = ['actual' => $ob, 'account_id' => $acc->id];
+                    $totals['total_assets'] += $ob;
+                }
+            } elseif ($cat === 'Liability') {
+                if (!isset($report['Liabilities'][$sub][$name])) {
+                    $report['Liabilities'][$sub][$name] = ['actual' => $ob, 'account_id' => $acc->id];
+                    $totals['total_liabilities'] += $ob;
+                }
+            } elseif ($cat === 'Equity') {
+                if (!isset($report['Equity'][$sub][$name])) {
+                    $report['Equity'][$sub][$name] = ['actual' => $ob, 'account_id' => $acc->id];
+                    $totals['total_equity'] += $ob;
                 }
             }
         }
@@ -746,7 +785,7 @@ class ReportsController extends AppController
             ])
             ->all();
 
-        $openingBalance = 0;
+        $openingBalance = (float)($account->opening_balance ?? 0);
         $isNormalCredit = in_array($account->category, ['Liability', 'Equity', 'Revenue']);
         
         foreach ($openingTxns as $txn) {

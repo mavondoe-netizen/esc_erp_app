@@ -21,6 +21,7 @@
                     echo $this->Form->control('category', ['options' => $categories, 'empty' => 'Select Category']);
                     echo $this->Form->control('type', ['options' => $types, 'empty' => 'Select Type']);
                     echo $this->Form->control('subcategory', ['options' => $subcategories, 'empty' => 'Select Subcategory']);
+                    echo $this->Form->control('opening_balance', ['label' => 'Opening Balance (Base Currency)', 'step' => '0.01']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

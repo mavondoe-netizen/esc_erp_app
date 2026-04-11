@@ -229,11 +229,26 @@ class TransactionsController extends AppController
                 return;
             }
 
+            // ── Pass 1.5: Verify the batch total balances to zero ───────────────
+            $totalZwg = 0;
+            $groupId = \Cake\Utility\Text::uuid();
+            foreach ($entities as $entity) {
+                $isDebit = in_array(strtolower(trim((string)$entity->type)), ['2', 'debit']);
+                $totalZwg += ($isDebit ? (float)$entity->zwg : -(float)$entity->zwg);
+                $entity->transaction_group = $groupId;
+            }
+
+            if (abs($totalZwg) > 0.001) {
+                $this->Flash->error(__("The journal entry is unbalanced (Net: {0}). Total Debits must equal Total Credits.", $totalZwg));
+                $this->set(compact('accounts', 'customers', 'suppliers', 'departments'));
+                return;
+            }
+
             // ── Pass 2: Save all validated entities atomically ──────────────────
-            // saveMany() handles its own transaction internally, avoiding nested
-            // begin/commit/rollback conflicts with CakePHP's per-save savepoints.
-            if ($table->saveMany($entities)) {
-                $this->Flash->success(__("Successfully posted {0} journal entries.", count($entities)));
+            // We pass check_balance => false because we've already validated the whole batch. 
+            // Sequential saves would otherwise fail.
+            if ($table->saveMany($entities, ['check_balance' => false])) {
+                $this->Flash->success(__("Successfully posted balanced journal with {0} lines.", count($entities)));
                 return $this->redirect(['action' => 'index']);
             } else {
                 // Collect per-entity errors for feedback
