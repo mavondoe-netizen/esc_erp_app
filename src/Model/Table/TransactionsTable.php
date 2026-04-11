@@ -231,18 +231,18 @@ class TransactionsTable extends Table
                 ->where(['transaction_group' => $entity->transaction_group])
                 ->all()
                 ->reduce(function ($acc, $row) {
-                    $isDebit = in_array(strtolower(trim((string)$row->type)), ['2', 'debit']);
+                    $isDebit = in_array(strtolower(trim((string)$row->type)), ['1', 'debit']);
                     return $acc + ($isDebit ? (float)$row->zwg : -(float)$row->zwg);
                 }, 0.0);
 
             // Add the current entity's impact (if not already in the DB)
-            $isEntityDebit = in_array(strtolower(trim((string)$entity->type)), ['2', 'debit']);
+            $isEntityDebit = in_array(strtolower(trim((string)$entity->type)), ['1', 'debit']);
             $entityImpact = $isEntityDebit ? (float)$entity->zwg : -(float)$entity->zwg;
 
             // If it's an update, subtract old value
             if (!$entity->isNew()) {
                 $original = $this->get($entity->id);
-                $isOldDebit = in_array(strtolower(trim((string)$original->type)), ['2', 'debit']);
+                $isOldDebit = in_array(strtolower(trim((string)$original->type)), ['1', 'debit']);
                 $total -= ($isOldDebit ? (float)$original->zwg : -(float)$original->zwg);
             }
 
@@ -286,6 +286,10 @@ class TransactionsTable extends Table
             $rateValue = $rate ? (float)$rate->rate_to_base : 1.0;
             $entity->zwg = (float)$entity->amount * $rateValue;
         }
+
+        // Standardize type going forward
+        if ($entity->type === '1') $entity->type = 'Debit';
+        if ($entity->type === '2') $entity->type = 'Credit';
     }
 
     /**

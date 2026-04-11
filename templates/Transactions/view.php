@@ -67,7 +67,7 @@
                 </tr>
                 <tr>
                     <th><?= __('Date') ?></th>
-                    <td><?= h($transaction->date) ?></td>
+                    <td><?= $transaction->date ? h($transaction->date->format('d/m/Y')) : '' ?></td>
                 </tr>
             </table>
             <div class="related">

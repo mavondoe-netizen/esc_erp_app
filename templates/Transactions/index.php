@@ -63,7 +63,7 @@
                 <tr id="row-<?= $transaction->id ?>">
                     <td style="text-align: center;"><input type="checkbox" class="row-checkbox" value="<?= $transaction->id ?>"></td>
                     <td><?= $this->Number->format($transaction->id) ?></td>
-                    <td><?= h($transaction->date) ?></td>
+                    <td><?= $transaction->date ? h($transaction->date->format('d/m/Y')) : '' ?></td>
                     <td><?= h($transaction->description) ?></td>
                     <td><?= h($transaction->currency) ?></td>
                     <td><?= $this->Number->format($transaction->amount) ?></td>

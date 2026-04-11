@@ -240,7 +240,7 @@ class TransactionsController extends AppController
             $totalZwg = 0;
             $groupId = \Cake\Utility\Text::uuid();
             foreach ($entities as $entity) {
-                $isDebit = in_array(strtolower(trim((string)$entity->type)), ['2', 'debit']);
+                $isDebit = in_array(strtolower(trim((string)$entity->type)), ['1', 'debit']);
                 $totalZwg += ($isDebit ? (float)$entity->zwg : -(float)$entity->zwg);
                 $entity->transaction_group = $groupId;
             }
@@ -349,7 +349,7 @@ class TransactionsController extends AppController
             // Verify the batch total balances to zero
             $totalZwg = 0;
             foreach ($entities as $entity) {
-                $isDebit = in_array(strtolower(trim((string)$entity->type)), ['2', 'debit']);
+                $isDebit = in_array(strtolower(trim((string)$entity->type)), ['1', 'debit']);
                 $totalZwg += ($isDebit ? (float)$entity->zwg : -(float)$entity->zwg);
             }
 
@@ -365,7 +365,7 @@ class TransactionsController extends AppController
 
             // Execute delete query (bypassing afterDelete cascade)
             if (!empty($idsToDelete)) {
-                $table->query()->delete()->where(['id IN' => $idsToDelete])->execute();
+                $table->deleteAll(['id IN' => $idsToDelete]);
             }
 
             // Save entities

@@ -64,7 +64,7 @@ $this->assign('title', 'Ledger Drilldown');
                 </tr>
                 <?php foreach ($ledgerData as $row): ?>
                 <tr>
-                    <td><?= h($row['txn']->date->format('Y-m-d')) ?></td>
+                    <td><?= h($row['txn']->date->format('d/m/Y')) ?></td>
                     <td>
                         <?= h($row['txn']->description) ?>
                         <?php if ($row['txn']->reference): ?>

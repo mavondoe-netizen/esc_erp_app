@@ -225,8 +225,8 @@ $this->assign('title', 'Post Bulk Journal Entries');
             <td><input type="number" name="rows[${i}][amount]" step="0.01" placeholder="0.00" class="amount-input" required></td>
             <td>
                 <select name="rows[${i}][type]" class="no-s2 type-select" required>
-                    <option value="1">Debit</option>
-                    <option value="2">Credit</option>
+                    <option value="Debit">Debit</option>
+                    <option value="Credit">Credit</option>
                 </select>
             </td>
             <td>
@@ -258,8 +258,8 @@ $this->assign('title', 'Post Bulk Journal Entries');
         const typeSelect = tr.querySelector('.type-select');
         typeSelect.addEventListener('change', function() {
             tr.classList.remove('debit-row', 'credit-row');
-            if (this.value === '1') tr.classList.add('debit-row');
-            else                   tr.classList.add('credit-row');
+            if (this.value === 'Debit') tr.classList.add('debit-row');
+            else                        tr.classList.add('credit-row');
         });
         // Trigger initial colour
         typeSelect.dispatchEvent(new Event('change'));
@@ -290,8 +290,8 @@ $this->assign('title', 'Post Bulk Journal Entries');
             currencies.add(currency);
             
             const type = tr.querySelector('.type-select').value;
-            // 1 = Debit, 2 = Credit. Usually Journals: Debit - Credit = 0
-            total += (type === '1' ? val : -val);
+            // Usually Journals: Debit - Credit = 0
+            total += (type === 'Debit' ? val : -val);
         });
 
         const display = document.getElementById('running-total');
@@ -350,7 +350,7 @@ $this->assign('title', 'Post Bulk Journal Entries');
             const type = tr.querySelector('.type-select').value;
             const currency = tr.querySelector('select[name*="[currency]"]').value;
             currencies.add(currency);
-            total += (type === '1' ? val : -val);
+            total += (type === 'Debit' ? val : -val);
         });
 
         // If multi-currency, we allow it to pass JS validation and let the backend handle the ZWG balance check

@@ -96,7 +96,7 @@
                                 data-date="<?= h($tx->date) ?>"
                                 data-amount="<?= (float)$tx->amount ?>">
                                 <td style="text-align: center;"><input type="checkbox" class="row-checkbox" value="<?= $tx->id ?>"></td>
-                                <td><?= h($tx->date) ?></td>
+                                <td><?= $tx->date ? h($tx->date->format('d/m/Y')) : '' ?></td>
                                 <td>
                                     <span style="font-weight: 500;"><?= h($tx->description) ?></span>
                                     <?php if (isset($tx->suggested_account_id)): ?>
@@ -218,11 +218,11 @@ $(document).ready(function() {
     });
 
     // ─── Date Range Filter ─────────────────────────────────────────────────────
-    $.fn.dataTable.ext.search.push(function(settings, data) {
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
         if (settings.nTable.id !== 'bank-tx-table') return true;
         const from = $('#filter-date-from').val();
         const to   = $('#filter-date-to').val();
-        const rowDate = data[1];
+        const rowDate = $(settings.aoData[dataIndex].nTr).data('date');
         if (from && rowDate < from) return false;
         if (to   && rowDate > to)   return false;
         return true;

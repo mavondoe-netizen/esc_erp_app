@@ -10,7 +10,7 @@
         
         <div class="alert alert-info" style="background: #f1f8fa; padding: 15px; border-left: 4px solid #2e6c80; margin-bottom: 25px; font-size: 0.9em;">
             <strong>Expected Columns:</strong><br>
-            1. Date (YYYY-MM-DD) - <em>Time component is optional and will be ignored.</em><br>
+            1. Date (DD/MM/YYYY) - <em>Time component is optional and will be ignored.</em><br>
             2. Description/Narration<br>
             3. Amount (Positive for Credit, Negative for Debit)<br>
             4. Reference (Optional)

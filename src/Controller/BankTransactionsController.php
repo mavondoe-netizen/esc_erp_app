@@ -139,10 +139,11 @@ class BankTransactionsController extends AppController
                         $saveErrors[] = "Row {$lineNum}: Empty date — skipped.";
                         continue;
                     }
-                    $normDate = str_replace(['/', '.'], '-', $dateStr);
-                    $datePart = explode(' ', $normDate)[0];
+                    $datePart = explode(' ', $dateStr)[0];
                     try {
-                        $date = new \Cake\I18n\FrozenDate($datePart);
+                        $date = \Cake\I18n\FrozenDate::createFromFormat('d/m/Y', $datePart)
+                             ?: \Cake\I18n\FrozenDate::createFromFormat('d-m-Y', $datePart)
+                             ?: new \Cake\I18n\FrozenDate(str_replace('/', '-', $datePart));
                     } catch (\Exception $e) {
                         $metrics['skipped']++;
                         $saveErrors[] = "Row {$lineNum}: Unrecognised date format '{$dateStr}' — skipped.";
@@ -584,8 +585,8 @@ class BankTransactionsController extends AppController
         $fileName = 'bank_transactions_template.csv';
         $header = ['Date', 'Description', 'Amount', 'Reference'];
         $sampleData = [
-            [date('Y-m-d'), 'Sample Credit (Customer Payment)', '500.00', 'REF001'],
-            [date('Y-m-d'), 'Sample Debit (Supplier Payment)', '-250.00', 'REF002']
+            [date('d/m/Y'), 'Sample Credit (Customer Payment)', '500.00', 'REF001'],
+            [date('d/m/Y'), 'Sample Debit (Supplier Payment)', '-250.00', 'REF002']
         ];
         
         $handle = fopen('php://temp', 'r+');
