@@ -128,6 +128,7 @@ class AccountsTable extends Table
 
             $total = $this->find()
                 ->where(['company_id' => $entity->company_id])
+                ->all()
                 ->sumOf('opening_balance');
 
             // Find current value in DB to subtract it (since sumOf includes it if it's already saved)

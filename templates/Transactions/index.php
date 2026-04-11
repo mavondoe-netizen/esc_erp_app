@@ -77,6 +77,9 @@
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $transaction->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $transaction->id]) ?>
+                        <?php if ($transaction->transaction_group): ?>
+                            <?= $this->Html->link(__('Edit Group'), ['action' => 'bulkEdit', $transaction->transaction_group]) ?>
+                        <?php endif; ?>
                         <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $transaction->id], ['confirm' => __('Are you sure you want to delete # {0}?', $transaction->id)]) ?>
                     </td>
                 </tr>

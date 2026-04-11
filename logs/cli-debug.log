@@ -1,0 +1,31 @@
+2026-03-10 03:51:58 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Trace:
+C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\eras_app\tmp\test.php, line 23
+[main]
+
+2026-03-15 10:51:18 notice: Since 5.0.0: Calling Table::get() with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line: 52
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `tmp_test_payslip_permanent.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 1560
+Cake\ORM\Table->get() C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line 52
+TestSavePermanent->run() C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line 61
+[main]
+
+2026-03-15 10:51:48 notice: Since 5.0.0: Calling Table::get() with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line: 52
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `tmp_test_payslip_permanent.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 1560
+Cake\ORM\Table->get() C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line 52
+TestSavePermanent->run() C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line 61
+[main]
+

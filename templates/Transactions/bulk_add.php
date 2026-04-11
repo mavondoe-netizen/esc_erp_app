@@ -148,7 +148,6 @@ $this->assign('title', 'Post Bulk Journal Entries');
                 <th>Description <span style="color:#f87171">*</span></th>
                 <th>Currency <span style="color:#f87171">*</span></th>
                 <th>Amount <span style="color:#f87171">*</span></th>
-                <th>ZWG</th>
                 <th>Type <span style="color:#f87171">*</span></th>
                 <th>Account <span style="color:#f87171">*</span></th>
                 <th>Customer</th>
@@ -223,8 +222,7 @@ $this->assign('title', 'Post Bulk Journal Entries');
                     <option value="GBP">GBP</option>
                 </select>
             </td>
-            <td><input type="number" name="rows[${i}][amount]" step="0.01" placeholder="0.00" required></td>
-            <td><input type="number" name="rows[${i}][zwg]" step="0.01" placeholder="0.00"></td>
+            <td><input type="number" name="rows[${i}][amount]" step="0.01" placeholder="0.00" class="amount-input" required></td>
             <td>
                 <select name="rows[${i}][type]" class="no-s2 type-select" required>
                     <option value="1">Debit</option>
@@ -281,7 +279,61 @@ $this->assign('title', 'Post Bulk Journal Entries');
         });
     }
 
-    document.getElementById('add-row-btn').addEventListener('click', addRow);
+    function updateBalance() {
+        const rows = document.querySelectorAll('#journal-rows tr');
+        let total = 0;
+        let currencies = new Set();
+
+        rows.forEach(tr => {
+            const val = parseFloat(tr.querySelector('.amount-input').value) || 0;
+            const currency = tr.querySelector('select[name*="[currency]"]').value;
+            currencies.add(currency);
+            
+            const type = tr.querySelector('.type-select').value;
+            // 1 = Debit, 2 = Credit. Usually Journals: Debit - Credit = 0
+            total += (type === '1' ? val : -val);
+        });
+
+        const display = document.getElementById('running-total');
+        const status = document.getElementById('balance-status');
+        
+        display.textContent = total.toFixed(2);
+        
+        if (Math.abs(total) < 0.001) {
+            display.style.color = '#22c55e';
+            status.className = 'fas fa-check-circle';
+            status.style.color = '#22c55e';
+        } else {
+            display.style.color = '#ef4444';
+            status.className = 'fas fa-circle-exclamation';
+            status.style.color = '#f59e0b';
+        }
+
+        // Warning if multiple currencies are mixed (balancing amount only works if currency is same)
+        if (currencies.size > 1) {
+            display.title = "Multiple currencies detected. Balancing on Amount is only an estimate. Backend will validate ZWG conversion.";
+            display.style.borderBottom = "1px dotted #94a3b8";
+        } else {
+            display.title = "";
+            display.style.borderBottom = "none";
+        }
+    }
+
+    document.getElementById('add-row-btn').addEventListener('click', function() {
+        addRow();
+        // Attach listeners to new row
+        const newTr = document.querySelector('#journal-rows tr:last-child');
+        newTr.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('input', updateBalance);
+        });
+    });
+
+    // Delegated listener for initial rows and dynamically added rows
+    document.getElementById('journal-rows').addEventListener('input', function(e) {
+        if (e.target.matches('input, select')) {
+            updateBalance();
+        }
+    });
 
     document.getElementById('bulk-journal-form').addEventListener('submit', function(e) {
         const rows = document.querySelectorAll('#journal-rows tr');
@@ -292,15 +344,22 @@ $this->assign('title', 'Post Bulk Journal Entries');
         }
 
         let total = 0;
+        let currencies = new Set();
         rows.forEach(tr => {
-            const val = parseFloat(tr.querySelector('.zwg-input').value) || 0;
-            const isDebit = tr.querySelector('.type-select').value === '2';
-            total += isDebit ? val : -val;
+            const val = parseFloat(tr.querySelector('.amount-input').value) || 0;
+            const type = tr.querySelector('.type-select').value;
+            const currency = tr.querySelector('select[name*="[currency]"]').value;
+            currencies.add(currency);
+            total += (type === '1' ? val : -val);
         });
 
-        if (Math.abs(total) > 0.001) {
+        // If multi-currency, we allow it to pass JS validation and let the backend handle the ZWG balance check
+        if (currencies.size === 1 && Math.abs(total) > 0.001) {
             e.preventDefault();
             alert('The journal entry is unbalanced (Balance: ' + total.toFixed(2) + '). Net balance must be 0.00.');
+        } else if (currencies.size > 1) {
+            // Optional: confirm if they want to proceed despite multi-currency
+            // For now, just allow it.
         }
     });
 
@@ -308,5 +367,6 @@ $this->assign('title', 'Post Bulk Journal Entries');
     addRow();
     addRow();
     addRow();
+    updateBalance();
 })();
 </script>

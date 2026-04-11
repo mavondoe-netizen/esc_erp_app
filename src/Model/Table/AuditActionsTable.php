@@ -46,6 +46,7 @@ class AuditActionsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('TenantAware');
 
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',

@@ -46,6 +46,7 @@ class AuditLogsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('TenantAware');
 
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',

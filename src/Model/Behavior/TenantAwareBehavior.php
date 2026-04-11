@@ -33,16 +33,39 @@ class TenantAwareBehavior extends Behavior
     }
 
     /**
-     * Auto-stamp company_id on INSERT
+     * Inject company_id into raw data before it is marshalled into an entity.
+     * This handles cases where validation(Default) requires company_id.
+     */
+    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options)
+    {
+        $tenantId = Configure::read('Tenant.company_id');
+        if ($tenantId && $this->_table->hasField('company_id')) {
+            $data['company_id'] = $tenantId;
+        }
+    }
+
+    /**
+     * Ensure company_id is set before Application Rules are checked.
+     * Some rules (like existsIn or cross-table sum checks) depend on this ID.
+     */
+    public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, string $operation)
+    {
+        $tenantId = Configure::read('Tenant.company_id');
+        if ($tenantId && $this->_table->hasField('company_id')) {
+            $entity->set('company_id', $tenantId);
+        }
+    }
+
+    /**
+     * Auto-stamp company_id on INSERT/UPDATE as a final safety measure.
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
     {
         $tenantId = Configure::read('Tenant.company_id');
         
         if ($tenantId && $this->_table->hasField('company_id')) {
-            if ($entity->isNew() && !$entity->get('company_id')) {
-                $entity->set('company_id', $tenantId);
-            }
+            // Always enforce the current tenant ID to prevent cross-tenant injection
+            $entity->set('company_id', $tenantId);
         }
     }
 }

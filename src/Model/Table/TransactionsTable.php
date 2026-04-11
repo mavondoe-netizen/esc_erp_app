@@ -103,6 +103,8 @@ class TransactionsTable extends Table
             'targetForeignKey' => 'receipt_id',
             'joinTable' => 'receipts_transactions',
         ]);
+
+        $this->addBehavior('TenantAware');
     }
 
     /**
@@ -141,8 +143,7 @@ class TransactionsTable extends Table
 
         $validator
             ->numeric('zwg')
-            ->requirePresence('zwg', 'create')
-            ->notEmptyString('zwg');
+            ->allowEmptyString('zwg');
 
         $validator
             ->scalar('type')
@@ -271,6 +272,19 @@ class TransactionsTable extends Table
     {
         if (empty($entity->transaction_group)) {
             $entity->transaction_group = \Cake\Utility\Text::uuid();
+        }
+
+        // Auto-calculate ZWG if provided amount but no ZWG conversion
+        if (empty($entity->zwg) && !empty($entity->amount) && !empty($entity->company_id)) {
+            $ratesTable = \Cake\ORM\TableRegistry::getTableLocator()->get('ExchangeRates');
+            $rate = $ratesTable->find()
+                ->where(['company_id' => $entity->company_id, 'currency' => $entity->currency])
+                ->where(['date <=' => $entity->date])
+                ->orderBy(['date' => 'DESC'])
+                ->first();
+            
+            $rateValue = $rate ? (float)$rate->rate_to_base : 1.0;
+            $entity->zwg = (float)$entity->amount * $rateValue;
         }
     }
 

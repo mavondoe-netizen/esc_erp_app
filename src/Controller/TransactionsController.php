@@ -206,6 +206,13 @@ class TransactionsController extends AppController
                 }
 
                 $row['company_id'] = $companyId;
+                
+                // Auto-calculate ZWG if not provided
+                if (empty($row['zwg']) && !empty($row['amount']) && !empty($row['currency'])) {
+                    $rate = $this->Accounting->getCurrentRate((int)$companyId, $row['currency'] ?? 'USD', $row['date'] ?? null);
+                    $row['zwg'] = (float)$row['amount'] * $rate;
+                }
+
                 $entity = $table->newEntity($row);
 
                 if ($entity->getErrors()) {
@@ -263,6 +270,120 @@ class TransactionsController extends AppController
         }
 
         $this->set(compact('accounts', 'customers', 'suppliers', 'departments'));
+    }
+
+    /**
+     * Edit an existing bulk journal group.
+     */
+    public function bulkEdit($groupId = null)
+    {
+        if (!$groupId) {
+            $this->Flash->error(__('Invalid journal group.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $table = $this->fetchTable('Transactions');
+        $journalLines = $table->find()->where(['transaction_group' => $groupId])->all();
+
+        if ($journalLines->isEmpty()) {
+            $this->Flash->error(__('Journal group not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $accounts    = $table->Accounts->find('list', ['limit' => 500])->all();
+        $customers   = $table->Customers->find('list', ['limit' => 500])->all();
+        $suppliers   = $table->Suppliers->find('list', ['limit' => 500])->all();
+        $departments = $this->fetchTable('Departments')->find('list')->all();
+        $companyId   = \Cake\Core\Configure::read('Tenant.company_id');
+
+        if ($this->request->is(['post', 'put', 'patch'])) {
+            $rows = $this->request->getData('rows', []);
+
+            if (empty($rows)) {
+                $this->Flash->error(__('No journal lines were submitted.'));
+                return $this->redirect(['action' => 'bulkEdit', $groupId]);
+            }
+
+            $entities = [];
+            $errors   = [];
+            $submittedIds = [];
+
+            foreach ($rows as $i => $row) {
+                if (empty($row['description']) && empty($row['amount'])) {
+                    continue;
+                }
+
+                $row['company_id'] = $companyId;
+                
+                if (empty($row['zwg']) && !empty($row['amount']) && !empty($row['currency'])) {
+                    $rate = $this->Accounting->getCurrentRate((int)$companyId, $row['currency'] ?? 'USD', $row['date'] ?? null);
+                    $row['zwg'] = (float)$row['amount'] * $rate;
+                }
+                
+                if (!empty($row['id'])) {
+                    // Update existing
+                    $entity = $table->get($row['id']);
+                    $entity = $table->patchEntity($entity, $row);
+                    $submittedIds[] = $row['id'];
+                } else {
+                    // Create new in group
+                    $entity = $table->newEntity($row);
+                    $entity->transaction_group = $groupId;
+                }
+
+                if ($entity->getErrors()) {
+                    foreach ($entity->getErrors() as $field => $msgs) {
+                        $errors[] = "Row " . ($i + 1) . " [{$field}]: " . implode(', ', $msgs);
+                    }
+                } else {
+                    $entities[] = $entity;
+                }
+            }
+
+            if (!empty($errors)) {
+                $this->Flash->error(__("Validation failed — no changes saved. Errors: " . implode(' | ', $errors)));
+                $this->set(compact('journalLines', 'accounts', 'customers', 'suppliers', 'departments', 'groupId'));
+                return;
+            }
+
+            // Verify the batch total balances to zero
+            $totalZwg = 0;
+            foreach ($entities as $entity) {
+                $isDebit = in_array(strtolower(trim((string)$entity->type)), ['2', 'debit']);
+                $totalZwg += ($isDebit ? (float)$entity->zwg : -(float)$entity->zwg);
+            }
+
+            if (abs($totalZwg) > 0.001) {
+                $this->Flash->error(__("The journal entry is unbalanced (Net: {0}). Total Debits must equal Total Credits.", $totalZwg));
+                $this->set(compact('journalLines', 'accounts', 'customers', 'suppliers', 'departments', 'groupId'));
+                return;
+            }
+
+            // Find rows to delete (ones that existed in the group but were removed from UI)
+            $existingIds = array_column($journalLines->toArray(), 'id');
+            $idsToDelete = array_diff($existingIds, $submittedIds);
+
+            // Execute delete query (bypassing afterDelete cascade)
+            if (!empty($idsToDelete)) {
+                $table->query()->delete()->where(['id IN' => $idsToDelete])->execute();
+            }
+
+            // Save entities
+            if ($table->saveMany($entities, ['check_balance' => false])) {
+                $this->Flash->success(__("Successfully updated balanced journal group."));
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $saveErrors = [];
+                foreach ($entities as $idx => $ent) {
+                    foreach ($ent->getErrors() as $field => $msgs) {
+                        $saveErrors[] = "Row " . ($idx + 1) . " [{$field}]: " . implode(', ', $msgs);
+                    }
+                }
+                $this->Flash->error(__("Save failed. " . (!empty($saveErrors) ? implode(' | ', $saveErrors) : 'Please check data format.')));
+            }
+        }
+
+        $this->set(compact('journalLines', 'accounts', 'customers', 'suppliers', 'departments', 'groupId'));
     }
 
 }

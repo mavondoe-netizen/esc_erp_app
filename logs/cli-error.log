@@ -1,0 +1,1058 @@
+2025-09-21 11:16:42 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:282
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:165
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 11:18:06 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:282
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:165
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 11:31:40 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:282
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:165
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 12:17:07 error: [Cake\Core\Exception\CakeException] Association alias `Accounts` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:282
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:165
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 12:17:34 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:282
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:165
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 12:18:23 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.accounts' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.accounts' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.accounts' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 12:19:18 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.accounts' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.accounts' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.accounts' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 13:40:48 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:362
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:245
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:35:01 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:115
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:40:17 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:115
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:40:22 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:362
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:245
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:44:22 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:362
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:245
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:47:42 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:508
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:255
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:57:46 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ControllerCommand.php:122
+- ROOT\vendor\cakephp\bake\src\Command\ControllerCommand.php:65
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 14:58:16 error: [Cake\Core\Exception\CakeException] Association alias `Bills` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:67
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:115
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 15:04:11 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:68
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:508
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:255
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 15:05:08 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:68
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:362
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:245
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 15:06:03 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:68
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:508
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:255
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 15:07:15 error: [Cake\Core\Exception\CakeException] Association alias `Transactions` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- APP/Model\Table\AccountsTable.php:68
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:213
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:508
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:255
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-21 16:21:58 error: [Cake\Core\Exception\CakeException] Association alias `Accounts` is already set. in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1209
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:282
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:165
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:117
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-09-22 03:23:52 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.visits' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.visits' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.visits' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2025-10-21 13:33:53 warning: The connection is going to be closed but there is an active transaction.
+2026-03-08 12:34:10 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.payslip_items' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.payslip_items' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.payslip_items' doesn't exist in C:\xampp\htdocs\eras_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-12 19:57:35 warning: The connection is going to be closed but there is an active transaction.
+2026-03-12 19:58:07 warning: The connection is going to be closed but there is an active transaction.
+2026-03-12 19:58:31 warning: The connection is going to be closed but there is an active transaction.
+2026-03-12 19:58:52 warning: The connection is going to be closed but there is an active transaction.
+2026-03-15 10:33:37 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.loan_schedules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.loan_schedules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.loan_schedules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-15 10:35:23 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.loan_schedules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.loan_schedules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.loan_schedules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-15 10:36:34 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.penalties' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.penalties' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.penalties' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-20 04:02:46 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.system_modules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.system_modules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.system_modules' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-20 04:02:57 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.companies' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.companies' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.companies' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- ROOT\vendor\cakephp\bake\src\Command\AllCommand.php:116
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-24 18:03:20 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.products' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.products' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.products' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-25 03:40:40 error: [Cake\Database\Exception\DatabaseException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.companies' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\Collection.php on line 158
+Stack Trace:
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [Cake\Database\Exception\QueryException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.companies' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Driver.php on line 375
+Stack Trace:
+- CORE\src\Database\Driver.php:322
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eras_app.companies' doesn't exist in C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:320
+- CORE\src\Database\Driver.php:288
+- CORE\src\Database\Connection.php:255
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:255
+- CORE\src\Database\Schema\Collection.php:156
+- CORE\src\Database\Schema\Collection.php:116
+- CORE\src\ORM\Table.php:546
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:116
+- ROOT\vendor\cakephp\bake\src\Command\ModelCommand.php:99
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-03-29 13:03:43 warning: SplFileInfo::openFile(C:\xampp\htdocs\ESC_payroll_app\tmp\cache\models\myapp_cake_model_default_roles): Failed to open stream: Permission denied
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 387
+Cake\Cache\Engine\FileEngine->_setKey() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 122
+Cake\Cache\Engine\FileEngine->set() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php, line 93
+Cake\Database\Schema\CachedCollection->describe() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 546
+Cake\ORM\Table->getSchema() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Utility\Model\AssociationFilter.php, line 104
+Bake\Utility\Model\AssociationFilter->filterAssociations() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 455
+Bake\Command\TemplateCommand->_filteredAssociations() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 308
+Bake\Command\TemplateCommand->_loadController() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 146
+Bake\Command\TemplateCommand->execute() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\BaseCommand.php, line 192
+Cake\Console\BaseCommand->run() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 330
+Cake\Console\CommandRunner->runCommand() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 168
+Cake\Console\CommandRunner->run() C:\xampp\htdocs\ESC_payroll_app\bin\cake.php, line 10
+[main]
+
+2026-03-29 13:04:29 warning: SplFileInfo::openFile(C:\xampp\htdocs\ESC_payroll_app\tmp\cache\models\myapp_cake_model_default_roles): Failed to open stream: Permission denied
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 387
+Cake\Cache\Engine\FileEngine->_setKey() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 122
+Cake\Cache\Engine\FileEngine->set() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php, line 93
+Cake\Database\Schema\CachedCollection->describe() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 546
+Cake\ORM\Table->getSchema() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 294
+Bake\Command\TemplateCommand->_loadController() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 146
+Bake\Command\TemplateCommand->execute() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\BaseCommand.php, line 192
+Cake\Console\BaseCommand->run() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 330
+Cake\Console\CommandRunner->runCommand() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 168
+Cake\Console\CommandRunner->run() C:\xampp\htdocs\ESC_payroll_app\bin\cake.php, line 10
+[main]
+
+2026-03-30 16:41:06 warning: SplFileInfo::openFile(C:\xampp\htdocs\ESC_payroll_app\tmp\cache\models\myapp_cake_model_default_tasks): Failed to open stream: Permission denied
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 387
+Cake\Cache\Engine\FileEngine->_setKey() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 122
+Cake\Cache\Engine\FileEngine->set() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php, line 93
+Cake\Database\Schema\CachedCollection->describe() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 546
+Cake\ORM\Table->getSchema() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 294
+Bake\Command\TemplateCommand->_loadController() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 146
+Bake\Command\TemplateCommand->execute() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\BaseCommand.php, line 192
+Cake\Console\BaseCommand->run() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 330
+Cake\Console\CommandRunner->runCommand() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 168
+Cake\Console\CommandRunner->run() C:\xampp\htdocs\ESC_payroll_app\bin\cake.php, line 10
+[main]
+
+2026-03-31 18:48:34 warning: SplFileInfo::openFile(C:\xampp\htdocs\ESC_payroll_app\tmp\cache\models\myapp_cake_model_default_deals): Failed to open stream: Permission denied
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 387
+Cake\Cache\Engine\FileEngine->_setKey() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 122
+Cake\Cache\Engine\FileEngine->set() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php, line 93
+Cake\Database\Schema\CachedCollection->describe() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 546
+Cake\ORM\Table->getSchema() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 294
+Bake\Command\TemplateCommand->_loadController() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 146
+Bake\Command\TemplateCommand->execute() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\BaseCommand.php, line 192
+Cake\Console\BaseCommand->run() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 330
+Cake\Console\CommandRunner->runCommand() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 168
+Cake\Console\CommandRunner->run() C:\xampp\htdocs\ESC_payroll_app\bin\cake.php, line 10
+[main]
+
+2026-03-31 18:53:17 warning: SplFileInfo::openFile(C:\xampp\htdocs\ESC_payroll_app\tmp\cache\models\myapp_cake_model_default_events): Failed to open stream: Permission denied
+Trace:
+C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 387
+Cake\Cache\Engine\FileEngine->_setKey() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Cache\Engine\FileEngine.php, line 122
+Cake\Cache\Engine\FileEngine->set() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Database\Schema\CachedCollection.php, line 93
+Cake\Database\Schema\CachedCollection->describe() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\ORM\Table.php, line 546
+Cake\ORM\Table->getSchema() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 294
+Bake\Command\TemplateCommand->_loadController() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\bake\src\Command\TemplateCommand.php, line 146
+Bake\Command\TemplateCommand->execute() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\BaseCommand.php, line 192
+Cake\Console\BaseCommand->run() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 330
+Cake\Console\CommandRunner->runCommand() C:\xampp\htdocs\ESC_payroll_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 168
+Cake\Console\CommandRunner->run() C:\xampp\htdocs\ESC_payroll_app\bin\cake.php, line 10
+[main]
+
+2026-04-01 04:06:26 warning: The connection is going to be closed but there is an active transaction.
+2026-04-03 07:04:54 warning: The connection is going to be closed but there is an active transaction.
+2026-04-03 10:39:18 error: [Cake\Core\Exception\CakeException] Association alias `BankTransactions` is already set. in C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1157
+- APP/Model\Table\TransactionsTable.php:83
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\TemplateCommand.php:280
+- ROOT\vendor\cakephp\bake\src\Command\TemplateCommand.php:146
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-04-05 17:25:52 error: [Cake\Core\Exception\CakeException] Association alias `BankTransactions` is already set. in C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\cakephp\src\ORM\AssociationCollection.php on line 84
+Stack Trace:
+- CORE\src\ORM\AssociationCollection.php:110
+- CORE\src\ORM\Table.php:1157
+- APP/Model\Table\TransactionsTable.php:94
+- CORE\src\ORM\Table.php:350
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- ROOT\vendor\cakephp\bake\src\Command\TemplateCommand.php:280
+- ROOT\vendor\cakephp\bake\src\Command\TemplateCommand.php:146
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-04-06 03:55:08 warning: The connection is going to be closed but there is an active transaction.
+2026-04-06 11:02:49 warning: Undefined array key 1
+Trace:
+Migrations\Util\ColumnParser->parseFields() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\migrations\src\Command\BakeMigrationCommand.php, line 82
+Migrations\Command\BakeMigrationCommand->templateData() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\migrations\src\Command\BakeSimpleMigrationCommand.php, line 128
+Migrations\Command\BakeSimpleMigrationCommand->bake() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\migrations\src\Command\BakeMigrationCommand.php, line 55
+Migrations\Command\BakeMigrationCommand->bake() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\migrations\src\Command\BakeSimpleMigrationCommand.php, line 92
+Migrations\Command\BakeSimpleMigrationCommand->execute() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\cakephp\src\Console\BaseCommand.php, line 192
+Cake\Console\BaseCommand->run() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 330
+Cake\Console\CommandRunner->runCommand() C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\cakephp\src\Console\CommandRunner.php, line 168
+Cake\Console\CommandRunner->run() C:\xampp\htdocs\ESC_erp_app\bin\cake.php, line 10
+[main]
+
+2026-04-06 11:02:49 error: [TypeError] Migrations\Util\ColumnParser::getTypeAndLength(): Argument #1 ($field) must be of type string, null given, called in C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\migrations\src\Util\ColumnParser.php on line 70 in C:\xampp\htdocs\ESC_erp_app\vendor\cakephp\migrations\src\Util\ColumnParser.php on line 194
+Stack Trace:
+- ROOT\vendor\cakephp\migrations\src\Util\ColumnParser.php:70
+- ROOT\vendor\cakephp\migrations\src\Command\BakeMigrationCommand.php:82
+- ROOT\vendor\cakephp\migrations\src\Command\BakeSimpleMigrationCommand.php:128
+- ROOT\vendor\cakephp\migrations\src\Command\BakeMigrationCommand.php:55
+- ROOT\vendor\cakephp\migrations\src\Command\BakeSimpleMigrationCommand.php:92
+- CORE\src\Console\BaseCommand.php:192
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+
+2026-04-07 16:04:43 warning: The connection is going to be closed but there is an active transaction.
+2026-04-08 16:22:49 warning: The connection is going to be closed but there is an active transaction.
+2026-04-08 16:28:45 warning: The connection is going to be closed but there is an active transaction.
