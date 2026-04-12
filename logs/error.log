@@ -20274,3 +20274,460 @@ Stack Trace:
 
 Request URL: /transactions/bulk-edit/214db9f5-3157-44c2-bc46-7ff7560c924f
 Referer URL: http://localhost/esc_erp_app3/transactions/bulk-edit/214db9f5-3157-44c2-bc46-7ff7560c924f
+2026-04-12 12:42:23 warning: Unable to garbage collect requests table. This is probably due to concurrent requests.
+2026-04-12 12:42:23 warning: PDOException: SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php:146
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php(146): PDOStatement->execute(NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\SqliteStatement.php(38): Cake\Database\Statement\Statement->execute(NULL)
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(327): Cake\Database\Statement\SqliteStatement->execute(NULL)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#12 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#13 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#14 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#15 {main}
+
+Next Cake\Database\Exception\QueryException: SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php (line 132) */ DELETE FROM panels WHERE request_id NOT IN ('b9394159-93c8-489b-a919-2ca3b06c7dd8','6fe13d16-6729-4a81-bcfc-de4036df7c4f','f9cc2fd0-96f2-45b3-9dba-a9ac0d6f12a3','4140d700-2368-4d80-a970-2322cf9f6d3f','2ce1cad7-39c5-4097-8f65-b1de9dc9a0d2','5860eae2-ee04-46b6-a75f-391244a81d2a','bcb75576-7a27-4348-a946-4393d325118d','6246147f-9ac5-484b-b572-f73baa65878d','88b7e4ba-5056-41c8-aaf8-b58b14b78952','c18fd138-9867-4778-ac1d-73a34bd6c933','7db54b4d-34f3-4f63-9904-4639b123d400','3cf6bf66-5016-46a0-87f9-f62cb19b2934','864bcdb5-455a-4b6b-99c4-2685db80c691','ea9d21cf-5ac7-4185-88f3-9530c597079c','856f9400-a6b7-429c-83a6-05f1be4c3905','62a640bc-435f-4142-8c1c-6846f7769cd9','9f6ae771-c6f1-4a2b-837e-41e64107babc','9129df94-997f-4b60-9fb8-75d420d031ca','1124bbb8-847a-4e07-a041-10a9919b8d8d','c7b8af28-6849-4086-9816-1e8c7d193d30') in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php:382
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(329): Cake\Database\Driver->createQueryException(Object(PDOException), Object(Cake\Database\Statement\SqliteStatement), NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#12 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#13 {main}
+2026-04-12 13:00:18 warning: Unable to garbage collect requests table. This is probably due to concurrent requests.
+2026-04-12 13:00:18 warning: PDOException: SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php:146
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php(146): PDOStatement->execute(NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\SqliteStatement.php(38): Cake\Database\Statement\Statement->execute(NULL)
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(327): Cake\Database\Statement\SqliteStatement->execute(NULL)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#12 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#13 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#14 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#15 {main}
+
+Next Cake\Database\Exception\QueryException: SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php (line 132) */ DELETE FROM panels WHERE request_id NOT IN ('1e4025aa-816d-4628-9587-2c66b9eca90a','a2971e9d-b08d-4179-95fd-11dab6fdc568','357f9e45-a1dc-40a4-9e11-d4fbfcbb5161','fc7937e9-4ae9-485c-ba02-2fe7e1595468','c09bf060-b2cd-4e87-a147-b01ff6e4b7f9','efffe195-4a50-47b8-850d-c459a1838248','a6828dd8-a9f7-4862-b267-d0a25140d618','9383433b-0f64-42e2-991e-4986c6e2f058','355d942d-9451-4ee9-b941-4935b77409f0','276adf53-9520-48cf-8861-334b39558fc1','c8330d1a-afd4-4066-8376-de8c304c0d7a','daf4d09f-5440-41e5-a061-e4633865341c','475e5b67-c0a6-4b3c-b754-b82da6e06958','159bf476-6f4c-42f7-883a-c7dcbef1a8c9','38a5e382-3bb8-447c-930f-25f5cdcb3e56','5f03c247-3a4a-4e6e-85a7-d82e876d70a8','1f3c592a-fca8-4c19-810a-d0ce01bde4fc','9bee6947-3f1b-4ba6-b3b1-cac083a05498','8149be63-c120-48e4-82bc-115ade0a185a','56b378e5-4d13-4b41-b7ee-a025ad14b847') in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php:382
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(329): Cake\Database\Driver->createQueryException(Object(PDOException), Object(Cake\Database\Statement\SqliteStatement), NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#12 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#13 {main}
+2026-04-12 13:00:26 warning: Failed to serialize data for panel "History": SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Panel\HistoryPanel.php (line 35) */ SELECT Requests.id AS Requests__id, Requests.url AS Requests__url, Requests.content_type AS Requests__content_type, Requests.status_code AS Requests__status_code, Requests.method AS Requests__method, Requests.requested_at AS Requests__requested_at FROM requests Requests ORDER BY Requests.requested_at DESC LIMIT 10
+2026-04-12 13:00:31 error: [PDOException] SQLSTATE[HY000]: General error: 1 cannot rollback - no transaction is active in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 472
+Stack Trace:
+- CORE\src\Database\Driver.php:472
+- CORE\src\Database\Connection.php:505
+- CORE\src\Database\Connection.php:651
+- CORE\src\ORM\Table.php:1582
+- CORE\src\ORM\Table.php:1950
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:331
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:04:41 warning: Unable to run VACUUM on debug kit SQLite database. Please manually remove the database file
+2026-04-12 13:04:41 warning: PDOException: SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php:146
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php(146): PDOStatement->execute(NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\SqliteStatement.php(38): Cake\Database\Statement\Statement->execute(NULL)
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(327): Cake\Database\Statement\SqliteStatement->execute(NULL)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(295): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(268): Cake\Database\Driver->execute('VACUUM;', Array, Array)
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(268): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(159): Cake\Database\Connection->execute('VACUUM;')
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#12 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#13 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#14 {main}
+
+Next Cake\Database\Exception\QueryException: SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: VACUUM; in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php:382
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(329): Cake\Database\Driver->createQueryException(Object(PDOException), Object(Cake\Database\Statement\SqliteStatement), NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(295): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(268): Cake\Database\Driver->execute('VACUUM;', Array, Array)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(268): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(159): Cake\Database\Connection->execute('VACUUM;')
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#11 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#12 {main}
+2026-04-12 13:09:04 warning: Unable to garbage collect requests table. This is probably due to concurrent requests.
+2026-04-12 13:09:04 warning: PDOException: SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php:146
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php(146): PDOStatement->execute(NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\SqliteStatement.php(38): Cake\Database\Statement\Statement->execute(NULL)
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(327): Cake\Database\Statement\SqliteStatement->execute(NULL)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#12 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#13 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#14 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#15 {main}
+
+Next Cake\Database\Exception\QueryException: SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php (line 132) */ DELETE FROM panels WHERE request_id NOT IN ('744ca3e7-0b16-4493-83f5-72d38222444a','0818a619-12ba-4f25-ae84-3067d5525c8f','4ca44ba2-3f62-46ad-8f53-1ba61d03ea81','59d8ec92-cfe4-4fe4-895e-ef6041f9315d','0a3c69fa-355b-41aa-8726-190a2d8e0763','68b03c31-1427-4ce9-94bf-9fe21f16899b','508a8b2f-277d-433b-b379-57ef3d55802b','ec212b8c-50c1-45db-9a56-7d3dc475eefb','2aa54592-2555-4172-b644-2a42b887942c','330a0700-f07b-41f9-9dc7-fe636535f77e','665653e7-1b0c-47e1-93d5-239d08d8a824','a6ae618b-ef28-4300-b966-909c7dfdef48','85c20c8f-b772-46f7-9d57-e92dfc81788b','613dd0d5-eaa2-4c0c-b2f6-bbbf883a2ed0','c3820823-208d-4f3a-ad23-f697082c7849','12675613-9bf2-46fa-b2d8-2d217914ac5c','3599d024-b4b2-42e9-9ed6-9c6986ffb3ab','95607e47-145a-45ca-a57f-8560b9718285','710d3d5f-7e01-4207-a93e-1aa700e988b1','ddc62d3c-d409-48f4-b979-72b3011ec2a2') in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php:382
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(329): Cake\Database\Driver->createQueryException(Object(PDOException), Object(Cake\Database\Statement\SqliteStatement), NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#12 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#13 {main}
+2026-04-12 13:10:37 warning: Unable to garbage collect requests table. This is probably due to concurrent requests.
+2026-04-12 13:10:37 warning: PDOException: SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php:146
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php(146): PDOStatement->execute(NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\SqliteStatement.php(38): Cake\Database\Statement\Statement->execute(NULL)
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(327): Cake\Database\Statement\SqliteStatement->execute(NULL)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#12 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#13 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#14 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#15 {main}
+
+Next Cake\Database\Exception\QueryException: SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php (line 132) */ DELETE FROM panels WHERE request_id NOT IN ('71211edb-7ae5-4c3c-a7e0-1f365ea31992','b126c2d2-d959-4446-be6a-a62058ad915e','2bb2b1fb-33e5-4347-9497-fd493a745642','ade391f8-cd70-4358-9263-acdac2bcc831','4a4a3874-32ca-42ca-92e5-5f9df8a8f71f','c3fefbd6-f04c-4953-9aa8-bd62fbefecbf','d6ab5cd2-e001-4aca-9e1f-6f60bd32b262','e02592fe-50f1-4ea8-bc04-1cd2badb82b2','25b1af65-724a-4d21-acc9-b29e4aeae25d','52c6e580-4bb0-4b9a-91cb-f8b71e282faf','85456342-2dd7-4f2d-a5a1-dc78497090ba','613bd9a0-8b2b-475b-b985-0b9505be8f22','3ca4b8db-a38c-4aa9-9451-b8c859b61208','cb82083a-c95a-4212-8132-7869996b0643','744ca3e7-0b16-4493-83f5-72d38222444a','0818a619-12ba-4f25-ae84-3067d5525c8f','4ca44ba2-3f62-46ad-8f53-1ba61d03ea81','59d8ec92-cfe4-4fe4-895e-ef6041f9315d','0a3c69fa-355b-41aa-8726-190a2d8e0763','68b03c31-1427-4ce9-94bf-9fe21f16899b') in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php:382
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(329): Cake\Database\Driver->createQueryException(Object(PDOException), Object(Cake\Database\Statement\SqliteStatement), NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#12 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#13 {main}
+2026-04-12 13:10:53 warning: Failed to serialize data for panel "History": SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Panel\HistoryPanel.php (line 35) */ SELECT Requests.id AS Requests__id, Requests.url AS Requests__url, Requests.content_type AS Requests__content_type, Requests.status_code AS Requests__status_code, Requests.method AS Requests__method, Requests.requested_at AS Requests__requested_at FROM requests Requests ORDER BY Requests.requested_at DESC LIMIT 10
+2026-04-12 13:11:11 error: [PDOException] SQLSTATE[HY000]: General error: 1 cannot rollback - no transaction is active in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 472
+Stack Trace:
+- CORE\src\Database\Driver.php:472
+- CORE\src\Database\Connection.php:505
+- CORE\src\Database\Connection.php:651
+- CORE\src\ORM\Table.php:1582
+- CORE\src\ORM\Table.php:1950
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:331
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:26 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 395
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:28 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\composer\ClassLoader.php on line 425
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:28 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:28 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:30 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:30 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:30 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:31 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:31 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:32 error: [Cake\Error\FatalErrorException] Fatal Error: Maximum execution time of 120 seconds exceeded in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Session.php on line 367
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+Request URL: /bank-transactions/api-unreconcile
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:38 error: [Cake\Database\Exception\QueryException] SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: SELECT name FROM sqlite_master WHERE (type="table" OR type="view") AND name != "sqlite_sequence" ORDER BY name in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 396
+Stack Trace:
+- CORE\src\Database\Driver.php:291
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- CORE\src\Database\Schema\Collection.php:82
+- CORE\src\Database\Schema\CachedCollection.php:74
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\LazyTableTrait.php:47
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php:58
+- CORE\src\ORM\Table.php:328
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- CORE\src\ORM\Locator\LocatorAwareTrait.php:96
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:276
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 394
+Stack Trace:
+- CORE\src\Database\Driver.php:394
+- CORE\src\Database\Driver.php:291
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- CORE\src\Database\Schema\Collection.php:82
+- CORE\src\Database\Schema\CachedCollection.php:74
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\LazyTableTrait.php:47
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php:58
+- CORE\src\ORM\Table.php:328
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- CORE\src\ORM\Locator\LocatorAwareTrait.php:96
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:276
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/bank-transactions
+2026-04-12 13:11:46 error: [Cake\Database\Exception\QueryException] SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: SELECT name FROM sqlite_master WHERE (type="table" OR type="view") AND name != "sqlite_sequence" ORDER BY name in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 396
+Stack Trace:
+- CORE\src\Database\Driver.php:291
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- CORE\src\Database\Schema\Collection.php:82
+- CORE\src\Database\Schema\CachedCollection.php:74
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\LazyTableTrait.php:47
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php:58
+- CORE\src\ORM\Table.php:328
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- CORE\src\ORM\Locator\LocatorAwareTrait.php:96
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:276
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 394
+Stack Trace:
+- CORE\src\Database\Driver.php:394
+- CORE\src\Database\Driver.php:291
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- CORE\src\Database\Schema\Collection.php:82
+- CORE\src\Database\Schema\CachedCollection.php:74
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\LazyTableTrait.php:47
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php:58
+- CORE\src\ORM\Table.php:328
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- CORE\src\ORM\Locator\LocatorAwareTrait.php:96
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:276
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /reports/balance-sheet
+Referer URL: http://localhost/esc_erp_app3/reports
+2026-04-12 13:12:04 error: [Cake\Database\Exception\QueryException] SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: SELECT name FROM sqlite_master WHERE (type="table" OR type="view") AND name != "sqlite_sequence" ORDER BY name in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 396
+Stack Trace:
+- CORE\src\Database\Driver.php:291
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- CORE\src\Database\Schema\Collection.php:82
+- CORE\src\Database\Schema\CachedCollection.php:74
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\LazyTableTrait.php:47
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php:58
+- CORE\src\ORM\Table.php:328
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- CORE\src\ORM\Locator\LocatorAwareTrait.php:96
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:276
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 394
+Stack Trace:
+- CORE\src\Database\Driver.php:394
+- CORE\src\Database\Driver.php:291
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- CORE\src\Database\Schema\Collection.php:82
+- CORE\src\Database\Schema\CachedCollection.php:74
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\LazyTableTrait.php:47
+- ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php:58
+- CORE\src\ORM\Table.php:328
+- CORE\src\ORM\Locator\TableLocator.php:319
+- CORE\src\ORM\Locator\TableLocator.php:272
+- CORE\src\Datasource\Locator\AbstractLocator.php:68
+- CORE\src\ORM\Locator\TableLocator.php:212
+- CORE\src\ORM\Locator\LocatorAwareTrait.php:96
+- ROOT\vendor\cakephp\debug_kit\src\ToolbarService.php:276
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:66
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /reports/balance-sheet
+Referer URL: http://localhost/esc_erp_app3/reports

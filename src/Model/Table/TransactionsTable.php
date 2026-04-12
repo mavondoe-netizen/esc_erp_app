@@ -241,9 +241,13 @@ class TransactionsTable extends Table
 
             // If it's an update, subtract old value
             if (!$entity->isNew()) {
-                $original = $this->get($entity->id);
-                $isOldDebit = in_array(strtolower(trim((string)$original->type)), ['1', 'debit']);
-                $total -= ($isOldDebit ? (float)$original->zwg : -(float)$original->zwg);
+                // EXTREMELY IMPORTANT: Use find() rather than get() to avoid 
+                // "Record not found" errors if another process/hook just deleted this.
+                $original = $this->find()->where(['id' => $entity->id])->first();
+                if ($original) {
+                    $isOldDebit = in_array(strtolower(trim((string)$original->type)), ['1', 'debit']);
+                    $total -= ($isOldDebit ? (float)$original->zwg : -(float)$original->zwg);
+                }
             }
 
             $finalTotal = $total + $entityImpact;
@@ -254,7 +258,8 @@ class TransactionsTable extends Table
             return abs($finalTotal) < 0.001;
         }, 'checkZeroSum', [
             'errorField' => 'zwg',
-            'message' => 'The transaction group must balance to zero (Total Debits = Total Credits).'
+            'message' => 'The transaction group must balance to zero (Total Debits = Total Credits).',
+            'on' => 'save'
         ]);
 
         return $rules;
@@ -303,11 +308,32 @@ class TransactionsTable extends Table
      */
     public function afterDelete(\Cake\Event\EventInterface $event, \Cake\Datasource\EntityInterface $entity, \ArrayObject $options): void
     {
+        // 1. Cascade delete to the rest of the group to maintain double-entry integrity
         if (!empty($entity->transaction_group)) {
             $this->deleteAll([
                 'transaction_group' => $entity->transaction_group,
                 'id !=' => $entity->id
             ]);
+        }
+
+        // 2. If this was linked to a bank transaction, mark the bank line as unreconciled
+        $bankTxId = $entity->bank_transaction_id;
+        
+        // Sometimes the link is only held in the bank_transactions table
+        if (!$bankTxId) {
+            $bankTx = $this->BankTransactions->find()
+                ->where(['transaction_id' => $entity->id])
+                ->first();
+            if ($bankTx) {
+                $bankTxId = $bankTx->id;
+            }
+        }
+
+        if ($bankTxId) {
+            $this->BankTransactions->updateAll(
+                ['reconciled' => 0, 'transaction_id' => null],
+                ['id' => $bankTxId]
+            );
         }
     }
 }

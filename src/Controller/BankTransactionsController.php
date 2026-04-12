@@ -25,6 +25,14 @@ class BankTransactionsController extends AppController
             ->order(['BankTransactions.date' => 'DESC'])
             ->all();
 
+        // Fetch recent reconciled items for the "History" tab
+        $recentReconciled = $this->BankTransactions->find()
+            ->where(['reconciled' => true])
+            ->contain(['BankAccounts'])
+            ->order(['BankTransactions.modified' => 'DESC'])
+            ->limit(15)
+            ->all();
+
         // Fetch all rules for the current company
         $rules = $this->fetchTable('BankRules')->find()->all();
         
@@ -51,7 +59,7 @@ class BankTransactionsController extends AppController
             ->limit(50)
             ->all();
 
-        $this->set(compact('bankTransactions', 'accounts', 'systemTransactions'));
+        $this->set(compact('bankTransactions', 'accounts', 'systemTransactions', 'recentReconciled'));
     }
 
     /**
@@ -280,19 +288,21 @@ class BankTransactionsController extends AppController
 
         try {
             $conn->transactional(function () use ($bankTx, $accountId, $saveRule, $transactionsTable, $bankTxId) {
+                $groupId = \Cake\Utility\Text::uuid();
+
                 // Leg 1: Target Account
                 $txTarget = $transactionsTable->newEntity([
                     'date' => $bankTx->get('date'),
                     'description' => $bankTx->get('description'),
                     'amount' => abs((float)$bankTx->get('amount')),
                     'currency' => 'USD', // Mapping default for now
-                    'zwg' => 0, // Placeholder
+                    'zwg' => 0, // Placeholder (will be auto-calculated in beforeSave)
                     'type' => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
                     'account_id' => $accountId,
                     'bank_transaction_id' => $bankTxId,
+                    'transaction_group' => $groupId,
                     'company_id' => $bankTx->get('company_id')
                 ]);
-                $transactionsTable->saveOrFail($txTarget);
 
                 // Leg 2: Bank Account
                 $txBank = $transactionsTable->newEntity([
@@ -304,9 +314,12 @@ class BankTransactionsController extends AppController
                     'type' => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
                     'account_id' => $bankTx->get('bank_account_id'),
                     'bank_transaction_id' => $bankTxId,
+                    'transaction_group' => $groupId,
                     'company_id' => $bankTx->get('company_id')
                 ]);
-                $transactionsTable->saveOrFail($txBank);
+
+                // Save both legs at once as a balanced set
+                $transactionsTable->saveManyOrFail([$txTarget, $txBank], ['check_balance' => false]);
 
                 // Mark bank line as reconciled
                 $bankTx->set('reconciled', true);
@@ -365,6 +378,8 @@ class BankTransactionsController extends AppController
 
             try {
                 $conn->transactional(function () use ($bankTx, $accountId, $transactionsTable, $bankTxId) {
+                    $groupId = \Cake\Utility\Text::uuid();
+
                     // Leg 1: Target Account
                     $txTarget = $transactionsTable->newEntity([
                         'date' => $bankTx->get('date'),
@@ -375,9 +390,9 @@ class BankTransactionsController extends AppController
                         'type' => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
                         'account_id' => $accountId,
                         'bank_transaction_id' => $bankTxId,
+                        'transaction_group' => $groupId,
                         'company_id' => $bankTx->get('company_id')
                     ]);
-                    $transactionsTable->saveOrFail($txTarget);
 
                     // Leg 2: Bank Account
                     $txBank = $transactionsTable->newEntity([
@@ -389,9 +404,11 @@ class BankTransactionsController extends AppController
                         'type' => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
                         'account_id' => $bankTx->get('bank_account_id'),
                         'bank_transaction_id' => $bankTxId,
+                        'transaction_group' => $groupId,
                         'company_id' => $bankTx->get('company_id')
                     ]);
-                    $transactionsTable->saveOrFail($txBank);
+
+                    $transactionsTable->saveManyOrFail([$txTarget, $txBank], ['check_balance' => false]);
 
                     // Mark as reconciled
                     $bankTx->set('reconciled', true);
@@ -444,11 +461,14 @@ class BankTransactionsController extends AppController
             // This is CakePHP-safe: internally each save() uses savepoints which nest
             // correctly inside transactional() without corrupting the outer transaction.
             $conn->transactional(function () use ($splits, $bankTx, $bankTxId, $transactionsTable) {
+                $groupId = \Cake\Utility\Text::uuid();
+                $entities = [];
+
                 foreach ($splits as $split) {
                     if (empty($split['account_id']) || empty($split['amount'])) {
                         continue;
                     }
-                    $tx = $transactionsTable->newEntity([
+                    $entities[] = $transactionsTable->newEntity([
                         'date'                => $bankTx->get('date'),
                         'description'         => $bankTx->get('description') . ' (Split)',
                         'amount'              => abs((float)$split['amount']),
@@ -457,13 +477,13 @@ class BankTransactionsController extends AppController
                         'type'                => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
                         'account_id'          => $split['account_id'],
                         'bank_transaction_id' => $bankTxId,
+                        'transaction_group'   => $groupId,
                         'company_id'          => $bankTx->get('company_id'),
                     ]);
-                    $transactionsTable->saveOrFail($tx);
                 }
 
                 // Leg 2: Bank Account
-                $txBank = $transactionsTable->newEntity([
+                $entities[] = $transactionsTable->newEntity([
                     'date'                => $bankTx->get('date'),
                     'description'         => $bankTx->get('description'),
                     'amount'              => abs((float)$bankTx->get('amount')),
@@ -472,9 +492,11 @@ class BankTransactionsController extends AppController
                     'type'                => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
                     'account_id'          => $bankTx->get('bank_account_id'),
                     'bank_transaction_id' => $bankTxId,
+                    'transaction_group'   => $groupId,
                     'company_id'          => $bankTx->get('company_id'),
                 ]);
-                $transactionsTable->saveOrFail($txBank);
+
+                $transactionsTable->saveManyOrFail($entities, ['check_balance' => false]);
 
                 // Mark bank line as reconciled
                 $bankTx->set('reconciled', true);
@@ -489,6 +511,56 @@ class BankTransactionsController extends AppController
         }
     }
 
+
+    /**
+     * AJAX: Unreconcile (Undo reconciliation)
+     */
+    public function apiUnreconcile()
+    {
+        $this->request->allowMethod(['post']);
+        $id = $this->request->getData('id');
+
+        if (!$id) {
+            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing ID']));
+        }
+
+        $bankTx = $this->BankTransactions->get($id);
+        $transactionsTable = $this->fetchTable('Transactions');
+
+        try {
+            $transactionsTable->getConnection()->transactional(function () use ($bankTx, $transactionsTable) {
+                // Find the associated ledger entries. 
+                // We check by the stored transaction_id OR by matching the bank_transaction_id column.
+                $linkedEntries = $transactionsTable->find()
+                    ->where([
+                        'OR' => [
+                            ['id' => $bankTx->transaction_id],
+                            ['bank_transaction_id' => $bankTx->id]
+                        ]
+                    ])
+                    ->all();
+
+                foreach ($linkedEntries as $entry) {
+                    // Only attempt delete if it still exists (it might have been wiped 
+                    // by the afterDelete of a previous entry in the same group)
+                    if ($transactionsTable->exists(['id' => $entry->id])) {
+                        $transactionsTable->delete($entry);
+                    }
+                }
+
+                // Final safety reset in case no entries were found to delete
+                $bankTx->set('reconciled', false);
+                $bankTx->set('transaction_id', null);
+                $this->BankTransactions->saveOrFail($bankTx);
+            });
+
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode(['success' => true, 'message' => 'Unreconciled successfully']));
+
+        } catch (\Exception $e) {
+            return $this->response->withStatus(500)->withStringBody(json_encode(['message' => 'Unreconcile failed: ' . $e->getMessage()]));
+        }
+    }
 
     /**
      * AJAX: Delete Transaction

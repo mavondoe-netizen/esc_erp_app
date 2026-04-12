@@ -159,7 +159,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Recent History Section -->
+    <div class="row" style="margin-top: 40px;">
+        <div class="column">
+            <h4 style="color: #666; font-size: 1.1em;"><i class="fas fa-history"></i> Recent Activity (Last 15 Reconciled)</h4>
+            <div class="card" style="padding: 10px; border-radius: 12px; background: #fdfdfd; border: 1px dashed #ccc;">
+                <div class="table-responsive">
+                    <table style="width: 100%; font-size: 0.8em; margin-bottom:0;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #eee;">
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Bank Account</th>
+                                <th>Amount</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($recentReconciled->isEmpty()): ?>
+                                <tr><td colspan="5" style="text-align: center; color: #999; padding: 15px;">No recently reconciled transactions.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($recentReconciled as $rec): ?>
+                                <tr style="border-bottom: 1px solid #f0f0f0;">
+                                    <td><?= $rec->date ? h($rec->date->format('d/m/Y')) : '' ?></td>
+                                    <td><?= h($rec->description) ?></td>
+                                    <td><small><?= $rec->hasValue('bank_account') ? h($rec->bank_account->name) : 'N/A' ?></small></td>
+                                    <td><strong style="color: <?= $rec->amount > 0 ? '#27ae60' : '#e74c3c' ?>;"><?= $this->Number->format($rec->amount) ?></strong></td>
+                                    <td style="text-align: right;">
+                                        <button class="button button-clear button-small unreconcile-btn" data-id="<?= $rec->id ?>" title="Undo Reconcile" style="padding:0; height:auto; line-height:1; color:#2e6c80; font-weight:bold;">
+                                            <i class="fas fa-undo"></i> UNDO
+                                        </button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p style="font-size: 0.75em; color: #888; margin-top: 10px;">
+                <i class="fas fa-lightbulb"></i> "Undo" will delete the system ledger entries and move the transaction back to the unreconciled list above.
+            </p>
+        </div>
+    </div>
 </div>
+
 
 <!-- Split Modal -->
 <div id="splitModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
@@ -450,6 +495,34 @@ $(document).ready(function() {
                 } else { alert('Error: ' + res.message); }
             },
             error: function() { alert('Splitting failed.'); }
+        });
+    });
+
+    // ─── Unreconcile ───────────────────────────────────────────────────────────
+    $(document).on('click', '.unreconcile-btn', function() {
+        const id = $(this).data('id');
+        const btn = $(this);
+        if (!confirm('This will delete the corresponding ledger entries and move this transaction back to the dashboard. Proceed?')) return;
+        
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> ...');
+        
+        $.ajax({
+            url: '<?= $this->Url->build(['action' => 'apiUnreconcile']) ?>',
+            type: 'POST',
+            headers: { 'X-CSRF-Token': csrfToken },
+            data: { id: id },
+            success: function(res) {
+                if (res.success) {
+                    location.reload(); 
+                } else {
+                    alert('Error: ' + res.message);
+                    btn.prop('disabled', false).html('<i class="fas fa-undo"></i> UNDO');
+                }
+            },
+            error: function() {
+                alert('Connection failed. Please check your network.');
+                btn.prop('disabled', false).html('<i class="fas fa-undo"></i> UNDO');
+            }
         });
     });
 });
