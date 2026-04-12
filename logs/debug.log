@@ -16202,3 +16202,292 @@ Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\
 Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
 [main]
 
+2026-04-11 21:43:27 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-edit/12543447-bc8f-4daa-afde-33333f04c8ae
+Referer URL: http://localhost/esc_erp_app3/transactions?start_date=&end_date=&category=&account_id=3&search=
+Trace:
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 849
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 293
+App\Controller\TransactionsController->bulkEdit() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 503
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-11 21:44:20 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-edit/12543447-bc8f-4daa-afde-33333f04c8ae
+Referer URL: http://localhost/esc_erp_app3/transactions/bulk-edit/12543447-bc8f-4daa-afde-33333f04c8ae
+Trace:
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 849
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 293
+App\Controller\TransactionsController->bulkEdit() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 503
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 162
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-11 21:45:10 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-edit/12543447-bc8f-4daa-afde-33333f04c8ae
+Referer URL: http://localhost/esc_erp_app3/transactions?start_date=&end_date=&category=&account_id=3&search=
+Trace:
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 849
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 293
+App\Controller\TransactionsController->bulkEdit() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 503
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-11 21:45:31 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-edit/12543447-bc8f-4daa-afde-33333f04c8ae
+Referer URL: http://localhost/esc_erp_app3/transactions/bulk-edit/12543447-bc8f-4daa-afde-33333f04c8ae
+Trace:
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 849
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 293
+App\Controller\TransactionsController->bulkEdit() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 503
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 162
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-11 21:45:38 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-add
+Referer URL: http://localhost/esc_erp_app3/transactions
+Trace:
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 849
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 183
+App\Controller\TransactionsController->bulkAdd() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 503
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-11 21:49:06 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2649
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-add
+Referer URL: http://localhost/esc_erp_app3/transactions/bulk-add
+Trace:
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2717
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2649
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1296
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 849
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 183
+App\Controller\TransactionsController->bulkAdd() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 503
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 162
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-12 04:56:26 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2627
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /bank-transactions
+Referer URL: http://localhost/esc_erp_app3/transactions
+Trace:
+Cake\Error\ErrorTrap->handleError() [internal], line ??
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2695
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2627
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1274
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\BankTransactionsController.php, line 41
+App\Controller\BankTransactionsController->index() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 505
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-12 05:05:43 notice: Since 5.0.0: Calling `findList` finder with options array is deprecated. Use named arguments instead.
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line: 2627
+You can disable all deprecation warnings by setting `Error.errorLevel` to `E_ALL & ~E_USER_DEPRECATED`. Adding `vendor/cakephp/cakephp/src/ORM/Table.php` to `Error.ignoredDeprecationPaths` in your `config/app.php` config will mute deprecations from that file only.
+Request URL: /transactions/bulk-edit/ed4b5c5c-abd1-4168-b849-eabc8fe218d2
+Referer URL: http://localhost/esc_erp_app3/transactions?start_date=2025-01-01&end_date=2026-04-12&category=&account_id=&search=
+Trace:
+Cake\Error\ErrorTrap->handleError() [internal], line ??
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\functions.php, line 384
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2695
+Cake\ORM\Table->invokeFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 2627
+Cake\ORM\Table->callFinder() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Table.php, line 1274
+Cake\ORM\Table->find() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Association.php, line 847
+Cake\ORM\Association->find() C:\xampp\htdocs\esc_erp_app3\src\Controller\TransactionsController.php, line 293
+App\Controller\TransactionsController->bulkEdit() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 505
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+

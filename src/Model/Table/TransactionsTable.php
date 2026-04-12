@@ -275,7 +275,11 @@ class TransactionsTable extends Table
         }
 
         // Auto-calculate ZWG if provided amount but no ZWG conversion
-        if (empty($entity->zwg) && !empty($entity->amount) && !empty($entity->company_id)) {
+        // Auto-calculate ZWG if amount, currency or date is modified, or if ZWG is empty
+        $needsRecalculation = empty($entity->zwg) || 
+            (!$entity->isDirty('zwg') && ($entity->isDirty('amount') || $entity->isDirty('currency') || $entity->isDirty('date')));
+
+        if ($needsRecalculation && !empty($entity->amount) && !empty($entity->company_id)) {
             $ratesTable = \Cake\ORM\TableRegistry::getTableLocator()->get('ExchangeRates');
             $rate = $ratesTable->find()
                 ->where(['company_id' => $entity->company_id, 'currency' => $entity->currency])
