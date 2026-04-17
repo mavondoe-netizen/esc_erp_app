@@ -51,6 +51,7 @@ $this->assign('title', 'Statement of Cash Flows');
                 <?= $this->Form->button(__('Generate'), ['class' => 'button']) ?>
             </div>
             <div class="col-md-4 text-right" style="margin-top: 25px;">
+                <button type="button" onclick="exportTableToCSV('cash_flow_<?= date('Ymd_His') ?>.csv')" class="button button-outline float-right" style="margin-left: 10px;">Export CSV</button>
                 <button type="button" onclick="window.print()" class="button button-outline float-right">Print Statement</button>
             </div>
             <?= $this->Form->end() ?>
@@ -137,3 +138,5 @@ $this->assign('title', 'Statement of Cash Flows');
         </table>
     </div>
 </div>
+
+<?= $this->element('export_csv') ?>

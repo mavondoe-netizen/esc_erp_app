@@ -45,7 +45,8 @@ $this->assign('title', 'Statement of Financial Position');
                 <?= $this->Form->button(__('Generate'), ['class' => 'button']) ?>
             </div>
             <div class="col-md-7 text-right" style="margin-top: 25px;">
-                <button onclick="window.print()" class="button button-outline float-right">Print Statement</button>
+                <button type="button" onclick="exportTableToCSV('balance_sheet_<?= date('Ymd_His') ?>.csv')" class="button button-outline float-right" style="margin-left: 10px;">Export CSV</button>
+                <button type="button" onclick="window.print()" class="button button-outline float-right">Print Statement</button>
             </div>
             <?= $this->Form->end() ?>
         </div>
@@ -184,3 +185,5 @@ $this->assign('title', 'Statement of Financial Position');
         </table>
     </div>
 </div>
+
+<?= $this->element('export_csv') ?>

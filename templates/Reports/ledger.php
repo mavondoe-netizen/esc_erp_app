@@ -33,6 +33,7 @@ $this->assign('title', 'Ledger Drilldown');
 <div class="reports index content">
     <div class="no-print" style="margin-bottom: 20px;">
         <button onclick="window.close()" class="button button-outline float-right" style="margin-left: 10px;">Close Window</button>
+        <button onclick="exportTableToCSV('ledger_<?= h(str_replace(' ', '_', $account->name)) ?>_<?= date('Ymd_His') ?>.csv')" class="button button-outline float-right" style="margin-left: 10px;">Export CSV</button>
         <button onclick="window.print()" class="button float-right">Print Ledger</button>
         <h3><?= __('Ledger Drilldown: ') . h($account->name) ?></h3>
     </div>
@@ -89,3 +90,5 @@ $this->assign('title', 'Ledger Drilldown');
         </table>
     </div>
 </div>
+
+<?= $this->element('export_csv') ?>

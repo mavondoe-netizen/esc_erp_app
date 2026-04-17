@@ -37,7 +37,8 @@ $this->assign('title', 'ZIMRA PAYE Return');
                 <?= $this->Form->button(__('Generate'), ['class' => 'button']) ?>
             </div>
             <div class="col-md-6 text-right" style="margin-top: 25px;">
-                <button onclick="window.print()" class="button button-outline float-right">Print Report</button>
+                <button type="button" onclick="exportTableToCSV('zimra_paye_<?= date('Ymd_His') ?>.csv', 'table#dynamicResultTable')" class="button button-outline float-right" style="margin-left: 10px;">Export CSV</button>
+                <button type="button" onclick="window.print()" class="button button-outline float-right">Print Report</button>
             </div>
             <?= $this->Form->end() ?>
         </div>
@@ -123,3 +124,5 @@ $this->assign('title', 'ZIMRA PAYE Return');
         <div class="message info">Please select a Pay Period to generate the ZIMRA Return.</div>
     <?php endif; ?>
 </div>
+
+<?= $this->element('export_csv') ?>

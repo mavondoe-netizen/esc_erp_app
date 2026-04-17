@@ -35,7 +35,8 @@
                 </div>
             <?= $this->Form->end() ?>
         </div>
-        <div class="column column-20" style="text-align: right;">
+        <div class="column column-30" style="text-align: right;">
+             <button type="button" class="button button-outline" onclick="exportTableToCSV('bank_schedule_<?= date('Ymd_His') ?>.csv', 'table.table')">Export CSV</button>
              <button class="button button-outline" onclick="window.print()">Print Transfer List</button>
         </div>
     </div>
@@ -116,3 +117,5 @@
     }
 }
 </style>
+
+<?= $this->element('export_csv') ?>

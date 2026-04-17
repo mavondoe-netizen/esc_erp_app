@@ -76,7 +76,7 @@ class AccountsController extends AppController
             'Cash and Bank' => 'Cash and Bank',
             'Accounts Receivable' => 'Accounts Receivable',
             'Inventory' => 'Inventory',
-            'Fixed Assets' => 'Fixed Assets',
+            'Property Plant & Equipment' => 'Property Plant & Equipment',
             'Accounts Payable' => 'Accounts Payable',
             'Credit Cards' => 'Credit Cards',
             'Long-term Liabilities' => 'Long-term Liabilities',
