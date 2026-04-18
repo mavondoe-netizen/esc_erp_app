@@ -24,13 +24,15 @@
                 <table id="invoice-items-table" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 35%;">Product</th>
+                            <th style="width: 25%;">Product</th>
                             <th style="width: 8%;">Qty</th>
-                            <th style="width: 12%;">Unit Price</th>
-                            <th style="width: 10%;">VAT %</th>
-                            <th style="width: 12%;">VAT Amt</th>
+                            <th style="width: 10%;">Unit Price</th>
+                            <th style="width: 8%;">HS Code</th>
+                            <th style="width: 8%;">VAT Type</th>
+                            <th style="width: 8%;">VAT %</th>
+                            <th style="width: 10%;">VAT Amt</th>
                             <th style="width: 12%;">Line Total</th>
-                            <th style="width: 8%;"></th>
+                            <th style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="items-container">
@@ -80,6 +82,8 @@
             <td>${productHtml}${accountHtml}</td>
             <td><input type="number" name="invoice_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="1" onchange="calculateLine(${rowIndex})" class="form-control"></td>
             <td><input type="number" name="invoice_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="text" name="invoice_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" placeholder="HS Code" onchange="handleHsCode(${rowIndex})"></td>
+            <td><input type="text" name="invoice_items[${rowIndex}][vat_type]" id="vat-type-${rowIndex}" class="form-control" placeholder="Type"></td>
             <td><input type="number" name="invoice_items[${rowIndex}][vat_rate]" id="vat-rate-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
             <td><input type="number" name="invoice_items[${rowIndex}][vat_amount]" id="vat-amount-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none;"></td>
             <td><input type="number" name="invoice_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;"></td>
@@ -102,6 +106,8 @@
             document.getElementById(`price-${idx}`).value = info.unit_price;
             document.getElementById(`account-${idx}`).value = info.account_id;
             document.getElementById(`vat-rate-${idx}`).value = info.vat_rate || 0;
+            document.getElementById(`hs-code-${idx}`).value = info.hs_code || '';
+            document.getElementById(`vat-type-${idx}`).value = info.vat_type || '';
             calculateLine(idx);
         }
     }
@@ -119,6 +125,25 @@
         document.getElementById(`total-${idx}`).value = grossTotal.toFixed(2);
         
         calculateGrandTotal();
+    }
+
+    function handleHsCode(idx) {
+        const hsInput = document.getElementById(`hs-code-${idx}`).value;
+        const vatRateInput = document.getElementById(`vat-rate-${idx}`);
+        const vatTypeInput = document.getElementById(`vat-type-${idx}`);
+
+        if (hsInput === '99001000') {
+            vatRateInput.value = '15.50';
+            vatTypeInput.value = 'Standard';
+        } else if (hsInput === '99002000') {
+            vatRateInput.value = '0.00';
+            vatTypeInput.value = 'Zero';
+        } else if (hsInput === '99003000') {
+            vatRateInput.value = '0.00';
+            vatTypeInput.value = 'Exempt';
+        }
+        
+        calculateLine(idx);
     }
 
     function calculateGrandTotal() {

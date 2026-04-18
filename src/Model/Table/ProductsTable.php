@@ -87,6 +87,16 @@ class ProductsTable extends Table
             ->requirePresence('vat_rate', 'create')
             ->notEmptyString('vat_rate');
 
+        $validator
+            ->scalar('hs_code')
+            ->maxLength('hs_code', 100)
+            ->allowEmptyString('hs_code');
+
+        $validator
+            ->scalar('vat_type')
+            ->maxLength('vat_type', 50)
+            ->allowEmptyString('vat_type');
+
         return $validator;
     }
 

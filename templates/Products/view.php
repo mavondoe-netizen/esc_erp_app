@@ -39,6 +39,14 @@
                     <td><?= $this->Number->format($product->vat_rate) ?></td>
                 </tr>
                 <tr>
+                    <th><?= __('Vat Type') ?></th>
+                    <td><?= h($product->vat_type) ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('HS Code') ?></th>
+                    <td><?= h($product->hs_code) ?></td>
+                </tr>
+                <tr>
                     <th><?= __('Created') ?></th>
                     <td><?= h($product->created) ?></td>
                 </tr>

@@ -66,6 +66,9 @@
                 <button id="btn-custom-bulk" class="button" style="margin:0; background:#2e6c80; border-color:#2e6c80; white-space:nowrap;">
                     <i class="fas fa-tags"></i> Categorize All
                 </button>
+                <button type="button" id="btn-custom-bulk-delete" class="button button-outline" style="margin:0; color: #e74c3c; border-color: #e74c3c; white-space:nowrap;">
+                    <i class="fas fa-trash"></i> Delete Selected
+                </button>
                 <button id="btn-deselect-all" class="button button-outline" style="margin:0; white-space:nowrap;">
                     <i class="fas fa-minus-square"></i> Deselect All
                 </button>
@@ -365,6 +368,45 @@ $(document).ready(function() {
             }
         });
     });
+
+    // ─── Bulk Delete ───────────────────────────────────────────────────────────
+    $('#btn-custom-bulk-delete').on('click', function() {
+        const ids = $('.row-checkbox:checked').map(function() { return $(this).val(); }).get();
+
+        if (ids.length === 0) return;
+        if (!confirm(`Are you sure you want to delete ${ids.length} selected transaction(s)?`)) return;
+
+        $('#btn-custom-bulk-delete').prop('disabled', true);
+        $('#bulk-loader').show();
+
+        $.ajax({
+            url: '<?= $this->Url->build(['action' => 'bulkAction']) ?>',
+            type: 'POST',
+            headers: { 'X-CSRF-Token': csrfToken },
+            data: { ids: ids, action: 'delete' },
+            success: function(res) {
+                if (res.success) {
+                    ids.forEach(function(id) {
+                        const rowNode = document.getElementById('row-' + id);
+                        if (rowNode) dt.row(rowNode).remove();
+                    });
+                    dt.draw(false);
+                    $('#select-all-rows').prop('checked', false);
+                    syncBulkCount();
+                } else {
+                    alert('Error: ' + res.message);
+                }
+                $('#btn-custom-bulk-delete').prop('disabled', false);
+                $('#bulk-loader').hide();
+            },
+            error: function() {
+                alert('Bulk delete failed.');
+                $('#btn-custom-bulk-delete').prop('disabled', false);
+                $('#bulk-loader').hide();
+            }
+        });
+    });
+
 
     // ─── Individual Categorize ─────────────────────────────────────────────────
     $(document).on('click', '.match-btn', function() {

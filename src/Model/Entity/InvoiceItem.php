@@ -39,6 +39,8 @@ class InvoiceItem extends Entity
         'product_id' => true,
         'vat_rate' => true,
         'vat_amount' => true,
+        'hs_code' => true,
+        'vat_type' => true,
         'invoice' => true,
         'account' => true,
     ];

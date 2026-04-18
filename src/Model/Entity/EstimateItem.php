@@ -40,6 +40,8 @@ class EstimateItem extends Entity
         'line_total' => true,
         'vat_rate' => true,
         'vat_amount' => true,
+        'hs_code' => true,
+        'vat_type' => true,
         'estimate' => true,
         'product' => true,
         'account' => true,

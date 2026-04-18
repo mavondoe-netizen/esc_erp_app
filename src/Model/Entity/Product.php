@@ -35,6 +35,8 @@ class Product extends Entity
         'account_id' => true,
         'unit_price' => true,
         'vat_rate' => true,
+        'hs_code' => true,
+        'vat_type' => true,
         'created' => true,
         'modified' => true,
         'account' => true,

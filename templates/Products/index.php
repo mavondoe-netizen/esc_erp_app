@@ -16,8 +16,8 @@
                     <th><?= $this->Paginator->sort('account_id') ?></th>
                     <th><?= $this->Paginator->sort('unit_price') ?></th>
                     <th><?= $this->Paginator->sort('vat_rate') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
+                    <th><?= $this->Paginator->sort('vat_type') ?></th>
+                    <th><?= $this->Paginator->sort('hs_code') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -29,8 +29,8 @@
                     <td><?= $product->hasValue('account') ? $this->Html->link($product->account->name, ['controller' => 'Accounts', 'action' => 'view', $product->account->id]) : '' ?></td>
                     <td><?= $this->Number->format($product->unit_price, ['places' => 2]) ?></td>
                     <td><?= $this->Number->format($product->vat_rate) ?></td>
-                    <td><?= h($product->created) ?></td>
-                    <td><?= h($product->modified) ?></td>
+                    <td><?= h($product->vat_type) ?></td>
+                    <td><?= h($product->hs_code) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $product->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id]) ?>

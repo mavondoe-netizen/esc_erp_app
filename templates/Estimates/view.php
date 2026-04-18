@@ -69,6 +69,8 @@
                                 <th style="text-align: left; padding: 12px;"><?= __('Product') ?></th>
                                 <th style="text-align: center; padding: 12px;"><?= __('Qty') ?></th>
                                 <th style="text-align: right; padding: 12px;"><?= __('Unit Price') ?></th>
+                                <th style="text-align: center; padding: 12px;"><?= __('HS Code') ?></th>
+                                <th style="text-align: center; padding: 12px;"><?= __('VAT Type') ?></th>
                                 <th style="text-align: right; padding: 12px;"><?= __('VAT %') ?></th>
                                 <th style="text-align: right; padding: 12px;"><?= __('VAT Amount') ?></th>
                                 <th style="text-align: right; padding: 12px;"><?= __('Line Total') ?></th>
@@ -86,6 +88,8 @@
                                 <td style="padding: 12px;"><?= $item->hasValue('product') ? h($item->product->name) : 'Custom Item' ?></td>
                                 <td style="text-align: center; padding: 12px;"><?= $this->Number->format($item->quantity) ?></td>
                                 <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($item->unit_price) ?></td>
+                                <td style="text-align: center; padding: 12px;"><?= h($item->hs_code) ?></td>
+                                <td style="text-align: center; padding: 12px;"><?= h($item->vat_type) ?></td>
                                 <td style="text-align: right; padding: 12px;"><?= $this->Number->format($item->vat_rate) ?>%</td>
                                 <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($item->vat_amount) ?></td>
                                 <td style="text-align: right; padding: 12px; font-weight: 600;"><?= $this->Number->currency($item->line_total) ?></td>
@@ -94,15 +98,15 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5" style="text-align: right; padding: 12px; font-weight: bold;"><?= __('Subtotal') ?></td>
+                                <td colspan="7" style="text-align: right; padding: 12px; font-weight: bold;"><?= __('Subtotal') ?></td>
                                 <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($subtotal) ?></td>
                             </tr>
                             <tr>
-                                <td colspan="5" style="text-align: right; padding: 12px; font-weight: bold;"><?= __('Total VAT') ?></td>
+                                <td colspan="7" style="text-align: right; padding: 12px; font-weight: bold;"><?= __('Total VAT') ?></td>
                                 <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($totalVat) ?></td>
                             </tr>
                             <tr style="background: #f1f5f9;">
-                                <td colspan="5" style="text-align: right; padding: 12px; font-size: 1.2rem; font-weight: bold;"><?= __('GRAND TOTAL') ?></td>
+                                <td colspan="7" style="text-align: right; padding: 12px; font-size: 1.2rem; font-weight: bold;"><?= __('GRAND TOTAL') ?></td>
                                 <td style="text-align: right; padding: 12px; font-size: 1.2rem; font-weight: bold; color: #0f172a;"><?= $this->Number->currency($estimate->total) ?></td>
                             </tr>
                         </tfoot>

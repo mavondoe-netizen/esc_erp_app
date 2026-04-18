@@ -68,6 +68,8 @@ class EstimatesController extends AppController
                 'unit_price' => $prod->unit_price,
                 'vat_rate' => $prod->vat_rate,
                 'account_id' => $prod->account_id,
+                'hs_code' => $prod->hs_code,
+                'vat_type' => $prod->vat_type,
             ];
         }
         
@@ -107,6 +109,8 @@ class EstimatesController extends AppController
                 'unit_price' => $prod->unit_price,
                 'vat_rate' => $prod->vat_rate,
                 'account_id' => $prod->account_id,
+                'hs_code' => $prod->hs_code,
+                'vat_type' => $prod->vat_type,
             ];
         }
         

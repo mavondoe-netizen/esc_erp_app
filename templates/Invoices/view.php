@@ -80,6 +80,8 @@
                             <th><?= __('Description') ?></th>
                             <th class="text-center"><?= __('Quantity') ?></th>
                             <th class="text-right"><?= __('Unit Price') ?></th>
+                            <th class="text-center"><?= __('HS Code') ?></th>
+                            <th class="text-center"><?= __('VAT Type') ?></th>
                             <th class="text-right"><?= __('Vat Rate') ?></th>
                             <th class="text-right"><?= __('Vat Amount') ?></th>
                             <th class="text-right"><?= __('Line Total') ?></th>
@@ -98,6 +100,8 @@
                             <td><?= h($item->description) ?></td>
                             <td class="text-center"><?= $this->Number->format($item->quantity) ?></td>
                             <td class="text-right"><?= $this->Number->currency($item->unit_price, $invoice->currency) ?></td>
+                            <td class="text-center"><?= h($item->hs_code) ?></td>
+                            <td class="text-center"><?= h($item->vat_type) ?></td>
                             <td class="text-right"><?= $this->Number->format($item->vat_rate) ?>%</td>
                             <td class="text-right"><?= $this->Number->currency($item->vat_amount, $invoice->currency) ?></td>
                             <td class="text-right"><?= $this->Number->currency($item->line_total, $invoice->currency) ?></td>
@@ -105,15 +109,15 @@
                         <?php endforeach; ?>
                         
                         <tr>
-                            <td colspan="6" class="text-right"><strong>Subtotal:</strong></td>
+                            <td colspan="8" class="text-right"><strong>Subtotal:</strong></td>
                             <td class="text-right"><?= $this->Number->currency($subtotal, $invoice->currency) ?></td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="text-right"><strong>Total VAT:</strong></td>
+                            <td colspan="8" class="text-right"><strong>Total VAT:</strong></td>
                             <td class="text-right"><?= $this->Number->currency($totalVat, $invoice->currency) ?></td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="text-right"><strong>Grand Total:</strong></td>
+                            <td colspan="8" class="text-right"><strong>Grand Total:</strong></td>
                             <td class="text-right" style="font-weight: bold; font-size: 1.1em;"><?= $this->Number->currency($invoice->total, $invoice->currency) ?></td>
                         </tr>
                     </table>
