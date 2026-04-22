@@ -4,676 +4,732 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
-use Cake\I18n\FrozenDate;
+use Cake\Utility\Text;
 
+/**
+ * BankTransactions Controller
+ *
+ * Handles bank statement import/reconciliation, categorisation (single, bulk, split),
+ * and the AJAX API endpoints consumed by the dashboard JS.
+ */
 class BankTransactionsController extends AppController
 {
-    public function initialize(): void
-    {
-        parent::initialize();
-        $this->loadComponent('Flash');
-    }
+    // -----------------------------------------------------------------------
+    // DASHBOARD
+    // -----------------------------------------------------------------------
 
     /**
-     * Main Reconciliation Dashboard
+     * Reconciliation dashboard — shows unreconciled bank lines and recent history.
+     *
+     * Variables:
+     *   $bankTransactions  — unreconciled rows
+     *   $recentReconciled  — last 15 reconciled rows
+     *   $accounts          — [id => name] list for categorize dropdowns
      */
     public function index()
     {
-        $bankTransactions = $this->BankTransactions->find()
-            ->where(['reconciled' => false])
+        $companyId = $this->request->getAttribute('company_id');
+
+        $BankTransactions = $this->fetchTable('BankTransactions');
+
+        // Unreconciled lines
+        $bankTransactions = $BankTransactions->find()
+            ->where([
+                'BankTransactions.company_id' => $companyId,
+                'BankTransactions.reconciled' => 0,
+            ])
             ->contain(['BankAccounts'])
-            ->order(['BankTransactions.date' => 'DESC'])
+            ->order(['BankTransactions.date' => 'ASC'])
             ->all();
 
-        // Fetch recent reconciled items for the "History" tab
-        $recentReconciled = $this->BankTransactions->find()
-            ->where(['reconciled' => true])
-            ->contain(['BankAccounts'])
-            ->order(['BankTransactions.modified' => 'DESC'])
-            ->limit(15)
+        // Apply simple suggestion: last-used account per description keyword
+        $BankRules = $this->fetchTable('BankRules');
+        $rulesQuery = $BankRules->find()
+            ->select(['match_text', 'account_id'])
+            ->where(['company_id' => $companyId])
             ->all();
-
-        // Fetch all rules for the current company
-        $rules = $this->fetchTable('BankRules')->find()->all();
         
-        // Match rules to transactions
-        foreach ($bankTransactions as $tx) {
-            foreach ($rules as $rule) {
-                if (stripos($tx->get('description'), $rule->match_text) !== false) {
-                    $tx->suggested_account_id = $rule->account_id;
+        $rules = [];
+        foreach ($rulesQuery as $row) {
+            $rules[strtolower($row->match_text)] = $row->account_id;
+        }
+
+        $txList = $bankTransactions->toList();
+        foreach ($txList as $tx) {
+            $desc = strtolower($tx->description ?? '');
+            foreach ($rules as $keyword => $accountId) {
+                if (str_contains($desc, $keyword)) {
+                    $tx->suggested_account_id = $accountId;
                     break;
                 }
             }
         }
 
-        $accounts = $this->fetchTable('Accounts')->find('list', [
-            'keyField' => 'id',
-            'valueField' => 'name'
-        ])->toArray();
-
-        // Get some recent system transactions to show for matching
-        $systemTransactions = $this->fetchTable('Transactions')->find()
-            ->where(['date >=' => date('Y-m-d', strtotime('-30 days'))])
-            ->contain(['Accounts'])
-            ->order(['date' => 'DESC'])
-            ->limit(50)
+        // Last 15 reconciled
+        $recentReconciled = $BankTransactions->find()
+            ->where([
+                'BankTransactions.company_id' => $companyId,
+                'BankTransactions.reconciled' => 1,
+            ])
+            ->contain(['BankAccounts'])
+            ->order(['BankTransactions.modified' => 'DESC'])
+            ->limit(15)
             ->all();
 
-        $this->set(compact('bankTransactions', 'accounts', 'systemTransactions', 'recentReconciled'));
+        // Account list for dropdowns
+        $Accounts = $this->fetchTable('Accounts');
+        $accounts = $Accounts->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Accounts.company_id' => $companyId])
+            ->order(['Accounts.type', 'Accounts.name'])
+            ->all()
+            ->toArray();
+
+        $this->set(compact('bankTransactions', 'recentReconciled', 'accounts'));
     }
 
+    // -----------------------------------------------------------------------
+    // CSV IMPORT
+    // -----------------------------------------------------------------------
+
     /**
-     * CSV Import View/Action
+     * Import a CSV bank statement.
+     *
+     * @return \Cake\Http\Response|null
      */
     public function import()
     {
-        $accounts = $this->fetchTable('Accounts')->find('list', [
-            'keyField'   => 'id',
-            'valueField' => 'name'
-        ])->toArray();
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Accounts = $this->fetchTable('Accounts');
+        $bankAccounts = $Accounts->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Accounts.company_id' => $companyId, 'Accounts.type' => 'Asset'])
+            ->all();
 
         if ($this->request->is('post')) {
-            $file          = $this->request->getData('csv_file');
-            $bankAccountId = $this->request->getData('bank_account_id');
+            $file        = $this->request->getUploadedFile('csv_file');
+            $bankAcctId  = $this->request->getData('bank_account_id');
+            $errors      = [];
+            $imported    = 0;
 
-            if (!$bankAccountId) {
-                $this->Flash->error(__('Please select a bank account to import into.'));
-            } elseif ($file && $file->getError() === UPLOAD_ERR_OK) {
-                $tmpPath = $file->getStream()->getMetadata('uri');
-                $content = file_get_contents($tmpPath);
-
-                // ── 1. Strip UTF-8 BOM (causes gibberish in first field) ──────────────
-                if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
-                    $content = substr($content, 3);
-                }
-
-                // ── 2. Detect & convert encoding to clean UTF-8 ──────────────────────
-                $encoding = mb_detect_encoding($content, ['UTF-8', 'Windows-1252', 'ISO-8859-1', 'UTF-16LE', 'UTF-16BE'], true);
-                if ($encoding && $encoding !== 'UTF-8') {
-                    $content = mb_convert_encoding($content, 'UTF-8', $encoding);
-                } else {
-                    // Force valid UTF-8 — removes any broken multi-byte sequences
-                    $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
-                }
-
-                // ── 3. Strip null bytes and carriage returns that corrupt fields ──────
-                $content = str_replace(["\x00", "\r"], ['', ''], $content);
-
-                // ── 4. Delimiter auto-detection ───────────────────────────────────────
-                $delimiter  = ',';
-                $firstLine  = explode("\n", $content)[0];
-                if (substr_count($firstLine, ';') > substr_count($firstLine, ',')) {
-                    $delimiter = ';';
-                } elseif (substr_count($firstLine, "\t") > substr_count($firstLine, ',')) {
-                    $delimiter = "\t";
-                }
-
-                // ── 5. Parse via in-memory stream ─────────────────────────────────────
-                $tempHandle = fopen('php://temp', 'r+');
-                fwrite($tempHandle, $content);
-                rewind($tempHandle);
-
-                $header    = fgetcsv($tempHandle, 0, $delimiter);
-                $rows      = [];
-                $saveErrors = [];
-                $metrics   = ['total' => 0, 'new' => 0, 'existing' => 0, 'skipped' => 0, 'restored' => 0];
-                $companyId = \Cake\Core\Configure::read('Tenant.company_id');
-                $conn      = $this->BankTransactions->getConnection();
-                $lineNum   = 1; // header was line 1
-
-                while (($data = fgetcsv($tempHandle, 0, $delimiter)) !== false) {
-                    $lineNum++;
-
-                    // Skip rows that have fewer than 3 meaningful columns
-                    if (count($data) < 3) {
-                        $metrics['skipped']++;
-                        continue;
-                    }
-
-                    // Trim & sanitise every field — removes BOM remnants, non-printable chars
-                    $data = array_map(function ($val) {
-                        $val = trim((string)$val);
-                        // Remove non-printable characters except space, tab, newline
-                        $val = preg_replace('/[^\x09\x0A\x20-\x7E\x80-\xFF]/u', '', $val);
-                        return $val;
-                    }, $data);
-
-                    $metrics['total']++;
-
-                    // ── Date parsing ─────────────────────────────────────────────────
-                    $dateStr = trim($data[0] ?? '');
-                    if (empty($dateStr)) {
-                        $metrics['skipped']++;
-                        $saveErrors[] = "Row {$lineNum}: Empty date — skipped.";
-                        continue;
-                    }
-                    $datePart = explode(' ', $dateStr)[0];
-                    try {
-                        $date = \Cake\I18n\FrozenDate::createFromFormat('d/m/Y', $datePart)
-                             ?: \Cake\I18n\FrozenDate::createFromFormat('d-m-Y', $datePart)
-                             ?: new \Cake\I18n\FrozenDate(str_replace('/', '-', $datePart));
-                    } catch (\Exception $e) {
-                        $metrics['skipped']++;
-                        $saveErrors[] = "Row {$lineNum}: Unrecognised date format '{$dateStr}' — skipped.";
-                        continue;
-                    }
-
-                    // ── Description ───────────────────────────────────────────────────
-                    $desc = $data[1];
-                    if (empty($desc)) {
-                        $metrics['skipped']++;
-                        $saveErrors[] = "Row {$lineNum}: Empty description — skipped.";
-                        continue;
-                    }
-                    // Truncate to DB column limit
-                    $desc = mb_substr($desc, 0, 250);
-
-                    // ── Amount ────────────────────────────────────────────────────────
-                    $amountStr     = preg_replace('/[^\d.\-]/', '', (string)($data[2] ?? ''));
-                    $numericAmount = (float)$amountStr;
-                    if ($amountStr === '' || $amountStr === '-') {
-                        $metrics['skipped']++;
-                        $saveErrors[] = "Row {$lineNum}: Missing or non-numeric amount '{$data[2]}' — skipped.";
-                        continue;
-                    }
-
-                    $dateFormatted = $date->format('Y-m-d');
-
-                    // ── Deduplication (raw SQL — immune to TenantAware double-scoping) ─
-                    $existingBankTx = $conn->execute(
-                        'SELECT id, reconciled, transaction_id FROM bank_transactions
-                         WHERE company_id     = ?
-                           AND bank_account_id = ?
-                           AND date           = ?
-                           AND description    = ?
-                           AND ABS(amount - ?) < 0.001
-                         LIMIT 1',
-                        [$companyId, $bankAccountId, $dateFormatted, $desc, $numericAmount]
-                    )->fetch('assoc');
-
-                    if (!$existingBankTx) {
-                        $rows[] = [
-                            'company_id'      => $companyId,
-                            'bank_account_id' => $bankAccountId,
-                            'date'            => $date,
-                            'description'     => $desc,
-                            'amount'          => $numericAmount,
-                            'reference'       => mb_substr(trim($data[3] ?? ''), 0, 100) ?: null,
-                            'reconciled'      => false,
-                        ];
-                        $metrics['new']++;
-                    } else {
-                        // It exists, but is it legitimately reconciled?
-                        if ($existingBankTx['reconciled'] && $existingBankTx['transaction_id']) {
-                            $txExists = $conn->execute('SELECT id FROM transactions WHERE id = ?', [$existingBankTx['transaction_id']])->fetch();
-                            if (!$txExists) {
-                                // The ledger transaction was deleted! Restore this bank line to be categorized again.
-                                $conn->execute('UPDATE bank_transactions SET reconciled = 0, transaction_id = NULL WHERE id = ?', [$existingBankTx['id']]);
-                                $metrics['restored']++;
-                            } else {
-                                $metrics['existing']++;
-                            }
-                        } else {
-                            $metrics['existing']++;
-                        }
-                    }
-                }
-                fclose($tempHandle);
-
-                // Show any row-level parse warnings collected above
-                if (!empty($saveErrors)) {
-                    $this->Flash->warning(__('Some rows were skipped: ' . implode(' | ', $saveErrors)));
-                }
-
-                if (empty($rows)) {
-                    $this->Flash->info(__(
-                        "Import complete — nothing new to save. Total rows in file: {0}. Already in system: {1}. Skipped (bad format): {2}.",
-                        $metrics['total'], $metrics['existing'], $metrics['skipped']
-                    ));
-                } else {
-                    // Save one-by-one so we can report individual failures clearly
-                    $savedCount  = 0;
-                    $failedRows  = [];
-                    foreach ($rows as $idx => $rowData) {
-                        $entity = $this->BankTransactions->newEntity($rowData);
-                        if ($this->BankTransactions->save($entity)) {
-                            $savedCount++;
-                        } else {
-                            $errs = [];
-                            foreach ($entity->getErrors() as $field => $msgs) {
-                                $errs[] = "{$field}: " . implode(', ', $msgs);
-                            }
-                            $failedRows[] = "Row " . ($idx + 2) . " [{$rowData['description']}]: " . implode('; ', $errs);
-                        }
-                    }
-
-                    if (empty($failedRows)) {
-                        $this->Flash->success(__(
-                            "Successfully processed imports. (New: {0} | Restored: {1} | Existing: {2} | Skipped: {3})",
-                            $savedCount, $metrics['restored'], $metrics['existing'], $metrics['skipped']
-                        ));
-                    } else {
-                        $this->Flash->error(__(
-                            "{0} rows saved. {1} rows failed validation: {2}",
-                            $savedCount, count($failedRows), implode(' | ', $failedRows)
-                        ));
-                    }
-                }
-                return $this->redirect(['action' => 'index']);
+            if (!$file || $file->getError() !== UPLOAD_ERR_OK) {
+                $this->Flash->error('Please upload a valid CSV file.');
+                $this->set(compact('bankAccounts'));
+                return null;
             }
+
+            $tmpPath = $file->getStream()->getMetadata('uri');
+            // Strip BOM
+            $raw = file_get_contents($tmpPath);
+            $raw = preg_replace('/^\xEF\xBB\xBF/', '', $raw);
+            $lines = array_filter(explode("\n", $raw));
+
+            $BankTransactions = $this->fetchTable('BankTransactions');
+
+            $headerSkipped = false;
+            $rowNum        = 0;
+
+            foreach ($lines as $line) {
+                $rowNum++;
+                $line = trim($line);
+                if (empty($line)) continue;
+
+                // Normalise: strip quotes, split on comma
+                $cols = str_getcsv($line);
+                $cols = array_map('trim', $cols);
+
+                if (!$headerSkipped) {
+                    $headerSkipped = true;
+                    // Detect header by looking for date/amount keywords
+                    $header = array_map('strtolower', $cols);
+                    if (in_array('date', $header) || in_array('amount', $header)) {
+                        continue; // skip header row
+                    }
+                }
+
+                // Expect: date, description, amount[, reference]
+                if (count($cols) < 3) {
+                    $errors[] = "Row $rowNum: Not enough columns (expected date, description, amount).";
+                    continue;
+                }
+
+                [$rawDate, $desc, $rawAmount] = $cols;
+                $reference = $cols[3] ?? '';
+
+                // Parse date
+                $date = null;
+                foreach (['d/m/Y', 'Y-m-d', 'd-m-Y', 'm/d/Y'] as $fmt) {
+                    $d = \DateTime::createFromFormat($fmt, trim($rawDate));
+                    if ($d !== false) { $date = $d->format('Y-m-d'); break; }
+                }
+                if (!$date) {
+                    $errors[] = "Row $rowNum: Cannot parse date '$rawDate'.";
+                    continue;
+                }
+
+                // Parse amount
+                $amount = (float) str_replace([',', ' '], '', $rawAmount);
+
+                $tx = $BankTransactions->newEntity([
+                    'company_id'      => $companyId,
+                    'bank_account_id' => $bankAcctId ?: null,
+                    'date'            => $date,
+                    'description'     => substr($desc, 0, 255),
+                    'amount'          => $amount,
+                    'reference'       => substr($reference, 0, 100),
+                    'reconciled'      => 0,
+                ]);
+
+                if ($BankTransactions->save($tx)) {
+                    $imported++;
+                } else {
+                    $errors[] = "Row $rowNum: Save failed — " . json_encode($tx->getErrors());
+                }
+            }
+
+            if ($imported > 0) {
+                $this->Flash->success("$imported transaction(s) imported successfully.");
+            }
+            if (!empty($errors)) {
+                $this->Flash->warning(implode('<br>', array_slice($errors, 0, 10)));
+            }
+
+            return $this->redirect(['action' => 'index']);
         }
 
-        $this->set(compact('accounts'));
+        $this->set(compact('bankAccounts'));
     }
 
+    // -----------------------------------------------------------------------
+    // AJAX API — SINGLE CATEGORIZE
+    // -----------------------------------------------------------------------
+
     /**
-     * AJAX: Categorize on the fly
+     * POST /bank-transactions/api-categorize
+     * Categorizes one bank line → creates a pair of double-entry Transactions.
+     *
+     * @return \Cake\Http\Response JSON
      */
     public function apiCategorize()
     {
         $this->request->allowMethod(['post']);
-        $data = $this->request->getData();
-        
-        $bankTxId = $data['bank_transaction_id'] ?? null;
-        $accountId = $data['account_id'] ?? null;
-        $saveRule = $data['save_rule'] ?? false;
+        $this->viewBuilder()->setClassName('Json');
+        $this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-        if (!$bankTxId || !$accountId) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing data']));
+        $companyId    = $this->request->getAttribute('company_id');
+        $bankTxId     = (int)$this->request->getData('bank_transaction_id');
+        $accountId    = (int)$this->request->getData('account_id');
+        $saveRule     = (bool)$this->request->getData('save_rule');
+
+        $BankTransactions = $this->fetchTable('BankTransactions');
+
+        $bankTx = $BankTransactions->find()
+            ->where(['BankTransactions.id' => $bankTxId, 'BankTransactions.company_id' => $companyId])
+            ->first();
+
+        if (!$bankTx) {
+            $this->set(['success' => false, 'message' => 'Transaction not found.']);
+            return null;
         }
 
-        $bankTx = $this->BankTransactions->get($bankTxId);
-        $transactionsTable = $this->fetchTable('Transactions');
-        $conn = $transactionsTable->getConnection();
+        if ($bankTx->reconciled) {
+            $this->set(['success' => false, 'message' => 'Already reconciled.']);
+            return null;
+        }
 
-        try {
-            $conn->transactional(function () use ($bankTx, $accountId, $saveRule, $transactionsTable, $bankTxId) {
-                $groupId = \Cake\Utility\Text::uuid();
+        $Accounts = $this->fetchTable('Accounts');
+        $account  = $Accounts->find()->where(['id' => $accountId, 'company_id' => $companyId])->first();
+        if (!$account) {
+            $this->set(['success' => false, 'message' => 'Account not found.']);
+            return null;
+        }
 
-                // Leg 1: Target Account
-                $txTarget = $transactionsTable->newEntity([
-                    'date' => $bankTx->get('date'),
-                    'description' => $bankTx->get('description'),
-                    'amount' => abs((float)$bankTx->get('amount')),
-                    'currency' => 'USD', // Mapping default for now
-                    'zwg' => 0, // Placeholder (will be auto-calculated in beforeSave)
-                    'type' => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
-                    'account_id' => $accountId,
-                    'bank_transaction_id' => $bankTxId,
-                    'transaction_group' => $groupId,
-                    'company_id' => $bankTx->get('company_id')
-                ]);
+        // Determine bank's own Account (the asset account the statement belongs to)
+        $bankAccountId = $bankTx->bank_account_id;
 
-                // Leg 2: Bank Account
-                $txBank = $transactionsTable->newEntity([
-                    'date' => $bankTx->get('date'),
-                    'description' => $bankTx->get('description'),
-                    'amount' => abs((float)$bankTx->get('amount')),
-                    'currency' => 'USD',
-                    'zwg' => 0,
-                    'type' => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
-                    'account_id' => $bankTx->get('bank_account_id'),
-                    'bank_transaction_id' => $bankTxId,
-                    'transaction_group' => $groupId,
-                    'company_id' => $bankTx->get('company_id')
-                ]);
+        // Derive type: positive amount → money came IN to bank (bank Debit, account Credit)
+        $amount   = (float)$bankTx->amount;
+        $isInflow = $amount >= 0;
+        $absAmt   = abs($amount);
 
-                // Save both legs at once as a balanced set
-                $transactionsTable->saveManyOrFail([$txTarget, $txBank], ['check_balance' => false]);
+        $groupId  = Text::uuid();
+        $date     = $bankTx->date ? $bankTx->date->format('Y-m-d') : date('Y-m-d');
+        $desc     = $bankTx->description;
 
-                // Mark bank line as reconciled
-                $bankTx->set('reconciled', true);
-                $bankTx->set('transaction_id', $txTarget->id);
-                $this->BankTransactions->saveOrFail($bankTx);
+        $Transactions = $this->fetchTable('Transactions');
 
-                // Save rule if requested
-                if ($saveRule) {
-                    $rulesTable = $this->fetchTable('BankRules');
-                    $ruleExists = $rulesTable->find()->where([
-                        'company_id' => $bankTx->get('company_id'),
-                        'match_text' => $bankTx->get('description')
-                    ])->first();
+        $result = $Transactions->getConnection()->transactional(function () use (
+            $Transactions, $BankTransactions, $bankTx, $bankTxId, $bankAccountId,
+            $accountId, $absAmt, $isInflow, $groupId, $date, $desc, $companyId, $saveRule, $account
+        ) {
+            // Line 1 — the bank account side
+            $line1 = $Transactions->newEntity([
+                'company_id'         => $companyId,
+                'bank_transaction_id' => $bankTxId,
+                'date'               => $date,
+                'description'        => $desc,
+                'currency'           => 'USD',
+                'amount'             => $absAmt,
+                'zwg'                => $absAmt,
+                'type'               => $isInflow ? 'Debit' : 'Credit',
+                'account_id'         => $bankAccountId ?: $accountId,
+                'transaction_group'  => $groupId,
+            ], ['validate' => false]);
 
-                    if (!$ruleExists) {
-                        $rule = $rulesTable->newEntity([
-                            'company_id' => $bankTx->get('company_id'),
-                            'match_text' => $bankTx->get('description'),
-                            'account_id' => $accountId
-                        ]);
-                        $rulesTable->saveOrFail($rule);
-                    }
+            // Line 2 — the categorised account side
+            $line2 = $Transactions->newEntity([
+                'company_id'         => $companyId,
+                'bank_transaction_id' => $bankTxId,
+                'date'               => $date,
+                'description'        => $desc,
+                'currency'           => 'USD',
+                'amount'             => $absAmt,
+                'zwg'                => $absAmt,
+                'type'               => $isInflow ? 'Credit' : 'Debit',
+                'account_id'         => $accountId,
+                'transaction_group'  => $groupId,
+            ], ['validate' => false]);
+
+            $saved1 = $Transactions->save($line1, ['check_balance' => false]);
+            $saved2 = $Transactions->save($line2, ['check_balance' => false]);
+
+            if (!$saved1 || !$saved2) {
+                return false;
+            }
+
+            // Mark bank transaction as reconciled
+            $bankTx->reconciled   = 1;
+            $bankTx->transaction_id = $line1->id;
+            $BankTransactions->save($bankTx);
+
+            // Optionally save categorisation rule
+            if ($saveRule) {
+                $keyword = strtolower(substr(trim($desc), 0, 50));
+                $BankRules = TableRegistry::getTableLocator()->get('BankRules');
+                $rule = $BankRules->find()
+                    ->where(['company_id' => $companyId, 'match_text' => $keyword])
+                    ->first();
+                if (!$rule) {
+                    $rule = $BankRules->newEmptyEntity();
+                    $rule->company_id = $companyId;
+                    $rule->match_text = $keyword;
                 }
-            });
+                $rule->account_id = $accountId;
+                $BankRules->save($rule);
+            }
 
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => true, 'message' => 'Reconciled successfully with double entry']));
+            return true;
+        });
 
-        } catch (\Exception $e) {
-            return $this->response->withStatus(500)->withStringBody(json_encode(['message' => 'Ledger save failed: ' . $e->getMessage()]));
+        if ($result) {
+            $this->set(['success' => true, 'message' => 'Categorized.']);
+        } else {
+            $this->set(['success' => false, 'message' => 'Could not save ledger entries.']);
         }
+
+        return null;
     }
 
+    // -----------------------------------------------------------------------
+    // AJAX API — BULK CATEGORIZE
+    // -----------------------------------------------------------------------
+
     /**
-     * AJAX: Bulk Categorize on the fly
+     * POST /bank-transactions/api-bulk-categorize
+     *
+     * @return \Cake\Http\Response JSON
      */
     public function apiBulkCategorize()
     {
         $this->request->allowMethod(['post']);
-        $data = $this->request->getData();
-        $ids = $data['ids'] ?? [];
-        $accountId = $data['account_id'] ?? null;
+        $this->viewBuilder()->setClassName('Json');
+        $this->viewBuilder()->setOption('serialize', ['success', 'message', 'count']);
+
+        $companyId = $this->request->getAttribute('company_id');
+        $ids       = (array)$this->request->getData('ids', []);
+        $accountId = (int)$this->request->getData('account_id');
 
         if (empty($ids) || !$accountId) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing data']));
+            $this->set(['success' => false, 'message' => 'Missing ids or account_id.', 'count' => 0]);
+            return null;
         }
 
-        $transactionsTable = $this->fetchTable('Transactions');
-        $conn = $transactionsTable->getConnection();
-        $successCount = 0;
-        $errors = [];
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $Transactions     = $this->fetchTable('Transactions');
 
-        foreach ($ids as $bankTxId) {
-            $bankTx = $this->BankTransactions->find()->where(['id' => $bankTxId, 'reconciled' => false])->first();
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $id    = (int)$id;
+            $bankTx = $BankTransactions->find()
+                ->where(['BankTransactions.id' => $id, 'BankTransactions.company_id' => $companyId, 'BankTransactions.reconciled' => 0])
+                ->first();
             if (!$bankTx) continue;
 
-            try {
-                $conn->transactional(function () use ($bankTx, $accountId, $transactionsTable, $bankTxId) {
-                    $groupId = \Cake\Utility\Text::uuid();
+            $amount   = (float)$bankTx->amount;
+            $isInflow = $amount >= 0;
+            $absAmt   = abs($amount);
+            $groupId  = Text::uuid();
+            $date     = $bankTx->date ? $bankTx->date->format('Y-m-d') : date('Y-m-d');
+            $desc     = $bankTx->description;
+            $bankAccountId = $bankTx->bank_account_id;
 
-                    // Leg 1: Target Account
-                    $txTarget = $transactionsTable->newEntity([
-                        'date' => $bankTx->get('date'),
-                        'description' => $bankTx->get('description'),
-                        'amount' => abs((float)$bankTx->get('amount')),
-                        'currency' => 'USD', 
-                        'zwg' => 0, 
-                        'type' => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
-                        'account_id' => $accountId,
-                        'bank_transaction_id' => $bankTxId,
-                        'transaction_group' => $groupId,
-                        'company_id' => $bankTx->get('company_id')
-                    ]);
+            $ok = $Transactions->getConnection()->transactional(function () use (
+                $Transactions, $BankTransactions, $bankTx, $id, $bankAccountId,
+                $accountId, $absAmt, $isInflow, $groupId, $date, $desc, $companyId
+            ) {
+                $line1 = $Transactions->newEntity([
+                    'company_id'          => $companyId,
+                    'bank_transaction_id' => $id,
+                    'date'                => $date,
+                    'description'         => $desc,
+                    'currency'            => 'USD',
+                    'amount'              => $absAmt,
+                    'zwg'                 => $absAmt,
+                    'type'                => $isInflow ? 'Debit' : 'Credit',
+                    'account_id'          => $bankAccountId ?: $accountId,
+                    'transaction_group'   => $groupId,
+                ], ['validate' => false]);
 
-                    // Leg 2: Bank Account
-                    $txBank = $transactionsTable->newEntity([
-                        'date' => $bankTx->get('date'),
-                        'description' => $bankTx->get('description'),
-                        'amount' => abs((float)$bankTx->get('amount')),
-                        'currency' => 'USD',
-                        'zwg' => 0,
-                        'type' => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
-                        'account_id' => $bankTx->get('bank_account_id'),
-                        'bank_transaction_id' => $bankTxId,
-                        'transaction_group' => $groupId,
-                        'company_id' => $bankTx->get('company_id')
-                    ]);
+                $line2 = $Transactions->newEntity([
+                    'company_id'          => $companyId,
+                    'bank_transaction_id' => $id,
+                    'date'                => $date,
+                    'description'         => $desc,
+                    'currency'            => 'USD',
+                    'amount'              => $absAmt,
+                    'zwg'                 => $absAmt,
+                    'type'                => $isInflow ? 'Credit' : 'Debit',
+                    'account_id'          => $accountId,
+                    'transaction_group'   => $groupId,
+                ], ['validate' => false]);
 
-                    $transactionsTable->saveManyOrFail([$txTarget, $txBank], ['check_balance' => false]);
+                if (!$Transactions->save($line1, ['check_balance' => false])) return false;
+                if (!$Transactions->save($line2, ['check_balance' => false])) return false;
 
-                    // Mark as reconciled
-                    $bankTx->set('reconciled', true);
-                    $bankTx->set('transaction_id', $txTarget->id);
-                    $this->BankTransactions->saveOrFail($bankTx);
-                });
-                $successCount++;
-            } catch (\Exception $e) {
-                $errors[] = "ID {$bankTxId}: " . $e->getMessage();
-            }
+                $bankTx->reconciled    = 1;
+                $bankTx->transaction_id = $line1->id;
+                $BankTransactions->save($bankTx);
+
+                return true;
+            });
+
+            if ($ok) $count++;
         }
 
-        return $this->response->withType('application/json')
-            ->withStringBody(json_encode([
-                'success' => true, 
-                'message' => "Reconciled {$successCount} transactions. " . implode(', ', $errors)
-            ]));
+        $this->set(['success' => true, 'message' => "$count transaction(s) categorized.", 'count' => $count]);
+        return null;
     }
 
+    // -----------------------------------------------------------------------
+    // AJAX API — SPLIT CATEGORIZE
+    // -----------------------------------------------------------------------
+
     /**
-     * AJAX: Split Categorize
+     * POST /bank-transactions/api-split-categorize
+     * Splits one bank line across multiple ledger accounts.
+     *
+     * @return \Cake\Http\Response JSON
      */
     public function apiSplitCategorize()
     {
         $this->request->allowMethod(['post']);
-        $data = $this->request->getData();
+        $this->viewBuilder()->setClassName('Json');
+        $this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-        $bankTxId = $data['bank_transaction_id'] ?? null;
-        $splits   = $data['splits'] ?? [];
+        $companyId = $this->request->getAttribute('company_id');
+        $bankTxId  = (int)$this->request->getData('bank_transaction_id');
+        $splits    = (array)$this->request->getData('splits', []);
 
-        if (!$bankTxId || empty($splits)) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing data']));
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $bankTx = $BankTransactions->find()
+            ->where(['BankTransactions.id' => $bankTxId, 'BankTransactions.company_id' => $companyId, 'BankTransactions.reconciled' => 0])
+            ->first();
+
+        if (!$bankTx) {
+            $this->set(['success' => false, 'message' => 'Transaction not found or already reconciled.']);
+            return null;
         }
 
-        $bankTx     = $this->BankTransactions->get($bankTxId);
-        $totalSplit = array_sum(array_map('floatval', array_column($splits, 'amount')));
-        $bankAmount = (float)$bankTx->get('amount');
-
-        if (abs(round((float)$totalSplit, 4) - round(abs((float)$bankAmount), 4)) > 0.0001) {
-            return $this->response->withStatus(400)->withStringBody(json_encode([
-                'message' => "Total split (" . number_format($totalSplit, 4) . ") must match bank amount (" . number_format(abs($bankAmount), 4) . ")"
-            ]));
+        if (empty($splits)) {
+            $this->set(['success' => false, 'message' => 'No split lines provided.']);
+            return null;
         }
 
-        $transactionsTable = $this->fetchTable('Transactions');
-        $conn              = $transactionsTable->getConnection();
+        $totalBank  = abs((float)$bankTx->amount);
+        $totalSplit = array_sum(array_column($splits, 'amount'));
 
-        try {
-            // Use transactional() instead of manual begin/commit/rollback.
-            // This is CakePHP-safe: internally each save() uses savepoints which nest
-            // correctly inside transactional() without corrupting the outer transaction.
-            $conn->transactional(function () use ($splits, $bankTx, $bankTxId, $transactionsTable) {
-                $groupId = \Cake\Utility\Text::uuid();
-                $entities = [];
+        if (abs($totalBank - $totalSplit) > 0.005) {
+            $this->set(['success' => false, 'message' => sprintf(
+                'Split total (%.4f) does not match bank amount (%.4f).', $totalSplit, $totalBank
+            )]);
+            return null;
+        }
 
-                foreach ($splits as $split) {
-                    if (empty($split['account_id']) || empty($split['amount'])) {
-                        continue;
-                    }
-                    $entities[] = $transactionsTable->newEntity([
-                        'date'                => $bankTx->get('date'),
-                        'description'         => $bankTx->get('description') . ' (Split)',
-                        'amount'              => abs((float)$split['amount']),
-                        'currency'            => 'USD',
-                        'zwg'                 => 0,
-                        'type'                => $bankTx->get('amount') > 0 ? 'Credit' : 'Debit',
-                        'account_id'          => $split['account_id'],
-                        'bank_transaction_id' => $bankTxId,
-                        'transaction_group'   => $groupId,
-                        'company_id'          => $bankTx->get('company_id'),
-                    ]);
-                }
+        $Transactions     = $this->fetchTable('Transactions');
+        $isInflow         = (float)$bankTx->amount >= 0;
+        $groupId          = Text::uuid();
+        $date             = $bankTx->date ? $bankTx->date->format('Y-m-d') : date('Y-m-d');
+        $bankAccountId    = $bankTx->bank_account_id;
 
-                // Leg 2: Bank Account
-                $entities[] = $transactionsTable->newEntity([
-                    'date'                => $bankTx->get('date'),
-                    'description'         => $bankTx->get('description'),
-                    'amount'              => abs((float)$bankTx->get('amount')),
-                    'currency'            => 'USD',
-                    'zwg'                 => 0,
-                    'type'                => $bankTx->get('amount') > 0 ? 'Debit' : 'Credit',
-                    'account_id'          => $bankTx->get('bank_account_id'),
+        $result = $Transactions->getConnection()->transactional(function () use (
+            $Transactions, $BankTransactions, $bankTx, $bankTxId, $splits,
+            $isInflow, $groupId, $date, $companyId, $bankAccountId, $totalBank
+        ) {
+            // One bank-side debit/credit for the full amount
+            $bankLine = $Transactions->newEntity([
+                'company_id'          => $companyId,
+                'bank_transaction_id' => $bankTxId,
+                'date'                => $date,
+                'description'         => $bankTx->description,
+                'currency'            => 'USD',
+                'amount'              => $totalBank,
+                'zwg'                 => $totalBank,
+                'type'                => $isInflow ? 'Debit' : 'Credit',
+                'account_id'          => $bankAccountId,
+                'transaction_group'   => $groupId,
+            ], ['validate' => false]);
+
+            if (!$Transactions->save($bankLine, ['check_balance' => false])) return false;
+
+            // One line per split
+            foreach ($splits as $split) {
+                $accId  = (int)$split['account_id'];
+                $amt    = (float)$split['amount'];
+                $line   = $Transactions->newEntity([
+                    'company_id'          => $companyId,
                     'bank_transaction_id' => $bankTxId,
+                    'date'                => $date,
+                    'description'         => $bankTx->description,
+                    'currency'            => 'USD',
+                    'amount'              => $amt,
+                    'zwg'                 => $amt,
+                    'type'                => $isInflow ? 'Credit' : 'Debit',
+                    'account_id'          => $accId,
                     'transaction_group'   => $groupId,
-                    'company_id'          => $bankTx->get('company_id'),
-                ]);
+                ], ['validate' => false]);
+                if (!$Transactions->save($line, ['check_balance' => false])) return false;
+            }
 
-                $transactionsTable->saveManyOrFail($entities, ['check_balance' => false]);
+            $bankTx->reconciled    = 1;
+            $bankTx->transaction_id = $bankLine->id;
+            $BankTransactions->save($bankTx);
 
-                // Mark bank line as reconciled
-                $bankTx->set('reconciled', true);
-                $this->BankTransactions->saveOrFail($bankTx);
-            });
+            return true;
+        });
 
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => true, 'message' => 'Split reconciled successfully']));
-
-        } catch (\Exception $e) {
-            return $this->response->withStatus(500)->withStringBody(json_encode(['message' => 'Split failed: ' . $e->getMessage()]));
+        if ($result) {
+            $this->set(['success' => true, 'message' => 'Split categorization saved.']);
+        } else {
+            $this->set(['success' => false, 'message' => 'Failed to save split entries.']);
         }
+
+        return null;
     }
 
+    // -----------------------------------------------------------------------
+    // AJAX API — DELETE (single)
+    // -----------------------------------------------------------------------
 
     /**
-     * AJAX: Unreconcile (Undo reconciliation)
+     * POST /bank-transactions/api-delete
+     *
+     * @return \Cake\Http\Response JSON
+     */
+    public function apiDelete()
+    {
+        $this->request->allowMethod(['post']);
+        $this->viewBuilder()->setClassName('Json');
+        $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+        $companyId = $this->request->getAttribute('company_id');
+        $id        = (int)$this->request->getData('id');
+
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $tx = $BankTransactions->find()
+            ->where(['BankTransactions.id' => $id, 'BankTransactions.company_id' => $companyId])
+            ->first();
+
+        if (!$tx) {
+            $this->set(['success' => false, 'message' => 'Not found.']);
+            return null;
+        }
+
+        if ($BankTransactions->delete($tx)) {
+            $this->set(['success' => true, 'message' => 'Deleted.']);
+        } else {
+            $this->set(['success' => false, 'message' => 'Delete failed.']);
+        }
+
+        return null;
+    }
+
+    // -----------------------------------------------------------------------
+    // AJAX API — BULK ACTION (delete)
+    // -----------------------------------------------------------------------
+
+    /**
+     * POST /bank-transactions/bulk-action
+     *
+     * @return \Cake\Http\Response JSON
+     */
+    public function bulkAction()
+    {
+        $this->request->allowMethod(['post']);
+        $this->viewBuilder()->setClassName('Json');
+        $this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+        $companyId = $this->request->getAttribute('company_id');
+        $action    = $this->request->getData('action');
+        $ids       = (array)$this->request->getData('ids', []);
+
+        if (empty($ids)) {
+            $this->set(['success' => false, 'message' => 'No IDs provided.']);
+            return null;
+        }
+
+        if ($action === 'delete') {
+            $BankTransactions = $this->fetchTable('BankTransactions');
+            $BankTransactions->deleteAll([
+                'BankTransactions.id IN'       => $ids,
+                'BankTransactions.company_id'  => $companyId,
+                'BankTransactions.reconciled'  => 0,
+            ]);
+            $this->set(['success' => true, 'message' => count($ids) . ' record(s) deleted.']);
+        } else {
+            $this->set(['success' => false, 'message' => 'Unknown action.']);
+        }
+
+        return null;
+    }
+
+    // -----------------------------------------------------------------------
+    // AJAX API — UNRECONCILE
+    // -----------------------------------------------------------------------
+
+    /**
+     * POST /bank-transactions/api-unreconcile
+     * Deletes the linked ledger entries and marks the bank line as unreconciled.
+     *
+     * @return \Cake\Http\Response JSON
      */
     public function apiUnreconcile()
     {
         $this->request->allowMethod(['post']);
-        $id = $this->request->getData('id');
+        $this->viewBuilder()->setClassName('Json');
+        $this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-        if (!$id) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing ID']));
+        $companyId = $this->request->getAttribute('company_id');
+        $id        = (int)$this->request->getData('id');
+
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $bankTx = $BankTransactions->find()
+            ->where(['BankTransactions.id' => $id, 'BankTransactions.company_id' => $companyId])
+            ->first();
+
+        if (!$bankTx) {
+            $this->set(['success' => false, 'message' => 'Transaction not found.']);
+            return null;
         }
 
-        $bankTx = $this->BankTransactions->get($id);
-        $transactionsTable = $this->fetchTable('Transactions');
+        $Transactions = $this->fetchTable('Transactions');
 
-        try {
-            $transactionsTable->getConnection()->transactional(function () use ($bankTx, $transactionsTable) {
-                // Find the associated ledger entries. 
-                // We check by the stored transaction_id OR by matching the bank_transaction_id column.
-                $linkedEntries = $transactionsTable->find()
-                    ->where([
-                        'OR' => [
-                            ['id' => $bankTx->transaction_id],
-                            ['bank_transaction_id' => $bankTx->id]
-                        ]
-                    ])
-                    ->all();
+        $result = $Transactions->getConnection()->transactional(function () use (
+            $Transactions, $BankTransactions, $bankTx, $id, $companyId
+        ) {
+            // Delete all system ledger lines linked to this bank transaction
+            $Transactions->deleteAll([
+                'Transactions.bank_transaction_id' => $id,
+                'Transactions.company_id'          => $companyId,
+            ]);
 
-                foreach ($linkedEntries as $entry) {
-                    // Only attempt delete if it still exists (it might have been wiped 
-                    // by the afterDelete of a previous entry in the same group)
-                    if ($transactionsTable->exists(['id' => $entry->id])) {
-                        $transactionsTable->delete($entry);
-                    }
+            // Also cascade via transaction_group if we have a transaction_id
+            if ($bankTx->transaction_id) {
+                $seed = $Transactions->find()
+                    ->where(['Transactions.id' => $bankTx->transaction_id])
+                    ->first();
+                if ($seed && !empty($seed->transaction_group)) {
+                    $Transactions->deleteAll(['transaction_group' => $seed->transaction_group]);
                 }
+            }
 
-                // Final safety reset in case no entries were found to delete
-                $bankTx->set('reconciled', false);
-                $bankTx->set('transaction_id', null);
-                $this->BankTransactions->saveOrFail($bankTx);
-            });
+            // Reset bank line
+            $bankTx->reconciled    = 0;
+            $bankTx->transaction_id = null;
+            $BankTransactions->save($bankTx);
 
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => true, 'message' => 'Unreconciled successfully']));
+            return true;
+        });
 
-        } catch (\Exception $e) {
-            return $this->response->withStatus(500)->withStringBody(json_encode(['message' => 'Unreconcile failed: ' . $e->getMessage()]));
+        if ($result) {
+            $this->set(['success' => true, 'message' => 'Unreconciled successfully.']);
+        } else {
+            $this->set(['success' => false, 'message' => 'Unreconcile failed.']);
         }
+
+        return null;
     }
 
-    /**
-     * AJAX: Delete Transaction
-     */
-    public function apiDelete()
+    // -----------------------------------------------------------------------
+    // STANDARD CRUD (add/view/edit/delete kept for admin use)
+    // -----------------------------------------------------------------------
+
+    public function view(int $id)
+    {
+        $user      = $this->Authentication->getIdentity();
+        $bankTx = $this->fetchTable('BankTransactions')
+            ->get($id, contain: ['BankAccounts', 'SystemTransactions']);
+        $this->set(compact('bankTx'));
+    }
+
+    public function add()
+    {
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $bankTransaction  = $BankTransactions->newEmptyEntity();
+
+        if ($this->request->is('post')) {
+            $data['company_id'] = $this->request->getAttribute('company_id');
+            $bankTransaction = $BankTransactions->patchEntity($bankTransaction, $data);
+            if ($BankTransactions->save($bankTransaction)) {
+                $this->Flash->success(__('Bank transaction saved.'));
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('Could not save transaction.'));
+        }
+
+        $this->set(compact('bankTransaction'));
+    }
+
+    public function edit(int $id)
+    {
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $bankTransaction  = $BankTransactions->get($id);
+
+        if ($this->request->is(['post', 'put'])) {
+            $bankTransaction = $BankTransactions->patchEntity($bankTransaction, $this->request->getData());
+            if ($BankTransactions->save($bankTransaction)) {
+                $this->Flash->success(__('Bank transaction saved.'));
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('Could not save transaction.'));
+        }
+
+        $this->set(compact('bankTransaction'));
+    }
+
+    public function delete(int $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $id = $this->request->getData('id');
-        
-        if (!$id) {
-            return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Missing ID']));
+        $BankTransactions = $this->fetchTable('BankTransactions');
+        $bankTransaction  = $BankTransactions->find()
+            ->where(['BankTransactions.id' => $id, 'BankTransactions.company_id' => $this->request->getAttribute('company_id')])
+            ->first();
+
+        if ($bankTransaction && $BankTransactions->delete($bankTransaction)) {
+            $this->Flash->success(__('Deleted.'));
+        } else {
+            $this->Flash->error(__('Could not delete.'));
         }
 
-        $bankTx = $this->BankTransactions->find()->where(['id' => $id])->first();
-        if (!$bankTx) {
-            return $this->response->withStatus(404)->withStringBody(json_encode(['message' => 'Transaction not found']));
-        }
-        
-        if ($bankTx->reconciled) {
-             return $this->response->withStatus(400)->withStringBody(json_encode(['message' => 'Cannot delete a reconciled transaction. Unreconcile it first.']));
-        }
-
-        if ($this->BankTransactions->delete($bankTx)) {
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => true, 'message' => 'Deleted successfully']));
-        }
-
-        return $this->response->withStatus(500)->withStringBody(json_encode(['message' => 'Delete failed']));
-    }
-
-    /**
-     * AJAX Endpoint to handle bulk actions specialized for Bank Transactions
-     */
-    public function bulkAction()
-    {
-        $this->request->allowMethod(['post', 'ajax']);
-        $data = $this->request->getData();
-        $ids = $data['ids'] ?? [];
-        $action = $data['action'] ?? '';
-        
-        if (empty($ids)) {
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => false, 'message' => 'No records selected.']));
-        }
-
-        try {
-            if ($action === 'delete') {
-                $reconciledCount = $this->BankTransactions->find()
-                    ->where(['id IN' => $ids, 'reconciled' => true])
-                    ->count();
-                
-                if ($reconciledCount > 0) {
-                    return $this->response->withType('application/json')
-                        ->withStringBody(json_encode([
-                            'success' => false, 
-                            'message' => "Cannot delete $reconciledCount reconciled transactions. Please unreconcile them first."
-                        ]));
-                }
-
-                $entities = $this->BankTransactions->find()->where(['id IN' => $ids])->all();
-                if ($this->BankTransactions->deleteMany($entities)) {
-                    return $this->response->withType('application/json')
-                        ->withStringBody(json_encode(['success' => true, 'message' => count($ids) . ' records deleted.']));
-                }
-            } elseif ($action === 'update') {
-                // For bank transactions, we might want to prevent bulk updates of certain fields if reconciled
-                $field = $data['field'] ?? '';
-                $value = $data['value'] ?? null;
-
-                $reconciledCount = $this->BankTransactions->find()
-                    ->where(['id IN' => $ids, 'reconciled' => true])
-                    ->count();
-
-                if ($reconciledCount > 0 && in_array($field, ['amount', 'date'])) {
-                    return $this->response->withType('application/json')
-                        ->withStringBody(json_encode([
-                            'success' => false, 
-                            'message' => "Cannot update '$field' for reconciled transactions."
-                        ]));
-                }
-
-                return parent::bulkAction(); // Fallback to generic if checks pass
-            }
-        } catch (\Exception $e) {
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => false, 'message' => $e->getMessage()]));
-        }
-
-        return parent::bulkAction();
-    }
-
-    public function downloadTemplate()
-    {
-        $fileName = 'bank_transactions_template.csv';
-        $header = ['Date', 'Description', 'Amount', 'Reference'];
-        $sampleData = [
-            [date('d/m/Y'), 'Sample Credit (Customer Payment)', '500.00', 'REF001'],
-            [date('d/m/Y'), 'Sample Debit (Supplier Payment)', '-250.00', 'REF002']
-        ];
-        
-        $handle = fopen('php://temp', 'r+');
-        fputcsv($handle, $header);
-        foreach ($sampleData as $row) {
-            fputcsv($handle, $row);
-        }
-        rewind($handle);
-        $csv = stream_get_contents($handle);
-        fclose($handle);
-        
-        $this->response = $this->response->withType('text/csv')
-            ->withDownload($fileName)
-            ->withStringBody($csv);
-
-        return $this->response;
+        return $this->redirect(['action' => 'index']);
     }
 }

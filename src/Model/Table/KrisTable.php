@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Kris Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\RisksTable&\Cake\ORM\Association\BelongsTo $Risks
  *
@@ -47,6 +48,7 @@ class KrisTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('TenantAware');
 
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',

@@ -3,117 +3,87 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Utility\ZimraMapping;
+use Cake\ORM\TableRegistry;
 
 /**
  * ZimraReports Controller
+ *
+ * ZIMRA VAT3 and related report generation for submission to ZIMRA.
  */
 class ZimraReportsController extends AppController
 {
     /**
-     * Index method
+     * ZIMRA reports index — list all available reports.
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return void
      */
     public function index()
     {
-        $payPeriods = $this->fetchTable('PayPeriods')->find('list', [
-            'valueField' => function($row) {
-                return $row->name;
-            },
-            'order' => ['start_date' => 'DESC']
-        ])->toArray();
-        
+        $companyId = $this->request->getAttribute('company_id');
+
+        $PayPeriods = TableRegistry::getTableLocator()->get('PayPeriods');
+        $payPeriods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
+            ->where(['PayPeriods.company_id' => $companyId])
+            ->order(['PayPeriods.start_date' => 'DESC'])
+            ->all();
+
         $this->set(compact('payPeriods'));
     }
 
     /**
-     * Generate method
+     * Generate a ZIMRA report (VAT3, etc.).
+     *
+     * @return void
      */
     public function generate()
     {
-        if ($this->request->is('post') || $this->request->getQuery('pay_period_id')) {
-            $payPeriodId = $this->request->getData('pay_period_id') ?? $this->request->getQuery('pay_period_id');
-            
-            $payPeriod = $this->fetchTable('PayPeriods')->get($payPeriodId);
-            
-            // Build aggregations here...
-            $reportData = $this->buildReportData((int)$payPeriodId);
-            
-            $this->set(compact('payPeriod', 'reportData'));
-        } else {
-            return $this->redirect(['action' => 'index']);
-        }
-    }
+        $companyId = $this->request->getAttribute('company_id');
 
-    private function buildReportData(int $payPeriodId): array
-    {
-        $data = [];
-        
-        $payslips = $this->fetchTable('Payslips')->find()
-            ->where(['pay_period_id' => $payPeriodId])
-            ->contain([
-                'Employees',
-                'PayslipItems'
-            ])
+        $PayPeriods = TableRegistry::getTableLocator()->get('PayPeriods');
+        $periods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
+            ->where(['PayPeriods.company_id' => $companyId])
+            ->order(['PayPeriods.start_date' => 'DESC'])
             ->all();
 
-        // Load mappings
-        $earnings = $this->fetchTable('Earnings')->find()->all()->combine('name', 'zimra_mapping')->toArray();
-        $deductions = $this->fetchTable('Deductions')->find()->all()->combine('name', 'zimra_mapping')->toArray();
+        $startDate = $this->request->getQuery('start_date', date('Y-01-01'));
+        $endDate   = $this->request->getQuery('end_date', date('Y-m-d'));
+        $reportType = $this->request->getQuery('type', 'VAT3');
 
-        foreach ($payslips as $payslip) {
-            $employee = $payslip->employee;
-            
-            $row = [
-                'TIN' => $employee->tax_number,
-                'ID/Passport Number' => $employee->national_identity ?: $employee->employee_code,
-                'Employee Name' => $employee->first_name . ' ' . $employee->last_name,
-                'Currency' => 'Mixed', // Wait, usually the employee has a base currency. ZIMRA separates USD and ZWG.
-            ];
+        // Gather transaction data for the report
+        $conn = TableRegistry::getTableLocator()->get('Transactions')->getConnection();
 
-            // Initialize all amounts to 0
-            $options = ZimraMapping::getOptions();
-            foreach ($options as $key => $label) {
-                $row[$label . ' USD'] = 0.0;
-                $row[$label . ' ZWG'] = 0.0;
-            }
-            
-            // Credits are per employee
-            // "Current Blind persons credit USD"
-            $row['Current Blind persons credit USD'] = $employee->is_blind ? 75.0 : 0.0;
-            $row['Current Blind persons credit ZWG'] = 0.0;
-            $row['Current Disabled persons credit USD'] = $employee->disabled ? 75.0 : 0.0;
-            $row['Current Disabled persons credit ZWG'] = 0.0;
-            $row['Current Elderly person credit USD'] = $employee->is_elderly ? 75.0 : 0.0;
-            $row['Current Elderly person credit ZWG'] = 0.0;
+        // Standard output / sales tax collected (Credits to Income accounts)
+        $outputSql = "SELECT SUM(t.amount) as total
+                      FROM transactions t
+                      JOIN accounts a ON a.id = t.account_id
+                      WHERE t.company_id = :cid
+                        AND t.date BETWEEN :start AND :end
+                        AND t.type IN ('Credit','2')
+                        AND a.type IN ('Income','Revenue')";
 
-            foreach ($payslip->payslip_items as $item) {
-                $mapLabel = null;
-                $currencySuffix = ($item->currency === 'USD') ? ' USD' : ' ZWG';
+        $inputSql  = "SELECT SUM(t.amount) as total
+                      FROM transactions t
+                      JOIN accounts a ON a.id = t.account_id
+                      WHERE t.company_id = :cid
+                        AND t.date BETWEEN :start AND :end
+                        AND t.type IN ('Debit','1')
+                        AND a.type = 'Expense'";
 
-                if ($item->item_type === 'Earning' && isset($earnings[$item->name]) && $earnings[$item->name]) {
-                    $key = $earnings[$item->name];
-                    $mapLabel = $options[$key] ?? null;
-                } elseif ($item->item_type === 'Deduction' && isset($deductions[$item->name]) && $deductions[$item->name]) {
-                    $key = $deductions[$item->name];
-                    $mapLabel = $options[$key] ?? null;
-                } elseif ($item->item_type === 'Tax') {
-                    if ($item->name === 'NSSA') $mapLabel = 'Current NSSA Contributions';
-                    if ($item->name === 'Pension') $mapLabel = 'Current Pension Contributions';
-                }
+        $outputStmt = $conn->execute($outputSql, [':cid' => $companyId, ':start' => $startDate, ':end' => $endDate]);
+        $inputStmt  = $conn->execute($inputSql,  [':cid' => $companyId, ':start' => $startDate, ':end' => $endDate]);
 
-                if ($mapLabel) {
-                    $column = $mapLabel . $currencySuffix;
-                    if (isset($row[$column])) {
-                        $row[$column] += (float)$item->amount;
-                    }
-                }
-            }
-            
-            $data[] = $row;
-        }
+        $outputTotal = (float)($outputStmt->fetch('assoc')['total'] ?? 0);
+        $inputTotal  = (float)($inputStmt->fetch('assoc')['total'] ?? 0);
 
-        return $data;
+        // VAT3 at 15% standard rate
+        $vatRate     = 0.15;
+        $outputVat   = $outputTotal * $vatRate;
+        $inputVat    = $inputTotal  * $vatRate;
+        $netVat      = $outputVat - $inputVat;
+
+        $this->set(compact(
+            'periods', 'startDate', 'endDate', 'reportType',
+            'outputTotal', 'inputTotal', 'outputVat', 'inputVat', 'netVat', 'vatRate'
+        ));
     }
 }

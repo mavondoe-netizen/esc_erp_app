@@ -116,3 +116,4 @@ class PermissionsTable extends Table
         return $rules;
     }
 }
+

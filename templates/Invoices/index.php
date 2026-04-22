@@ -7,13 +7,26 @@
 <div class="invoices index content">
     <?= $this->Html->link(__('New Invoice'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('Invoices') ?></h3>
+    <div class="table-controls" style="margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; border-radius: 8px;">
+        <?= $this->Form->create(null, ['type' => 'get', 'class' => 'row']) ?>
+        <div class="column"><?= $this->Form->control('status', ['options' => ['' => 'All Statuses', 'Draft' => 'Draft', 'Sent' => 'Sent', 'Paid' => 'Paid'], 'value' => $this->request->getQuery('status')]) ?></div>
+        <div class="column"><?= $this->Form->control('contact_id', ['options' => $customers, 'empty' => 'All Clients', 'label' => 'Client (Contact)', 'value' => $this->request->getQuery('contact_id')]) ?></div>
+        <div class="column"><?= $this->Form->control('start_date', ['type' => 'date', 'value' => $this->request->getQuery('start_date')]) ?></div>
+        <div class="column"><?= $this->Form->control('end_date', ['type' => 'date', 'value' => $this->request->getQuery('end_date')]) ?></div>
+        <div class="column" style="display: flex; align-items: flex-end;">
+            <?= $this->Form->button(__('Filter'), ['class' => 'button']) ?>
+            <?= $this->Html->link(__('Reset'), ['action' => 'index'], ['class' => 'button secondary', 'style' => 'margin-left: 10px;']) ?>
+        </div>
+        <?= $this->Form->end() ?>
+    </div>
+
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('date') ?></th>
-                    <th><?= $this->Paginator->sort('customer_id') ?></th>
+                    <th><?= $this->Paginator->sort('customer_id', 'Client') ?></th>
                     <th><?= $this->Paginator->sort('currency') ?></th>
                     <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort('status') ?></th>

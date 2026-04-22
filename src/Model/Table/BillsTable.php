@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Bills Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\SuppliersTable&\Cake\ORM\Association\BelongsTo $Suppliers
  * @property \App\Model\Table\TransactionsTable&\Cake\ORM\Association\BelongsToMany $Transactions
  *
@@ -61,6 +62,9 @@ class BillsTable extends Table
          $this->hasMany('Accounts', [
             'foreignKey' => 'account_id',
         ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
+        ]);
     }
 
     /**
@@ -110,6 +114,7 @@ class BillsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['supplier_id'], 'Suppliers'), ['errorField' => 'supplier_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

@@ -25,6 +25,7 @@ use Cake\ORM\Entity;
  * @property string|null $notes
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Loan $loan
  * @property \App\Model\Entity\Account $account
@@ -55,6 +56,7 @@ class LoanRepayment extends Entity
         'processed_by' => true,
         'allocation_json' => true,
         'notes' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'loan' => true,

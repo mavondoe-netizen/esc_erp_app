@@ -18,6 +18,7 @@ use Cake\ORM\Entity;
  * @property string|null $notes
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Loan $loan
  * @property \App\Model\Entity\Employee $employee
@@ -41,6 +42,7 @@ class LoanDeduction extends Entity
         'status' => true,
         'start_date' => true,
         'notes' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'loan' => true,

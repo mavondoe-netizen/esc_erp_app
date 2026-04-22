@@ -27,6 +27,8 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\Payslip>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Payslip> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Payslip>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Payslip>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\Payslip>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Payslip> deleteManyOrFail(iterable $entities, array $options = [])
+ *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class PayslipsTable extends Table
 {
@@ -58,6 +60,9 @@ class PayslipsTable extends Table
             'foreignKey' => 'payslip_id',
             'dependent' => true,
             'cascadeCallbacks' => true,
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -194,7 +199,20 @@ class PayslipsTable extends Table
     {
         $rules->add($rules->existsIn(['employee_id'], 'Employees'), ['errorField' => 'employee_id']);
         $rules->add($rules->existsIn(['pay_period_id'], 'PayPeriods'), ['errorField' => 'pay_period_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
         $rules->add($rules->isUnique(['employee_id', 'pay_period_id'], 'This employee already has a payslip for this pay period.'));
+
+        // Rule to ensure company_id matches employee's company_id
+        $rules->add(function ($entity, $options) {
+            $employee = $this->Employees->get($entity->employee_id);
+            if ($entity->company_id !== $employee->company_id) {
+                return false;
+            }
+            return true;
+        }, 'companyMismatch', [
+            'errorField' => 'company_id',
+            'message' => 'The payslip must belong to the same company as the employee.'
+        ]);
 
         return $rules;
     }

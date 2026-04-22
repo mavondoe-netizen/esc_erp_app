@@ -113,3 +113,4 @@ class AuditsTable extends Table
         return $rules;
     }
 }
+

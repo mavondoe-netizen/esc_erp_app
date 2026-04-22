@@ -17,7 +17,8 @@ class RolesController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Roles')->find();
+        $query = $this->Roles->find()
+            ->contain(['Companies']);
         $roles = $this->paginate($query);
 
         $this->set(compact('roles'));
@@ -32,7 +33,7 @@ class RolesController extends AppController
      */
     public function view($id = null)
     {
-        $role = $this->fetchTable('Roles')->get($id, contain: ['Users', 'ApprovalFlows']);
+        $role = $this->Roles->get($id, contain: ['Companies', 'ApprovalFlows', 'Permissions', 'SalaryStructures', 'Users']);
         $this->set(compact('role'));
     }
 
@@ -43,18 +44,18 @@ class RolesController extends AppController
      */
     public function add()
     {
-        $role = $this->fetchTable('Roles')->newEmptyEntity();
+        $role = $this->Roles->newEmptyEntity();
         if ($this->request->is('post')) {
-            $role = $this->fetchTable('Roles')->patchEntity($role, $this->request->getData());
-            if ($this->fetchTable('Roles')->save($role)) {
+            $role = $this->Roles->patchEntity($role, $this->request->getData());
+            if ($this->Roles->save($role)) {
                 $this->Flash->success(__('The role has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The role could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('Roles')->Users->find('list', limit: 200)->all();
-        $this->set(compact('role', 'users'));
+        $companies = $this->Roles->Companies->find('list', limit: 200)->all();
+        $this->set(compact('role', 'companies'));
     }
 
     /**
@@ -66,18 +67,18 @@ class RolesController extends AppController
      */
     public function edit($id = null)
     {
-        $role = $this->fetchTable('Roles')->get($id, contain: ['Users']);
+        $role = $this->Roles->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $role = $this->fetchTable('Roles')->patchEntity($role, $this->request->getData());
-            if ($this->fetchTable('Roles')->save($role)) {
+            $role = $this->Roles->patchEntity($role, $this->request->getData());
+            if ($this->Roles->save($role)) {
                 $this->Flash->success(__('The role has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The role could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('Roles')->Users->find('list', limit: 200)->all();
-        $this->set(compact('role', 'users'));
+        $companies = $this->Roles->Companies->find('list', limit: 200)->all();
+        $this->set(compact('role', 'companies'));
     }
 
     /**
@@ -90,8 +91,8 @@ class RolesController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $role = $this->fetchTable('Roles')->get($id);
-        if ($this->fetchTable('Roles')->delete($role)) {
+        $role = $this->Roles->get($id);
+        if ($this->Roles->delete($role)) {
             $this->Flash->success(__('The role has been deleted.'));
         } else {
             $this->Flash->error(__('The role could not be deleted. Please, try again.'));

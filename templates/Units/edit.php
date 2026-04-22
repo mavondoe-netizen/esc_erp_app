@@ -26,6 +26,7 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('building_id', ['options' => $buildings]);
                     echo $this->Form->control('area');
+                    echo $this->Form->control('isvacant');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

@@ -11,7 +11,7 @@
         <?php foreach($groupedPayslips as $periodName => $periodPayslips): ?>
         <h4 style="margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #444;"><?= h($periodName) ?></h4>
         <div style="overflow-x: auto; max-width: 100%; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <table style="min-width: 1200px; background: #fff; border-radius: 4px;">
+            <table class="no-dt" style="min-width: 1200px; background: #fff; border-radius: 4px;">
                 <thead>
                     <tr>
                         <th rowspan="2" style="width: 40px;"><input type="checkbox" class="select-all-period"></th>

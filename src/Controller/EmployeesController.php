@@ -17,7 +17,8 @@ class EmployeesController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Employees')->find();
+        $query = $this->Employees->find()
+            ->contain(['Companies']);
         $employees = $this->paginate($query);
 
         $this->set(compact('employees'));
@@ -32,7 +33,7 @@ class EmployeesController extends AppController
      */
     public function view($id = null)
     {
-        $employee = $this->fetchTable('Employees')->get($id, contain: ['Payslips']);
+        $employee = $this->Employees->get($id, contain: ['Companies', 'Claims', 'LeaveApplications', 'LeaveBalances', 'Payslips', 'Users']);
         $this->set(compact('employee'));
     }
 
@@ -43,17 +44,29 @@ class EmployeesController extends AppController
      */
     public function add()
     {
-        $employee = $this->fetchTable('Employees')->newEmptyEntity();
+        $employee = $this->Employees->newEmptyEntity();
         if ($this->request->is('post')) {
-            $employee = $this->fetchTable('Employees')->patchEntity($employee, $this->request->getData());
-            if ($this->fetchTable('Employees')->save($employee)) {
+            $employee = $this->Employees->patchEntity($employee, $this->request->getData());
+            
+            if ($this->request->getQuery('popup')) {
+                if ($this->Employees->save($employee)) {
+                    $this->set('popupResult', [
+                        'id' => $employee->id, 
+                        'name' => ($employee->first_name . ' ' . $employee->last_name)
+                    ]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
+            }
+
+            if ($this->Employees->save($employee)) {
                 $this->Flash->success(__('The employee has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The employee could not be saved. Please, try again.'));
         }
-        $companies = $this->fetchTable('Employees')->Companies->find('list', limit: 200)->all();
+        $companies = $this->Employees->Companies->find('list', limit: 200)->all();
         $this->set(compact('employee', 'companies'));
     }
 
@@ -66,17 +79,17 @@ class EmployeesController extends AppController
      */
     public function edit($id = null)
     {
-        $employee = $this->fetchTable('Employees')->get($id, contain: []);
+        $employee = $this->Employees->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $employee = $this->fetchTable('Employees')->patchEntity($employee, $this->request->getData());
-            if ($this->fetchTable('Employees')->save($employee)) {
+            $employee = $this->Employees->patchEntity($employee, $this->request->getData());
+            if ($this->Employees->save($employee)) {
                 $this->Flash->success(__('The employee has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The employee could not be saved. Please, try again.'));
         }
-       $companies = $this->fetchTable('Employees')->Companies->find('list', limit: 200)->all();
+        $companies = $this->Employees->Companies->find('list', limit: 200)->all();
         $this->set(compact('employee', 'companies'));
     }
 
@@ -90,8 +103,8 @@ class EmployeesController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $employee = $this->fetchTable('Employees')->get($id);
-        if ($this->fetchTable('Employees')->delete($employee)) {
+        $employee = $this->Employees->get($id);
+        if ($this->Employees->delete($employee)) {
             $this->Flash->success(__('The employee has been deleted.'));
         } else {
             $this->Flash->error(__('The employee could not be deleted. Please, try again.'));

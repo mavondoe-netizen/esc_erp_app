@@ -17,8 +17,8 @@ class TasksController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Tasks')->find()
-            ->contain(['Users']);
+        $query = $this->Tasks->find()
+            ->contain(['Users', 'Companies']);
         $tasks = $this->paginate($query);
 
         $this->set(compact('tasks'));
@@ -33,7 +33,7 @@ class TasksController extends AppController
      */
     public function view($id = null)
     {
-        $task = $this->fetchTable('Tasks')->get($id, contain: ['Users']);
+        $task = $this->Tasks->get($id, contain: ['Users', 'Companies']);
         $this->set(compact('task'));
     }
 
@@ -44,18 +44,19 @@ class TasksController extends AppController
      */
     public function add()
     {
-        $task = $this->fetchTable('Tasks')->newEmptyEntity();
+        $task = $this->Tasks->newEmptyEntity();
         if ($this->request->is('post')) {
-            $task = $this->fetchTable('Tasks')->patchEntity($task, $this->request->getData());
-            if ($this->fetchTable('Tasks')->save($task)) {
+            $task = $this->Tasks->patchEntity($task, $this->request->getData());
+            if ($this->Tasks->save($task)) {
                 $this->Flash->success(__('The task has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The task could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('Tasks')->Users->find('list', limit: 200)->all();
-        $this->set(compact('task', 'users'));
+        $users = $this->Tasks->Users->find('list', limit: 200)->all();
+        $companies = $this->Tasks->Companies->find('list', limit: 200)->all();
+        $this->set(compact('task', 'users', 'companies'));
     }
 
     /**
@@ -67,18 +68,19 @@ class TasksController extends AppController
      */
     public function edit($id = null)
     {
-        $task = $this->fetchTable('Tasks')->get($id, contain: []);
+        $task = $this->Tasks->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $task = $this->fetchTable('Tasks')->patchEntity($task, $this->request->getData());
-            if ($this->fetchTable('Tasks')->save($task)) {
+            $task = $this->Tasks->patchEntity($task, $this->request->getData());
+            if ($this->Tasks->save($task)) {
                 $this->Flash->success(__('The task has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The task could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('Tasks')->Users->find('list', limit: 200)->all();
-        $this->set(compact('task', 'users'));
+        $users = $this->Tasks->Users->find('list', limit: 200)->all();
+        $companies = $this->Tasks->Companies->find('list', limit: 200)->all();
+        $this->set(compact('task', 'users', 'companies'));
     }
 
     /**
@@ -91,8 +93,8 @@ class TasksController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $task = $this->fetchTable('Tasks')->get($id);
-        if ($this->fetchTable('Tasks')->delete($task)) {
+        $task = $this->Tasks->get($id);
+        if ($this->Tasks->delete($task)) {
             $this->Flash->success(__('The task has been deleted.'));
         } else {
             $this->Flash->error(__('The task could not be deleted. Please, try again.'));

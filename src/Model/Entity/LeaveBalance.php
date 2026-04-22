@@ -16,6 +16,7 @@ use Cake\ORM\Entity;
  * @property string $days_taken
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Employee $employee
  * @property \App\Model\Entity\LeaveType $leave_type
@@ -39,6 +40,7 @@ class LeaveBalance extends Entity
         'days_taken' => true,
         'created' => true,
         'modified' => true,
+        'company_id' => true,
         'employee' => true,
         'leave_type' => true,
     ];

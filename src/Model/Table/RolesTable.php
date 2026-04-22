@@ -100,3 +100,4 @@ class RolesTable extends Table
         return $rules;
     }
 }
+

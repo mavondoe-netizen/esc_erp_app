@@ -29,6 +29,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\LeaveApplication>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\LeaveApplication> deleteManyOrFail(iterable $entities, array $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class LeaveApplicationsTable extends Table
 {
@@ -57,6 +58,9 @@ class LeaveApplicationsTable extends Table
         $this->belongsTo('LeaveTypes', [
             'foreignKey' => 'leave_type_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -100,6 +104,10 @@ class LeaveApplicationsTable extends Table
             ->maxLength('status', 20)
             ->notEmptyString('status');
 
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
+
         return $validator;
     }
 
@@ -114,6 +122,7 @@ class LeaveApplicationsTable extends Table
     {
         $rules->add($rules->existsIn(['employee_id'], 'Employees'), ['errorField' => 'employee_id']);
         $rules->add($rules->existsIn(['leave_type_id'], 'LeaveTypes'), ['errorField' => 'leave_type_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

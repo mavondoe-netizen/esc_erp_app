@@ -15,6 +15,11 @@ use Cake\ORM\Entity;
  * @property bool $pensionable
  * @property bool $nssa_applicable
  * @property string $calculation_type
+ * @property bool|null $gross_up
+ * @property string|null $taxable_percentage
+ * @property string|null $tax_free_amount
+ * @property string|null $zimra_mapping
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Account $account
  */
@@ -36,7 +41,11 @@ class Earning extends Entity
         'pensionable' => true,
         'nssa_applicable' => true,
         'calculation_type' => true,
-        'account' => true,
+        'gross_up' => true,
+        'taxable_percentage' => true,
+        'tax_free_amount' => true,
         'zimra_mapping' => true,
+        'company_id' => true,
+        'account' => true,
     ];
 }

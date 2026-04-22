@@ -3,219 +3,222 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Event\EventInterface;
+use Cake\ORM\TableRegistry;
 
 /**
  * Portal Controller
- * 
- * Employee Self-Service Portal — employees access their own data only.
- * Only accessible to users with the 'Employee' role.
+ *
+ * Employee Self-Service Portal — allows employees to view their own payslips,
+ * apply for leave, and manage their profile without access to the main ERP.
  */
 class PortalController extends AppController
 {
-    public function initialize(): void
-    {
-        parent::initialize();
-    }
-
-    public function beforeFilter(EventInterface $event)
-    {
-        parent::beforeFilter($event);
-
-        $identity = $this->request->getAttribute('identity');
-        if (!$identity) {
-            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-        }
-
-        // Only 'Employee' role users may access the portal
-        try {
-            $role = $this->fetchTable('Roles')->get($identity->role_id);
-            if (strtolower($role->name) !== 'employee') {
-                // Admins can also view their own portal if they have an employee_id
-                if (!$identity->employee_id) {
-                    $this->Flash->error('The Employee Portal is only accessible to employees.');
-                    return $this->redirect('/');
-                }
-            }
-        } catch (\Exception $e) {
-            return $this->redirect('/');
-        }
-    }
-
     /**
-     * Dashboard — overview of leave balance, latest payslip, pending applications
+     * Portal dashboard.
+     *
+     * @return void
      */
     public function dashboard()
     {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
+        $userId = $user->get('id');
 
-        $employee = $this->fetchTable('Employees')->get($employeeId, contain: ['EmployeeProfiles']);
-
-        // Latest payslip
-        $latestPayslip = $this->fetchTable('Payslips')->find()
-            ->where(['employee_id' => $employeeId])
-            ->contain(['PayPeriods'])
-            ->order(['generated_date' => 'DESC'])
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $userId, 'Employees.company_id' => $companyId])
             ->first();
 
-        // Leave balances this year
-        $year = (int)date('Y');
-        $leaveBalances = $this->fetchTable('LeaveBalances')->find()
-            ->where(['employee_id' => $employeeId, 'year' => $year])
-            ->contain(['LeaveTypes'])
-            ->all();
+        $leaveBalances = [];
+        $recentPayslips = [];
 
-        // Pending leave applications
-        $pendingLeave = $this->fetchTable('LeaveApplications')->find()
-            ->where(['employee_id' => $employeeId, 'status' => 'Pending'])
-            ->order(['created' => 'DESC'])
-            ->all();
+        if ($employee) {
+            $LeaveBalances = TableRegistry::getTableLocator()->get('LeaveBalances');
+            $leaveBalances = $LeaveBalances->find()
+                ->where(['LeaveBalances.employee_id' => $employee->id])
+                ->contain(['LeaveTypes'])
+                ->all();
 
-        $this->set(compact('employee', 'latestPayslip', 'leaveBalances', 'pendingLeave'));
+            $Payslips = TableRegistry::getTableLocator()->get('Payslips');
+            $recentPayslips = $Payslips->find()
+                ->where(['Payslips.employee_id' => $employee->id])
+                ->order(['Payslips.pay_date' => 'DESC'])
+                ->limit(6)
+                ->all();
+        }
+
+        $this->set(compact('employee', 'leaveBalances', 'recentPayslips'));
     }
 
     /**
-     * Payslips — employee's own payslips only
+     * View employee's payslips.
+     *
+     * @return void
      */
     public function payslips()
     {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
 
-        $payslips = $this->fetchTable('Payslips')->find()
-            ->where(['employee_id' => $employeeId])
-            ->contain(['PayPeriods'])
-            ->order(['generated_date' => 'DESC'])
-            ->all();
-
-        $this->set(compact('payslips'));
-    }
-
-    /**
-     * Payslip View — validates payslip belongs to the logged-in employee
-     */
-    public function payslipView($id = null)
-    {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
-
-        $payslip = $this->fetchTable('Payslips')->find()
-            ->where(['id' => $id, 'employee_id' => $employeeId])
-            ->contain(['Employees', 'PayPeriods', 'PayslipItems'])
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
             ->first();
 
-        if (!$payslip) {
-            $this->Flash->error('Payslip not found or you do not have access to it.');
-            return $this->redirect(['action' => 'payslips']);
+        $payslips = [];
+        if ($employee) {
+            $Payslips = TableRegistry::getTableLocator()->get('Payslips');
+            $payslips = $Payslips->find()
+                ->where(['Payslips.employee_id' => $employee->id])
+                ->order(['Payslips.pay_date' => 'DESC'])
+                ->all();
         }
 
-        $year = (int)$payslip->generated_date->format('Y');
-        $leaveBalances = $this->fetchTable('LeaveBalances')->find()
-            ->where(['employee_id' => $employeeId, 'year' => $year])
-            ->contain(['LeaveTypes'])
-            ->all();
-
-        // Get company for branding
-        $companyId = $identity->company_id;
-        $company = $this->fetchTable('Companies')->get($companyId);
-
-        $this->set(compact('payslip', 'leaveBalances', 'company'));
+        $this->set(compact('payslips', 'employee'));
     }
 
     /**
-     * Leave Apply — pre-fills employee_id, prevents manipulation
+     * View a single payslip.
+     *
+     * @param int $id Payslip ID.
+     * @return void
+     */
+    public function payslipView(int $id)
+    {
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
+
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
+            ->first();
+
+        if (!$employee) {
+            throw new \Cake\Http\Exception\NotFoundException('Employee not found.');
+        }
+
+        $Payslips = TableRegistry::getTableLocator()->get('Payslips');
+        $payslip = $Payslips->get($id, contain: ['Employees', 'PayPeriods']);
+
+        if ((int)$payslip->employee_id !== (int)$employee->id) {
+            throw new \Cake\Http\Exception\ForbiddenException('Access denied.');
+        }
+
+        $this->set(compact('payslip', 'employee'));
+    }
+
+    /**
+     * Apply for leave.
+     *
+     * @return \Cake\Http\Response|null
      */
     public function leaveApply()
     {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
 
-        $leaveApplication = $this->fetchTable('LeaveApplications')->newEmptyEntity();
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
+            ->first();
+
+        if (!$employee) {
+            $this->Flash->error('No employee profile found for your account.');
+            return $this->redirect(['action' => 'dashboard']);
+        }
+
+        $LeaveApplications = TableRegistry::getTableLocator()->get('LeaveApplications');
+        $leaveApplication = $LeaveApplications->newEmptyEntity();
 
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            // Force employee_id from session — cannot be overridden
-            $data['employee_id'] = $employeeId;
-            $data['status'] = 'Pending';
+            $data['employee_id'] = $employee->id;
+            $leaveApplication = $LeaveApplications->patchEntity($leaveApplication, $data);
 
-            // Calculate days_requested
-            if (!empty($data['start_date']) && !empty($data['end_date'])) {
-                $start = new \DateTime($data['start_date']);
-                $end = new \DateTime($data['end_date']);
-                $data['days_requested'] = max(1, (int)$start->diff($end)->days + 1);
-            }
-
-            $leaveApplication = $this->fetchTable('LeaveApplications')->patchEntity($leaveApplication, $data);
-            if ($this->fetchTable('LeaveApplications')->save($leaveApplication)) {
-                $this->Flash->success('Your leave application has been submitted successfully.');
+            if ($LeaveApplications->save($leaveApplication)) {
+                $this->Flash->success('Leave application submitted successfully.');
                 return $this->redirect(['action' => 'leaveHistory']);
             }
-            $this->Flash->error('Could not submit application. Please check your input.');
+            $this->Flash->error('Could not submit leave application. Please check for errors.');
         }
 
-        $leaveTypes = $this->fetchTable('LeaveTypes')->find('list')->all();
-
-        // Current balances for display
-        $year = (int)date('Y');
-        $leaveBalances = $this->fetchTable('LeaveBalances')->find()
-            ->where(['employee_id' => $employeeId, 'year' => $year])
-            ->contain(['LeaveTypes'])
+        $LeaveTypes = TableRegistry::getTableLocator()->get('LeaveTypes');
+        $leaveTypes = $LeaveTypes->find('list', keyField: 'id', valueField: 'name')
+            ->where(['LeaveTypes.company_id' => $companyId])
             ->all();
 
-        $this->set(compact('leaveApplication', 'leaveTypes', 'leaveBalances'));
+        $this->set(compact('leaveApplication', 'leaveTypes', 'employee'));
     }
 
     /**
-     * Leave History — employee's own applications
+     * Leave application history.
+     *
+     * @return void
      */
     public function leaveHistory()
     {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
 
-        $applications = $this->fetchTable('LeaveApplications')->find()
-            ->where(['employee_id' => $employeeId])
-            ->contain(['LeaveTypes'])
-            ->order(['created' => 'DESC'])
-            ->all();
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
+            ->first();
 
-        $this->set(compact('applications'));
+        $leaveApplications = [];
+        if ($employee) {
+            $LeaveApplications = TableRegistry::getTableLocator()->get('LeaveApplications');
+            $leaveApplications = $LeaveApplications->find()
+                ->where(['LeaveApplications.employee_id' => $employee->id])
+                ->contain(['LeaveTypes'])
+                ->order(['LeaveApplications.created' => 'DESC'])
+                ->all();
+        }
+
+        $this->set(compact('leaveApplications', 'employee'));
     }
 
     /**
-     * Leave Balances — current balance summary
+     * Leave balances.
+     *
+     * @return void
      */
     public function leaveBalances()
     {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
 
-        $year = (int)date('Y');
-        $leaveBalances = $this->fetchTable('LeaveBalances')->find()
-            ->where(['employee_id' => $employeeId, 'year' => $year])
-            ->contain(['LeaveTypes'])
-            ->all();
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
+            ->first();
 
-        $this->set(compact('leaveBalances', 'year'));
+        $leaveBalances = [];
+        if ($employee) {
+            $LeaveBalances = TableRegistry::getTableLocator()->get('LeaveBalances');
+            $leaveBalances = $LeaveBalances->find()
+                ->where(['LeaveBalances.employee_id' => $employee->id])
+                ->contain(['LeaveTypes'])
+                ->all();
+        }
+
+        $this->set(compact('leaveBalances', 'employee'));
     }
 
     /**
-     * Profile — view own employee record
+     * Employee profile.
+     *
+     * @return \Cake\Http\Response|null
      */
     public function profile()
     {
-        $this->viewBuilder()->setLayout('portal');
-        $identity = $this->request->getAttribute('identity');
-        $employeeId = $identity->employee_id;
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
 
-        $employee = $this->fetchTable('Employees')->get($employeeId, contain: ['EmployeeProfiles']);
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+        $employee = $Employees->find()
+            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
+            ->first();
 
         $this->set(compact('employee'));
     }

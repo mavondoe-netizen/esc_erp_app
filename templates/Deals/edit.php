@@ -29,17 +29,33 @@
                     echo $this->Form->control('date');
                     echo $this->Form->control('type');
                     echo $this->Form->control('value');
-                    echo $this->Form->control('stage');
-                    echo $this->Form->control('contact_id', ['options' => $contacts, 'empty' => true]);
-                    echo $this->Form->control('status');
-                    echo $this->Form->control('submitted_by');
-                    echo $this->Form->control('submitted_at', ['empty' => true]);
-                    echo $this->Form->control('approved_by');
-                    echo $this->Form->control('approved_at', ['empty' => true]);
-                    echo $this->Form->control('rejected_by');
-                    echo $this->Form->control('rejected_at', ['empty' => true]);
-                    echo $this->Form->control('rejection_reason');
-                    echo $this->Form->control('company_id', ['options' => $companies, 'empty' => true]);
+                    echo $this->Form->control('stage', ['options' => [
+                        'Lead' => 'Lead',
+                        'Qualified' => 'Qualified',
+                        'Proposal' => 'Proposal',
+                        'Negotiation' => 'Negotiation',
+                        'Closed Won' => 'Closed Won',
+                        'Closed Lost' => 'Closed Lost'
+                    ]]);
+                ?>
+                <div class="quick-add-group">
+                    <div class="form-control-wrapper">
+                        <?= $this->Form->control('contact_id', ['options' => $contacts, 'id' => 'contact-id', 'empty' => true]) ?>
+                    </div>
+                    <button type="button" class="global-quick-add-btn button button-outline" data-url="/contacts/index?popup=1" data-target-dropdown="contact-id" title="Search/Pick Contact">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <button type="button" class="global-quick-add-btn button button-outline" data-url="/contacts/add?popup=1" data-target-dropdown="contact-id" title="Add New Contact">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <?php
+                    echo $this->Form->control('status', ['options' => [
+                        'Active' => 'Active',
+                        'On Hold' => 'On Hold',
+                        'Completed' => 'Completed',
+                        'Cancelled' => 'Cancelled'
+                    ]]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

@@ -17,8 +17,8 @@ class InvoiceItemsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('InvoiceItems')->find()
-            ->contain(['Invoices', 'Accounts']);
+        $query = $this->InvoiceItems->find()
+            ->contain(['Invoices', 'Accounts', 'Products']);
         $invoiceItems = $this->paginate($query);
 
         $this->set(compact('invoiceItems'));
@@ -33,7 +33,7 @@ class InvoiceItemsController extends AppController
      */
     public function view($id = null)
     {
-        $invoiceItem = $this->fetchTable('InvoiceItems')->get($id, contain: ['Invoices', 'Accounts']);
+        $invoiceItem = $this->InvoiceItems->get($id, contain: ['Invoices', 'Accounts', 'Products']);
         $this->set(compact('invoiceItem'));
     }
 
@@ -44,20 +44,20 @@ class InvoiceItemsController extends AppController
      */
     public function add()
     {
-        $invoiceItem = $this->fetchTable('InvoiceItems')->newEmptyEntity();
+        $invoiceItem = $this->InvoiceItems->newEmptyEntity();
         if ($this->request->is('post')) {
-            $invoiceItem = $this->fetchTable('InvoiceItems')->patchEntity($invoiceItem, $this->request->getData());
-            if ($this->fetchTable('InvoiceItems')->save($invoiceItem)) {
+            $invoiceItem = $this->InvoiceItems->patchEntity($invoiceItem, $this->request->getData());
+            if ($this->InvoiceItems->save($invoiceItem)) {
                 $this->Flash->success(__('The invoice item has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The invoice item could not be saved. Please, try again.'));
         }
-        $invoices = $this->fetchTable('InvoiceItems')->Invoices->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('InvoiceItems')->Accounts->find('list', limit: 200)->all();
-        
-        $this->set(compact('invoiceItem', 'invoices', 'accounts'));
+        $invoices = $this->InvoiceItems->Invoices->find('list', limit: 200)->all();
+        $accounts = $this->InvoiceItems->Accounts->find('list', limit: 200)->all();
+        $products = $this->InvoiceItems->Products->find('list', limit: 200)->all();
+        $this->set(compact('invoiceItem', 'invoices', 'accounts', 'products'));
     }
 
     /**
@@ -69,19 +69,20 @@ class InvoiceItemsController extends AppController
      */
     public function edit($id = null)
     {
-        $invoiceItem = $this->fetchTable('InvoiceItems')->get($id, contain: []);
+        $invoiceItem = $this->InvoiceItems->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $invoiceItem = $this->fetchTable('InvoiceItems')->patchEntity($invoiceItem, $this->request->getData());
-            if ($this->fetchTable('InvoiceItems')->save($invoiceItem)) {
+            $invoiceItem = $this->InvoiceItems->patchEntity($invoiceItem, $this->request->getData());
+            if ($this->InvoiceItems->save($invoiceItem)) {
                 $this->Flash->success(__('The invoice item has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The invoice item could not be saved. Please, try again.'));
         }
-        $invoices = $this->fetchTable('InvoiceItems')->Invoices->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('InvoiceItems')->Accounts->find('list', limit: 200)->all();
-        $this->set(compact('invoiceItem', 'invoices', 'accounts'));
+        $invoices = $this->InvoiceItems->Invoices->find('list', limit: 200)->all();
+        $accounts = $this->InvoiceItems->Accounts->find('list', limit: 200)->all();
+        $products = $this->InvoiceItems->Products->find('list', limit: 200)->all();
+        $this->set(compact('invoiceItem', 'invoices', 'accounts', 'products'));
     }
 
     /**
@@ -94,8 +95,8 @@ class InvoiceItemsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $invoiceItem = $this->fetchTable('InvoiceItems')->get($id);
-        if ($this->fetchTable('InvoiceItems')->delete($invoiceItem)) {
+        $invoiceItem = $this->InvoiceItems->get($id);
+        if ($this->InvoiceItems->delete($invoiceItem)) {
             $this->Flash->success(__('The invoice item has been deleted.'));
         } else {
             $this->Flash->error(__('The invoice item could not be deleted. Please, try again.'));

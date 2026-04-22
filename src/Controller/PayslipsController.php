@@ -3,263 +3,369 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\PayrollService;
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Text;
 
 /**
  * Payslips Controller
  *
- * @property \App\Model\Table\PayslipsTable $Payslips
+ * Payroll management: payslip generation per pay period, individual
+ * payslip CRUD, and the ZIMRA PAYE summary.
  */
 class PayslipsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
     public function index()
     {
-        $query = $this->fetchTable('Payslips')->find()
-            ->contain([
-                'Employees', 
-                'PayPeriods', 
-                // Contain items and order them nicely for display
-                'PayslipItems' => function($q) {
-                    return $q->order(['item_type' => 'ASC', 'name' => 'ASC']);
-                }
-            ])
-            ->order(['PayPeriods.start_date' => 'DESC', 'Employees.employee_code' => 'ASC']);
-            
-        $payslips = $this->paginate($query);
+        $companyId = $this->request->getAttribute('company_id');
 
-        // Pre-calculate unique dynamic columns across the paginated set
-        $dynamicColumns = [
-            'Earnings' => [],
-            'Deductions' => [],
-            'Taxes' => []
-        ];
+        $Payslips = $this->fetchTable('Payslips');
+        $conditions = [];
+
+        $periodId = $this->request->getQuery('pay_period_id');
+        if ($periodId) $conditions['Payslips.pay_period_id'] = (int)$periodId;
+
+        $query = $Payslips->find()
+            ->where($conditions)
+            ->contain(['Employees', 'PayPeriods', 'PayslipItems'])
+            ->order(['Payslips.pay_period_id' => 'DESC', 'Employees.first_name' => 'ASC', 'Employees.last_name' => 'ASC']);
+
+        $payslips = $this->paginate($query, ['limit' => 100]);
+
+        $groupedPayslips = [];
+        $dynamicColumns  = ['Earnings' => [], 'Deductions' => [], 'Taxes' => []];
 
         foreach ($payslips as $payslip) {
-            foreach ($payslip->payslip_items as $item) {
-                if ($item->item_type === 'Earning') {
-                    $dynamicColumns['Earnings'][$item->name] = $item->name;
-                } elseif ($item->item_type === 'Deduction') {
-                    $dynamicColumns['Deductions'][$item->name] = $item->name;
-                } elseif ($item->item_type === 'Tax') {
-                    $dynamicColumns['Taxes'][$item->name] = $item->name;
+            $periodName = $payslip->hasValue('pay_period') ? $payslip->pay_period->name : 'Unknown Period';
+            $groupedPayslips[$periodName][] = $payslip;
+
+            if (!empty($payslip->payslip_items)) {
+                foreach ($payslip->payslip_items as $item) {
+                    if ($item->item_type === 'Earning' && !in_array($item->name, $dynamicColumns['Earnings'])) {
+                        $dynamicColumns['Earnings'][] = $item->name;
+                    } elseif ($item->item_type === 'Deduction' && !in_array($item->name, $dynamicColumns['Deductions'])) {
+                        $dynamicColumns['Deductions'][] = $item->name;
+                    } elseif ($item->item_type === 'Tax' && !in_array($item->name, $dynamicColumns['Taxes'])) {
+                        $dynamicColumns['Taxes'][] = $item->name;
+                    }
                 }
             }
         }
 
-        // Sort them alphabetically for consistent UI rendering
-        asort($dynamicColumns['Earnings']);
-        asort($dynamicColumns['Deductions']);
-        asort($dynamicColumns['Taxes']);
-
-        $groupedPayslips = collection($payslips)->groupBy(function ($payslip) {
-            return $payslip->hasValue('pay_period') ? $payslip->pay_period->name : 'Unknown Period';
-        })->toArray();
-
-        $this->set(compact('payslips', 'groupedPayslips', 'dynamicColumns'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Payslip id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $payslip = $this->fetchTable('Payslips')->get($id, contain: ['Employees', 'PayPeriods', 'PayslipItems']);
-        
-        // Fetch Leave Balances for the Payslip Year
-        $year = (int)$payslip->generated_date->format('Y');
-        $leaveBalances = $this->fetchTable('LeaveBalances')->find()
-            ->where(['employee_id' => $payslip->employee_id, 'year' => $year])
-            ->contain(['LeaveTypes'])
+        $PayPeriods = $this->fetchTable('PayPeriods');
+        $payPeriods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
+            ->where(['PayPeriods.company_id' => $companyId])
+            ->order(['PayPeriods.start_date' => 'DESC'])
             ->all();
 
-        $this->set(compact('payslip', 'leaveBalances'));
+        $this->set(compact('payslips', 'groupedPayslips', 'dynamicColumns', 'payPeriods'));
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
+    public function view(int $id)
+    {
+        $payslip = $this->fetchTable('Payslips')
+            ->get($id, contain: ['Employees', 'PayPeriods', 'PayslipItems']);
+        $this->set(compact('payslip'));
+    }
+
     public function add()
     {
-        $payslip = $this->fetchTable('Payslips')->newEmptyEntity();
-        
-        // Auto-assign the globally active Current Pay Period
-        $activePeriod = $this->fetchTable('PayPeriods')->find()->where(['status' => 'Current'])->first();
-        if ($activePeriod) {
-            $payslip->pay_period_id = $activePeriod->id;
-        }
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Payslips = $this->fetchTable('Payslips');
+        $payslip  = $Payslips->newEmptyEntity();
 
         if ($this->request->is('post')) {
-            $payslip = $this->fetchTable('Payslips')->patchEntity($payslip, $this->request->getData(), ['associated' => ['PayslipItems']]);
-            if ($this->fetchTable('Payslips')->save($payslip)) {
-                $this->Flash->success(__('The payslip has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+            $data               = $this->request->getData();
+            $data['company_id'] = $companyId;
+            $payslip = $Payslips->patchEntity($payslip, $data, [
+                'associated' => ['PayslipItems']
+            ]);
+            if ($Payslips->save($payslip)) {
+                $this->Flash->success(__('Payslip saved.'));
+                return $this->redirect(['action' => 'view', $payslip->id]);
             }
-            \Cake\Log\Log::error('Payslip save failed in add: ' . print_r($payslip->getErrors(), true));
-            $this->Flash->error(__('The payslip could not be saved. Please, try again.'));
+            $this->Flash->error(__('Could not save payslip.'));
         }
-        $employees = $this->fetchTable('Payslips')->Employees->find('list', limit: 500)->where(['disabled' => 0])->all();
-        $payPeriods = $this->fetchTable('Payslips')->PayPeriods->find('list', limit: 200)->all();
-        $systemEarningsRecords = $this->fetchTable('Earnings')->find()->all();
-        $systemEarnings = [];
-        $earningsMetadata = [];
-        foreach ($systemEarningsRecords as $er) {
-            $systemEarnings[$er->name] = $er->name;
-            $earningsMetadata[$er->name] = [
-                'is_gross_up' => (bool)$er->gross_up,
-                'is_fringe' => (stripos($er->name, 'fringe') !== false || stripos($er->name, 'airtime') !== false)
-            ];
-        }
-        $systemDeductions = $this->fetchTable('Deductions')->find('list', valueField: 'name', keyField: 'name')->toArray();
-        $this->set(compact('payslip', 'employees', 'payPeriods', 'systemEarnings', 'earningsMetadata', 'systemDeductions'));
-    }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Payslip id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $payslip = $this->fetchTable('Payslips')->get($id, contain: ['PayslipItems', 'PayPeriods']);
+        [$employees, $payPeriods] = $this->_dropdowns($companyId);
         
-        // Compliance Firewall: Lock historical edits
-        if ($payslip->hasValue('pay_period') && $payslip->pay_period->get('status') === 'Previous') {
-            $this->Flash->error(__('This payslip belongs to a closed Pay Period and cannot be edited. Please reverse or issue an adjustment in the current period.'));
-            return $this->redirect(['action' => 'index']);
-        }
+        $systemEarnings = $this->fetchTable('Earnings')->find('list', valueField: 'name')->all()->toArray();
+        $systemDeductions = $this->fetchTable('Deductions')->find('list', valueField: 'name')->all()->toArray();
+        
+        $earningsMetadata = $this->fetchTable('Earnings')->find()
+            ->select(['name', 'gross_up', 'taxable'])
+            ->all()
+            ->indexBy('name')
+            ->toArray();
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $payslip = $this->fetchTable('Payslips')->patchEntity($payslip, $this->request->getData(), ['associated' => ['PayslipItems']]);
-            if ($this->fetchTable('Payslips')->save($payslip)) {
-                $this->Flash->success(__('The payslip has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            \Cake\Log\Log::error('Payslip save failed in edit: ' . print_r($payslip->getErrors(), true));
-            $this->Flash->error(__('The payslip could not be saved. Please, try again.'));
-        }
-        $employees = $this->fetchTable('Payslips')->Employees->find('list', limit: 500)->where(['disabled' => 0])->all();
-        $payPeriods = $this->fetchTable('Payslips')->PayPeriods->find('list', limit: 200)->all();
-        $systemEarningsRecords = $this->fetchTable('Earnings')->find()->all();
-        $systemEarnings = [];
-        $earningsMetadata = [];
-        foreach ($systemEarningsRecords as $er) {
-            $systemEarnings[$er->name] = $er->name;
-            $earningsMetadata[$er->name] = [
-                'is_gross_up' => (bool)$er->gross_up,
-                'is_fringe' => (stripos($er->name, 'fringe') !== false || stripos($er->name, 'airtime') !== false)
-            ];
-        }
-        $systemDeductions = $this->fetchTable('Deductions')->find('list', valueField: 'name', keyField: 'name')->toArray();
-        $this->set(compact('payslip', 'employees', 'payPeriods', 'systemEarnings', 'earningsMetadata', 'systemDeductions'));
+        $this->set(compact('payslip', 'employees', 'payPeriods', 'systemEarnings', 'systemDeductions', 'earningsMetadata'));
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Payslip id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
+    public function edit(int $id)
+    {
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Payslips = $this->fetchTable('Payslips');
+        $payslip  = $Payslips->get($id, contain: ['PayslipItems']);
+
+        if ($this->request->is(['post', 'put'])) {
+            $payslip = $Payslips->patchEntity($payslip, $this->request->getData(), [
+                'associated' => ['PayslipItems']
+            ]);
+            if ($Payslips->save($payslip)) {
+                $this->Flash->success(__('Payslip updated.'));
+                return $this->redirect(['action' => 'view', $payslip->id]);
+            }
+            $this->Flash->error(__('Could not update payslip.'));
+        }
+
+        [$employees, $payPeriods] = $this->_dropdowns($companyId);
+        
+        $systemEarnings = $this->fetchTable('Earnings')->find('list', valueField: 'name')->all()->toArray();
+        $systemDeductions = $this->fetchTable('Deductions')->find('list', valueField: 'name')->all()->toArray();
+
+        $earningsMetadata = $this->fetchTable('Earnings')->find()
+            ->select(['name', 'gross_up', 'taxable'])
+            ->all()
+            ->indexBy('name')
+            ->toArray();
+
+        $this->set(compact('payslip', 'employees', 'payPeriods', 'systemEarnings', 'systemDeductions', 'earningsMetadata'));
+    }
+
+    public function delete(int $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $payslip = $this->fetchTable('Payslips')->get($id);
-        if ($this->fetchTable('Payslips')->delete($payslip)) {
-            $this->Flash->success(__('The payslip has been deleted.'));
+        $Payslips = $this->fetchTable('Payslips');
+        $payslip  = $Payslips->get($id);
+
+        if ($Payslips->delete($payslip)) {
+            $this->Flash->success(__('Payslip deleted.'));
         } else {
-            $this->Flash->error(__('The payslip could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Could not delete payslip.'));
         }
 
         return $this->redirect(['action' => 'index']);
     }
 
-    /**
-     * AJAX Endpoint to calculate statutory taxes from dynamic line items
-     * 
-     * @return \Cake\Http\Response|null Returns JSON response
-     */
-    public function calculateTaxes()
-    {
-        $this->request->allowMethod(['post', 'ajax']);
-        
-        $items = $this->request->getData('payslip_items', []);
-        $exchangeRate = (float)$this->request->getData('exchange_rate', 1.0);
-        $employeeId = $this->request->getData('employee_id');
-        
-        $employee = null;
-        if ($employeeId) {
-            $employee = $this->fetchTable('Employees')->get($employeeId);
-        }
-        
-        $payrollService = new \App\Service\PayrollService();
-        $result = $payrollService->calculateFromItems($items, $exchangeRate, $employee);
-        
-        return $this->response->withType('application/json')
-            ->withStringBody(json_encode([
-                'success' => true,
-                'data' => $result['taxes'],
-                'updated_items' => $result['updated_items']
-            ]));
-    }
-
-    /**
-     * AJAX Endpoint to fetch permanent line items from an employee's most recent payslip
-     * 
-     * @return \Cake\Http\Response|null Returns JSON response
-     */
     public function getPermanentItems()
     {
-        $this->request->allowMethod(['get', 'ajax']);
+        $this->request->allowMethod(['get']);
         $employeeId = $this->request->getQuery('employee_id');
-
-        if (!$employeeId) {
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => false, 'message' => 'Employee ID required']));
-        }
-
-        // Find the most recent payslip for this employee
-        $lastPayslip = $this->fetchTable('Payslips')->find()
-            ->where(['employee_id' => $employeeId])
-            ->order(['generated_date' => 'DESC', 'id' => 'DESC'])
-            ->contain([
-                'PayslipItems' => function ($q) {
-                    return $q->where(['is_permanent' => true]);
-                }
-            ])
-            ->first();
+        $employee = $this->fetchTable('Employees')->get($employeeId);
 
         $items = [];
-        if ($lastPayslip && !empty($lastPayslip->payslip_items)) {
-            foreach ($lastPayslip->payslip_items as $item) {
-                $items[] = [
-                    'item_type' => $item->item_type,
-                    'currency' => $item->currency ?? 'ZWG',
-                    'name' => $item->name,
-                    'amount' => $item->amount,
-                    'is_permanent' => true
-                ];
+        if ($employee->basic_salary > 0) {
+            $items[] = [
+                'item_type' => 'Earning',
+                'name' => 'Basic Salary',
+                'amount' => $employee->basic_salary,
+                'currency' => 'USD',
+                'is_permanent' => true
+            ];
+        }
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode(['success' => true, 'data' => $items]));
+    }
+
+    public function calculateTaxes()
+    {
+        $this->request->allowMethod(['post']);
+        $data = $this->request->getData();
+        $items = $data['payslip_items'] ?? [];
+        $rate = (float)($data['exchange_rate'] ?? 1.0);
+
+        $usdGross = 0; $zwgGross = 0;
+        $usdBasic = 0; $zwgBasic = 0;
+
+        foreach($items as $item) {
+            if ($item['item_type'] === 'Earning') {
+                $amt = (float)$item['amount'];
+                $isBasic = stripos($item['name'] ?? '', 'Basic Salary') !== false;
+
+                if ($item['currency'] === 'USD') {
+                    $usdGross += $amt;
+                    if ($isBasic) $usdBasic += $amt;
+                } else if ($item['currency'] === 'ZWG') {
+                    $zwgGross += $amt;
+                    if ($isBasic) $zwgBasic += $amt;
+                }
+            }
+        }
+
+        $totalUsdGross = $usdGross + ($zwgGross / $rate);
+        $totalUsdBasic = $usdBasic + ($zwgBasic / $rate);
+
+        if ($totalUsdGross <= 0) {
+            return $this->response->withType('application/json')
+                ->withStringBody(json_encode(['success' => true, 'data' => []]));
+        }
+
+        // Proportions for General Taxes (PAYE, Aids Levy)
+        $usdWeightGen = $usdGross / $totalUsdGross;
+        $zwgWeightGen = 1.0 - $usdWeightGen;
+
+        // Proportions for NSSA (based on Basic Salary)
+        if ($totalUsdBasic > 0) {
+            $usdWeightNssa = $usdBasic / $totalUsdBasic;
+            $zwgWeightNssa = 1.0 - $usdWeightNssa;
+        } else {
+            // Fallback to general weights if no basic salary identified
+            $usdWeightNssa = $usdWeightGen;
+            $zwgWeightNssa = $zwgWeightGen;
+        }
+
+        $totalPayeUsd = $this->_calculatePaye($totalUsdGross);
+        $totalNssaUsd = $totalUsdBasic * 0.045; // 4.5% of basic
+        if ($totalNssaUsd > 31.50) $totalNssaUsd = 31.50; // Cap at $31.50
+
+        $totalAidsUsd = $totalPayeUsd * 0.03;
+
+        $taxes = [];
+
+        // Split PAYE
+        if ($totalPayeUsd > 0) {
+            if ($usdWeightGen > 0) {
+                $taxes[] = ['item_type' => 'Tax', 'name' => 'PAYE', 'amount' => round($totalPayeUsd * $usdWeightGen, 2), 'currency' => 'USD', 'is_permanent' => false];
+            }
+            if ($zwgWeightGen > 0) {
+                $taxes[] = ['item_type' => 'Tax', 'name' => 'PAYE', 'amount' => round($totalPayeUsd * $zwgWeightGen * $rate, 2), 'currency' => 'ZWG', 'is_permanent' => false];
+            }
+        }
+
+        // Split NSSA
+        if ($totalNssaUsd > 0) {
+            if ($usdWeightNssa > 0) {
+                $taxes[] = ['item_type' => 'Tax', 'name' => 'NSSA', 'amount' => round($totalNssaUsd * $usdWeightNssa, 2), 'currency' => 'USD', 'is_permanent' => false];
+            }
+            if ($zwgWeightNssa > 0) {
+                $taxes[] = ['item_type' => 'Tax', 'name' => 'NSSA', 'amount' => round($totalNssaUsd * $zwgWeightNssa * $rate, 2), 'currency' => 'ZWG', 'is_permanent' => false];
+            }
+        }
+
+        // Split Aids Levy
+        if ($totalAidsUsd > 0) {
+            if ($usdWeightGen > 0) {
+                $taxes[] = ['item_type' => 'Tax', 'name' => 'Aids Levy', 'amount' => round($totalAidsUsd * $usdWeightGen, 2), 'currency' => 'USD', 'is_permanent' => false];
+            }
+            if ($zwgWeightGen > 0) {
+                $taxes[] = ['item_type' => 'Tax', 'name' => 'Aids Levy', 'amount' => round($totalAidsUsd * $zwgWeightGen * $rate, 2), 'currency' => 'ZWG', 'is_permanent' => false];
             }
         }
 
         return $this->response->withType('application/json')
-            ->withStringBody(json_encode([
-                'success' => true,
-                'data' => $items
-            ]));
+            ->withStringBody(json_encode(['success' => true, 'data' => $taxes]));
+    }
+
+    /**
+     * Bulk-generate payslips for all active employees in a pay period.
+     */
+    public function generate()
+    {
+        $companyId = $this->request->getAttribute('company_id');
+
+        $PayPeriods = $this->fetchTable('PayPeriods');
+        $payPeriods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
+            ->where(['PayPeriods.company_id' => $companyId])
+            ->order(['PayPeriods.start_date' => 'DESC'])
+            ->all();
+
+        if ($this->request->is('post')) {
+            $periodId = (int)$this->request->getData('pay_period_id');
+
+            $period = $PayPeriods->find()
+                ->where(['PayPeriods.id' => $periodId, 'PayPeriods.company_id' => $companyId])
+                ->first();
+
+            if (!$period) {
+                $this->Flash->error('Pay period not found.');
+                $this->set(compact('payPeriods'));
+                return null;
+            }
+
+            $Employees = $this->fetchTable('Employees');
+            $employees = $Employees->find()
+                ->where(['Employees.disabled' => false])
+                ->all();
+
+            $Payslips = $this->fetchTable('Payslips');
+            $generated = 0;
+            $skipped   = 0;
+
+            foreach ($employees as $employee) {
+                $existing = $Payslips->find()
+                    ->where([
+                        'Payslips.company_id'    => $companyId,
+                        'Payslips.employee_id'   => $employee->id,
+                        'Payslips.pay_period_id' => $periodId,
+                    ])
+                    ->first();
+
+                if ($existing) {
+                    $skipped++;
+                    continue;
+                }
+
+                $gross = (float)($employee->basic_salary ?? 0);
+                $paye = $this->_calculatePaye($gross);
+                $net  = $gross - $paye - ($gross * 0.045) - ($paye * 0.03); // Rough net
+
+                $payslip = $Payslips->newEntity([
+                    'company_id'    => $companyId,
+                    'employee_id'   => $employee->id,
+                    'pay_period_id' => $periodId,
+                    'gross_pay'     => $gross,
+                    'paye'          => $paye,
+                    'net_pay'       => $net,
+                    'generated_date' => date('Y-m-d'),
+                    'exchange_rate' => 1.0,
+                    'usd_gross' => $gross,
+                    'usd_deductions' => $gross - $net,
+                    'usd_net' => $net,
+                    'status'        => 'Draft',
+                ], ['validate' => false]);
+
+                if ($Payslips->save($payslip)) {
+                    $generated++;
+                }
+            }
+
+            $this->Flash->success("Generated $generated payslip(s). $skipped skipped.");
+            return $this->redirect(['action' => 'index', '?' => ['pay_period_id' => $periodId]]);
+        }
+
+        $earnings = $this->fetchTable('Earnings')->find()->all();
+        $deductions = $this->fetchTable('Deductions')->find()->all();
+
+        $this->set(compact('payPeriods', 'earnings', 'deductions'));
+    }
+
+    private function _calculatePaye(float $gross): float
+    {
+        if ($gross <= 300)    return 0.0;
+        if ($gross <= 700)    return ($gross - 300) * 0.20;
+        if ($gross <= 1500)   return 80 + ($gross - 700) * 0.25;
+        if ($gross <= 3000)   return 280 + ($gross - 1500) * 0.30;
+        return 730 + ($gross - 3000) * 0.35;
+    }
+
+    private function _dropdowns(int $companyId): array
+    {
+        $employees = $this->fetchTable('Employees')
+            ->find()
+            ->where(['Employees.disabled' => false])
+            ->all()
+            ->combine('id', 'name')
+            ->toArray();
+
+        $payPeriods = $this->fetchTable('PayPeriods')
+            ->find()
+            ->order(['PayPeriods.start_date' => 'DESC'])
+            ->all()
+            ->combine('id', 'name')
+            ->toArray();
+
+        return [$employees, $payPeriods];
     }
 }

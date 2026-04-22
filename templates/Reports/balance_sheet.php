@@ -84,14 +84,14 @@ $this->assign('title', 'Statement of Financial Position');
                             ]
                         ], ['target' => '_blank']) ?>
                     </td>
-                    <td class="acc-amount"><?= $this->Number->format($data['actual'], ['places' => 2]) ?></td>
+                    <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
                 </tr>
                 <?php endif; ?>
                 <?php endforeach; ?>
             <?php endforeach; ?>
             <tr>
                 <td style="font-size: 1.1em;"><strong>TOTAL ASSETS</strong></td>
-                <td class="acc-grand-total" style="color: #0b5394;"><?= $this->Number->format($totals['total_assets'], ['places' => 2]) ?></td>
+                <td class="acc-grand-total" style="color: #0b5394;"><?= $this->Number->format($totals['total_assets'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
 
             <!-- SPACE -->
@@ -122,14 +122,14 @@ $this->assign('title', 'Statement of Financial Position');
                             ]
                         ], ['target' => '_blank']) ?>
                     </td>
-                    <td class="acc-amount"><?= $this->Number->format($data['actual'], ['places' => 2]) ?></td>
+                    <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
                 </tr>
                 <?php endif; ?>
                 <?php endforeach; ?>
             <?php endforeach; ?>
             <tr>
                 <td><strong>Total Liabilities</strong></td>
-                <td class="acc-subtotal"><?= $this->Number->format($totals['total_liabilities'], ['places' => 2]) ?></td>
+                <td class="acc-subtotal"><?= $this->Number->format($totals['total_liabilities'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
 
             <!-- EQUITY -->
@@ -154,31 +154,31 @@ $this->assign('title', 'Statement of Financial Position');
                             ]
                         ], ['target' => '_blank']) ?>
                     </td>
-                    <td class="acc-amount"><?= $this->Number->format($data['actual'], ['places' => 2]) ?></td>
+                    <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
                 </tr>
                 <?php endif; ?>
                 <?php endforeach; ?>
             <?php endforeach; ?>
             <tr>
                 <td class="acc-item">Retained Earnings (Net Income)</td>
-                <td class="acc-amount" style="<?= $totals['retained_earnings'] < 0 ? 'color:red;' : '' ?>"><?= $this->Number->format($totals['retained_earnings'], ['places' => 2]) ?></td>
+                <td class="acc-amount" style="<?= ($totals['retained_earnings'] ?? 0) < 0 ? 'color:red;' : '' ?>"><?= $this->Number->format($totals['retained_earnings'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
             <tr>
                 <td><strong>Total Equity</strong></td>
-                <td class="acc-subtotal"><?= $this->Number->format($totals['total_equity'], ['places' => 2]) ?></td>
+                <td class="acc-subtotal"><?= $this->Number->format($totals['total_equity'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
 
             <!-- TOTAL LIABILITIES & EQUITY -->
             <tr style="background: #fafafa;">
                 <td style="font-size: 1.1em; padding-top: 20px; padding-bottom: 20px;"><strong>TOTAL LIABILITIES & EQUITY</strong></td>
                 <td class="acc-grand-total" style="padding-top: 20px; padding-bottom: 20px; <?= round($totals['total_assets'],2) !== round($totals['total_liabilities_equity'],2) ? 'color:red; background:#ffe6e6;' : 'color: #38761d;' ?>">
-                    <?= $this->Number->format($totals['total_liabilities_equity'], ['places' => 2]) ?>
+                    <?= $this->Number->format($totals['total_liabilities_equity'] ?? 0.0, ['places' => 2]) ?>
                 </td>
             </tr>
             <?php if (round($totals['total_assets'],2) !== round($totals['total_liabilities_equity'],2)): ?>
             <tr>
                 <td colspan="2" class="text-center text-danger" style="font-size: 0.9em; padding: 10px;">
-                    Warning: Balance Sheet is out of balance. Check dual-entry records or uncategorized accounts. Variance: <?= $this->Number->format($totals['total_assets'] - $totals['total_liabilities_equity'], ['places' => 2]) ?>
+                    Warning: Balance Sheet is out of balance. Check dual-entry records or uncategorized accounts. Variance: <?= $this->Number->format(($totals['total_assets'] ?? 0) - ($totals['total_liabilities_equity'] ?? 0), ['places' => 2]) ?>
                 </td>
             </tr>
             <?php endif; ?>

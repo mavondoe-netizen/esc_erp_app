@@ -20,7 +20,6 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('mobile');
                     echo $this->Form->control('email');
-                    echo $this->Form->control('company_id');
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

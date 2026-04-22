@@ -17,7 +17,7 @@ class UnitsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Units')->find()
+        $query = $this->Units->find()
             ->contain(['Buildings']);
         $units = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class UnitsController extends AppController
      */
     public function view($id = null)
     {
-        $unit = $this->fetchTable('Units')->get($id, contain: ['Buildings', 'Enrolments']);
+        $unit = $this->Units->get($id, contain: ['Buildings', 'Enrolments']);
         $this->set(compact('unit'));
     }
 
@@ -44,17 +44,17 @@ class UnitsController extends AppController
      */
     public function add()
     {
-        $unit = $this->fetchTable('Units')->newEmptyEntity();
+        $unit = $this->Units->newEmptyEntity();
         if ($this->request->is('post')) {
-            $unit = $this->fetchTable('Units')->patchEntity($unit, $this->request->getData());
-            if ($this->fetchTable('Units')->save($unit)) {
+            $unit = $this->Units->patchEntity($unit, $this->request->getData());
+            if ($this->Units->save($unit)) {
                 $this->Flash->success(__('The unit has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The unit could not be saved. Please, try again.'));
         }
-        $buildings = $this->fetchTable('Units')->Buildings->find('list', limit: 200)->all();
+        $buildings = $this->Units->Buildings->find('list', limit: 200)->all();
         $this->set(compact('unit', 'buildings'));
     }
 
@@ -67,17 +67,17 @@ class UnitsController extends AppController
      */
     public function edit($id = null)
     {
-        $unit = $this->fetchTable('Units')->get($id, contain: []);
+        $unit = $this->Units->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $unit = $this->fetchTable('Units')->patchEntity($unit, $this->request->getData());
-            if ($this->fetchTable('Units')->save($unit)) {
+            $unit = $this->Units->patchEntity($unit, $this->request->getData());
+            if ($this->Units->save($unit)) {
                 $this->Flash->success(__('The unit has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The unit could not be saved. Please, try again.'));
         }
-        $buildings = $this->fetchTable('Units')->Buildings->find('list', limit: 200)->all();
+        $buildings = $this->Units->Buildings->find('list', limit: 200)->all();
         $this->set(compact('unit', 'buildings'));
     }
 
@@ -91,8 +91,8 @@ class UnitsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $unit = $this->fetchTable('Units')->get($id);
-        if ($this->fetchTable('Units')->delete($unit)) {
+        $unit = $this->Units->get($id);
+        if ($this->Units->delete($unit)) {
             $this->Flash->success(__('The unit has been deleted.'));
         } else {
             $this->Flash->error(__('The unit could not be deleted. Please, try again.'));

@@ -17,7 +17,7 @@ class BillItemsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('BillItems')->find()
+        $query = $this->BillItems->find()
             ->contain(['Bills', 'Accounts']);
         $billItems = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class BillItemsController extends AppController
      */
     public function view($id = null)
     {
-        $billItem = $this->fetchTable('BillItems')->get($id, contain: ['Bills', 'Accounts']);
+        $billItem = $this->BillItems->get($id, contain: ['Bills', 'Accounts']);
         $this->set(compact('billItem'));
     }
 
@@ -44,18 +44,18 @@ class BillItemsController extends AppController
      */
     public function add()
     {
-        $billItem = $this->fetchTable('BillItems')->newEmptyEntity();
+        $billItem = $this->BillItems->newEmptyEntity();
         if ($this->request->is('post')) {
-            $billItem = $this->fetchTable('BillItems')->patchEntity($billItem, $this->request->getData());
-            if ($this->fetchTable('BillItems')->save($billItem)) {
+            $billItem = $this->BillItems->patchEntity($billItem, $this->request->getData());
+            if ($this->BillItems->save($billItem)) {
                 $this->Flash->success(__('The bill item has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The bill item could not be saved. Please, try again.'));
         }
-        $bills = $this->fetchTable('BillItems')->Bills->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('BillItems')->Accounts->find('list', limit: 200)->all();
+        $bills = $this->BillItems->Bills->find('list', limit: 200)->all();
+        $accounts = $this->BillItems->Accounts->find('list', limit: 200)->all();
         $this->set(compact('billItem', 'bills', 'accounts'));
     }
 
@@ -68,18 +68,18 @@ class BillItemsController extends AppController
      */
     public function edit($id = null)
     {
-        $billItem = $this->fetchTable('BillItems')->get($id, contain: []);
+        $billItem = $this->BillItems->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $billItem = $this->fetchTable('BillItems')->patchEntity($billItem, $this->request->getData());
-            if ($this->fetchTable('BillItems')->save($billItem)) {
+            $billItem = $this->BillItems->patchEntity($billItem, $this->request->getData());
+            if ($this->BillItems->save($billItem)) {
                 $this->Flash->success(__('The bill item has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The bill item could not be saved. Please, try again.'));
         }
-        $bills = $this->fetchTable('BillItems')->Bills->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('BillItems')->Accounts->find('list', limit: 200)->all();
+        $bills = $this->BillItems->Bills->find('list', limit: 200)->all();
+        $accounts = $this->BillItems->Accounts->find('list', limit: 200)->all();
         $this->set(compact('billItem', 'bills', 'accounts'));
     }
 
@@ -93,8 +93,8 @@ class BillItemsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $billItem = $this->fetchTable('BillItems')->get($id);
-        if ($this->fetchTable('BillItems')->delete($billItem)) {
+        $billItem = $this->BillItems->get($id);
+        if ($this->BillItems->delete($billItem)) {
             $this->Flash->success(__('The bill item has been deleted.'));
         } else {
             $this->Flash->error(__('The bill item could not be deleted. Please, try again.'));

@@ -15,6 +15,11 @@ use Cake\ORM\Entity;
  * @property float $unit_price
  * @property float $line_total
  * @property int|null $product_id
+ * @property string|null $vat_rate
+ * @property string|null $vat_amount
+ * @property string|null $hs_code
+ * @property string|null $vat_type
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Invoice $invoice
  * @property \App\Model\Entity\Account $account
@@ -41,6 +46,7 @@ class InvoiceItem extends Entity
         'vat_amount' => true,
         'hs_code' => true,
         'vat_type' => true,
+        'company_id' => true,
         'invoice' => true,
         'account' => true,
     ];

@@ -26,6 +26,8 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\PayslipItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PayslipItem> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\PayslipItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PayslipItem>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\PayslipItem>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PayslipItem> deleteManyOrFail(iterable $entities, array $options = [])
+ *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class PayslipItemsTable extends Table
 {
@@ -48,6 +50,9 @@ class PayslipItemsTable extends Table
         $this->belongsTo('Payslips', [
             'foreignKey' => 'payslip_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -101,6 +106,7 @@ class PayslipItemsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['payslip_id'], 'Payslips'), ['errorField' => 'payslip_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

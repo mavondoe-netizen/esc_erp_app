@@ -34,6 +34,10 @@
                     <th><?= __('Area') ?></th>
                     <td><?= $this->Number->format($unit->area) ?></td>
                 </tr>
+                <tr>
+                    <th><?= __('Is Vacant') ?></th>
+                    <td><?= $unit->isvacant ? __('Yes') : __('No'); ?></td>
+                </tr>
             </table>
             <div class="related">
                 <h4><?= __('Related Enrolments') ?></h4>

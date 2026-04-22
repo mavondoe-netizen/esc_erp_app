@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * DebitNotes Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\SuppliersTable&\Cake\ORM\Association\BelongsTo $Suppliers
  * @property \App\Model\Table\DebitNoteItemsTable&\Cake\ORM\Association\HasMany $DebitNoteItems

@@ -47,6 +47,15 @@ class ProductsController extends AppController
         $product = $this->Products->newEmptyEntity();
         if ($this->request->is('post')) {
             $product = $this->Products->patchEntity($product, $this->request->getData());
+            
+            if ($this->request->getQuery('popup')) {
+                if ($this->Products->save($product)) {
+                    $this->set('popupResult', ['id' => $product->id, 'name' => $product->name]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
+            }
+
             if ($this->Products->save($product)) {
                 $this->Flash->success(__('The product has been saved.'));
 

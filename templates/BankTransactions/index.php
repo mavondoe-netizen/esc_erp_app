@@ -169,7 +169,7 @@
             <h4 style="color: #666; font-size: 1.1em;"><i class="fas fa-history"></i> Recent Activity (Last 15 Reconciled)</h4>
             <div class="card" style="padding: 10px; border-radius: 12px; background: #fdfdfd; border: 1px dashed #ccc;">
                 <div class="table-responsive">
-                    <table style="width: 100%; font-size: 0.8em; margin-bottom:0;">
+                    <table class="no-dt" style="width: 100%; font-size: 0.8em; margin-bottom:0;">
                         <thead>
                             <tr style="border-bottom: 2px solid #eee;">
                                 <th>Date</th>

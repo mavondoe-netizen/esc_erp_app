@@ -3,157 +3,109 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Utility\Text;
-
 /**
- * Repairs Controller — Tracks unit maintenance and posts costs to the ledger on completion.
+ * Repairs Controller
+ *
+ * @property \App\Model\Table\RepairsTable $Repairs
  */
 class RepairsController extends AppController
 {
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
     public function index()
     {
-        $query = $this->fetchTable('Repairs')->find()
-            ->contain(['Units', 'Buildings', 'Tenants'])
-            ->order(['status' => 'ASC', 'reported_date' => 'DESC']);
+        $query = $this->Repairs->find()
+            ->contain(['Companies', 'Units', 'Buildings', 'Tenants', 'Accounts']);
         $repairs = $this->paginate($query);
+
         $this->set(compact('repairs'));
     }
 
+    /**
+     * View method
+     *
+     * @param string|null $id Repair id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
     public function view($id = null)
     {
-        $repair = $this->fetchTable('Repairs')->get($id, contain: ['Units', 'Buildings', 'Tenants', 'Accounts']);
+        $repair = $this->Repairs->get($id, contain: ['Companies', 'Units', 'Buildings', 'Tenants', 'Accounts']);
         $this->set(compact('repair'));
     }
 
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     */
     public function add()
     {
-        $repair = $this->fetchTable('Repairs')->newEmptyEntity();
-        $companyId = \Cake\Core\Configure::read('Tenant.company_id');
-        $repair->company_id = $companyId;
-        $repair->status = 'Reported';
-        $repair->reported_date = date('Y-m-d');
-        $repair->currency = 'USD';
-
+        $repair = $this->Repairs->newEmptyEntity();
         if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            $data['company_id'] = $companyId;
-            $repair = $this->fetchTable('Repairs')->patchEntity($repair, $data);
+            $repair = $this->Repairs->patchEntity($repair, $this->request->getData());
+            if ($this->Repairs->save($repair)) {
+                $this->Flash->success(__('The repair has been saved.'));
 
-            if ($this->fetchTable('Repairs')->save($repair)) {
-                $this->Flash->success(__('Repair request logged successfully.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('Could not log repair. Please try again.'));
+            $this->Flash->error(__('The repair could not be saved. Please, try again.'));
         }
-
-        $units     = $this->fetchTable('Units')->find('list')->all();
-        $buildings = $this->fetchTable('Buildings')->find('list')->all();
-        $tenants   = $this->fetchTable('Tenants')->find('list')->all();
-        $accounts  = $this->fetchTable('Accounts')->find('list', ['conditions' => ['category' => 'Expense']])->all();
-        $statuses   = ['Reported' => 'Reported', 'In Progress' => 'In Progress', 'Completed' => 'Completed', 'Cancelled' => 'Cancelled'];
-        $categories = ['Plumbing' => 'Plumbing', 'Electrical' => 'Electrical', 'Structural' => 'Structural', 'Painting' => 'Painting', 'Carpentry' => 'Carpentry', 'General' => 'General'];
-        $currencies = ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR'];
-
-        $this->set(compact('repair', 'units', 'buildings', 'tenants', 'accounts', 'statuses', 'categories', 'currencies'));
-    }
-
-    public function edit($id = null)
-    {
-        $repair = $this->fetchTable('Repairs')->get($id, contain: []);
-        $companyId = \Cake\Core\Configure::read('Tenant.company_id');
-
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $data = $this->request->getData();
-            $wasCompleted = $repair->status === 'Completed';
-            $repair = $this->fetchTable('Repairs')->patchEntity($repair, $data);
-
-            if ($this->fetchTable('Repairs')->save($repair)) {
-                // Auto-post to ledger when newly marked Completed with a cost
-                if (!$wasCompleted && $repair->status === 'Completed' && $repair->cost > 0) {
-                    $this->_postRepairCost($repair, $companyId);
-                }
-                $this->Flash->success(__('Repair updated.'));
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('Could not update repair.'));
-        }
-
-        $units     = $this->fetchTable('Units')->find('list')->all();
-        $buildings = $this->fetchTable('Buildings')->find('list')->all();
-        $tenants   = $this->fetchTable('Tenants')->find('list')->all();
-        $accounts  = $this->fetchTable('Accounts')->find('list', ['conditions' => ['category' => 'Expense']])->all();
-        $statuses   = ['Reported' => 'Reported', 'In Progress' => 'In Progress', 'Completed' => 'Completed', 'Cancelled' => 'Cancelled'];
-        $categories = ['Plumbing' => 'Plumbing', 'Electrical' => 'Electrical', 'Structural' => 'Structural', 'Painting' => 'Painting', 'Carpentry' => 'Carpentry', 'General' => 'General'];
-        $currencies = ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR'];
-
-        $this->set(compact('repair', 'units', 'buildings', 'tenants', 'accounts', 'statuses', 'categories', 'currencies'));
+        $companies = $this->Repairs->Companies->find('list', limit: 200)->all();
+        $units = $this->Repairs->Units->find('list', limit: 200)->all();
+        $buildings = $this->Repairs->Buildings->find('list', limit: 200)->all();
+        $tenants = $this->Repairs->Tenants->find('list', limit: 200)->all();
+        $accounts = $this->Repairs->Accounts->find('list', limit: 200)->all();
+        $this->set(compact('repair', 'companies', 'units', 'buildings', 'tenants', 'accounts'));
     }
 
     /**
-     * Posts repair cost to the ledger:
-     * Debit Maintenance Expense / Credit Accounts Payable
+     * Edit method
+     *
+     * @param string|null $id Repair id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    protected function _postRepairCost($repair, $companyId): void
+    public function edit($id = null)
     {
-        $txTable  = $this->fetchTable('Transactions');
-        $txGroup  = Text::uuid();
-        $amount   = (float)$repair->cost;
-        $currency = $repair->currency ?? 'USD';
-        $date     = $repair->resolved_date ?? date('Y-m-d');
-        $desc     = 'Repair: ' . $repair->title;
+        $repair = $this->Repairs->get($id, contain: []);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $repair = $this->Repairs->patchEntity($repair, $this->request->getData());
+            if ($this->Repairs->save($repair)) {
+                $this->Flash->success(__('The repair has been saved.'));
 
-        // Determine maintenance expense account
-        $expenseAccountId = $repair->account_id;
-        if (!$expenseAccountId) {
-            $acct = $this->fetchTable('Accounts')->find()
-                ->where(['name LIKE' => '%Maintenance%', 'category' => 'Expense'])
-                ->first();
-            $expenseAccountId = $acct ? $acct->id : null;
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The repair could not be saved. Please, try again.'));
         }
-
-        // Find Accounts Payable for the offset credit
-        $apAccount = $this->fetchTable('Accounts')->find()
-            ->where(['name LIKE' => '%Payable%', 'category' => 'Liability'])
-            ->first();
-        $apAccountId = $apAccount ? $apAccount->id : null;
-
-        if ($expenseAccountId && $apAccountId) {
-            $txTable->save($txTable->newEntity([
-                'date'              => $date,
-                'description'       => $desc,
-                'amount'            => $amount,
-                'zwg'               => $amount,
-                'currency'          => $currency,
-                'account_id'        => $expenseAccountId,
-                'company_id'        => $companyId,
-                'building_id'       => $repair->building_id,
-                'type'              => '2', // Debit maintenance expense
-                'transaction_group' => $txGroup,
-            ]));
-            $txTable->save($txTable->newEntity([
-                'date'              => $date,
-                'description'       => $desc,
-                'amount'            => $amount,
-                'zwg'               => $amount,
-                'currency'          => $currency,
-                'account_id'        => $apAccountId,
-                'company_id'        => $companyId,
-                'building_id'       => $repair->building_id,
-                'type'              => '1', // Credit Accounts Payable
-                'transaction_group' => $txGroup,
-            ]));
-        }
+        $companies = $this->Repairs->Companies->find('list', limit: 200)->all();
+        $units = $this->Repairs->Units->find('list', limit: 200)->all();
+        $buildings = $this->Repairs->Buildings->find('list', limit: 200)->all();
+        $tenants = $this->Repairs->Tenants->find('list', limit: 200)->all();
+        $accounts = $this->Repairs->Accounts->find('list', limit: 200)->all();
+        $this->set(compact('repair', 'companies', 'units', 'buildings', 'tenants', 'accounts'));
     }
 
+    /**
+     * Delete method
+     *
+     * @param string|null $id Repair id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $repair = $this->fetchTable('Repairs')->get($id);
-        if ($this->fetchTable('Repairs')->delete($repair)) {
-            $this->Flash->success(__('Repair deleted.'));
+        $repair = $this->Repairs->get($id);
+        if ($this->Repairs->delete($repair)) {
+            $this->Flash->success(__('The repair has been deleted.'));
         } else {
-            $this->Flash->error(__('Could not delete repair.'));
+            $this->Flash->error(__('The repair could not be deleted. Please, try again.'));
         }
+
         return $this->redirect(['action' => 'index']);
     }
 }

@@ -3,261 +3,358 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Security;
+use Cake\Utility\Text;
+
 /**
  * Users Controller
  *
- * @property \App\Model\Table\UsersTable $Users
+ * Authentication (login/logout/register), profile management,
+ * company-switching for super-admins, and invitation acceptance.
  */
 class UsersController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
+    public function initialize(): void
+    {
+        parent::initialize();
+        $this->Authentication->allowUnauthenticated(['login', 'logout', 'register', 'acceptInvite']);
+    }
+
+    // -----------------------------------------------------------------------
+    // LOGIN
+    // -----------------------------------------------------------------------
+
+    public function login()
+    {
+        $this->request->allowMethod(['get', 'post']);
+        $result = $this->Authentication->getResult();
+
+        if ($result->isValid()) {
+            $redirect = $this->Authentication->getLoginRedirect() ?? ['controller' => 'Dashboard', 'action' => 'index'];
+            return $this->redirect($redirect);
+        }
+
+        if ($this->request->is('post') && !$result->isValid()) {
+            $this->Flash->error(__('Invalid email or password. Please try again.'));
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // LOGOUT
+    // -----------------------------------------------------------------------
+
+    public function logout()
+    {
+        $result = $this->Authentication->getResult();
+        if ($result->isValid()) {
+            $this->Authentication->logout();
+        }
+        return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
+    // -----------------------------------------------------------------------
+    // REGISTER
+    // -----------------------------------------------------------------------
+
+    public function register()
+    {
+        $Users = $this->fetchTable('Users');
+        $user  = $Users->newEmptyEntity();
+
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+
+            // Hash password
+            if (!empty($data['password'])) {
+                $data['password'] = (new \Authentication\PasswordHasher\DefaultPasswordHasher())->hash($data['password']);
+            }
+            $data['role_id'] = $data['role_id'] ?? null;
+
+            $user = $Users->patchEntity($user, $data);
+
+            if ($Users->save($user)) {
+                $this->Flash->success('Account created successfully. Please log in.');
+                return $this->redirect(['action' => 'login']);
+            }
+            $this->Flash->error('Could not create account. Please check for errors.');
+        }
+
+        $Companies = $this->fetchTable('Companies');
+        $companies = $Companies->find('list', keyField: 'id', valueField: 'name')->all();
+        $this->set(compact('user', 'companies'));
+    }
+
+    // -----------------------------------------------------------------------
+    // INDEX (admin)
+    // -----------------------------------------------------------------------
+
     public function index()
     {
-        $query = $this->fetchTable('Users')->find()
-            ->contain(['Roles']);
-        $users = $this->paginate($query);
+        $user      = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
+
+        $Users = $this->fetchTable('Users');
+        $query = $Users->find()
+            ->contain(['Roles', 'Companies'])
+            ->order(['Users.email' => 'ASC']);
+
+        $users = $this->paginate($query, ['limit' => 50]);
         $this->set(compact('users'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
+    // -----------------------------------------------------------------------
+    // VIEW
+    // -----------------------------------------------------------------------
+
+    public function view(int $id)
     {
-        $user = $this->fetchTable('Users')->get($id, contain: ['Meetings', 'Roles', 'Companies', 'Employees']);
-        $this->set(compact('user'));
+        $Users = $this->fetchTable('Users');
+        $viewUser = $Users->get($id, contain: ['Roles', 'Companies', 'Employees']);
+        $this->set('viewUser', $viewUser);
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
+    // -----------------------------------------------------------------------
+    // ADD
+    // -----------------------------------------------------------------------
+
     public function add()
     {
-        $user = $this->fetchTable('Users')->newEmptyEntity();
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Users = $this->fetchTable('Users');
+        $user  = $Users->newEmptyEntity();
+
         if ($this->request->is('post')) {
-            $user = $this->fetchTable('Users')->patchEntity($user, $this->request->getData());
-            if ($this->fetchTable('Users')->save($user)) {
+            $data               = $this->request->getData();
+            $data['company_id'] = $companyId;
 
+            if (!empty($data['password'])) {
+                $data['password'] = (new \Authentication\PasswordHasher\DefaultPasswordHasher())->hash($data['password']);
+            }
 
-                $this->Flash->success(__('The user has been saved.'));
+            $user = $Users->patchEntity($user, $data);
 
+            if ($this->request->getQuery('popup')) {
+                if ($Users->save($user)) {
+                    $this->set('popupResult', ['id' => $user->id, 'name' => $user->name ?? $user->email]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
+            }
+
+            if ($Users->save($user)) {
+                $this->Flash->success(__('User created.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Could not create user. Please check the form.'));
         }
-        $roles = $this->fetchTable('Users')->Roles->find('list', limit: 200)->all();
-        $employees = $this->fetchTable('Employees')->find('list', [
-            'keyField' => 'id',
-            'valueField' => function($e) { return $e->get('first_name') . ' ' . $e->get('last_name') . ' (' . $e->get('employee_code') . ')'; }
-        ])->all();
-        $companies = $this->fetchTable('Users')->Companies->find('list', limit: 200)->all();
+
+        $Roles     = $this->fetchTable('Roles');
+        $roles     = $Roles->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Roles.company_id' => $companyId])
+            ->all();
+
+        $Employees = $this->fetchTable('Employees');
+        $employees = $Employees->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Employees.company_id' => $companyId])
+            ->all();
+
+        $companies = null;
+        if ($this->viewVars['isSuperAdmin'] ?? false) {
+            $companies = $this->fetchTable('Companies')->find('list')->all();
+        }
+
         $this->set(compact('user', 'roles', 'employees', 'companies'));
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
+    // -----------------------------------------------------------------------
+    // EDIT
+    // -----------------------------------------------------------------------
+
+    public function edit(int $id)
     {
-        $user = $this->fetchTable('Users')->get($id, contain: []);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->fetchTable('Users')->patchEntity($user, $this->request->getData());
-            if ($this->fetchTable('Users')->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+        $Users = $this->fetchTable('Users');
+        $user  = $Users->get($id);
 
+        $companyId = $this->request->getAttribute('company_id');
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $data = $this->request->getData();
+
+            // Only re-hash if a new password was typed
+            if (empty($data['password'])) {
+                unset($data['password']);
+            } else {
+                $data['password'] = (new \Authentication\PasswordHasher\DefaultPasswordHasher())->hash($data['password']);
+            }
+
+            $user = $Users->patchEntity($user, $data);
+            if ($Users->save($user)) {
+                $this->Flash->success(__('User updated.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Could not update user.'));
         }
-        $roles = $this->fetchTable('Users')->Roles->find('list', limit: 200)->all();
-        $employees = $this->fetchTable('Employees')->find('list', [
-            'keyField' => 'id',
-            'valueField' => function($e) { return $e->get('first_name') . ' ' . $e->get('last_name') . ' (' . $e->get('employee_code') . ')'; }
-        ])->all();
-        $companies = $this->fetchTable('Users')->Companies->find('list', limit: 200)->all();
+
+        $Roles     = $this->fetchTable('Roles');
+        $roles     = $Roles->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Roles.company_id' => $companyId])
+            ->all();
+
+        $Employees = $this->fetchTable('Employees');
+        $employees = $Employees->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Employees.company_id' => $companyId])
+            ->all();
+
+        $companies = null;
+        if ($this->viewVars['isSuperAdmin'] ?? false) {
+            $companies = $this->fetchTable('Companies')->find('list')->all();
+        }
+
         $this->set(compact('user', 'roles', 'employees', 'companies'));
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
+    // -----------------------------------------------------------------------
+    // DELETE
+    // -----------------------------------------------------------------------
+
+    public function delete(int $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $user = $this->fetchTable('Users')->get($id);
-        if ($this->fetchTable('Users')->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
+        $Users = $this->fetchTable('Users');
+        $user  = $Users->get($id);
+
+        if ($Users->delete($user)) {
+            $this->Flash->success(__('User deleted.'));
         } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Could not delete user.'));
         }
 
         return $this->redirect(['action' => 'index']);
     }
-     public function beforeFilter(\Cake\Event\EventInterface $event)
-{
-    parent::beforeFilter($event);
-    $this->Authentication->addUnauthenticatedActions(['login', 'add', 'register', 'acceptInvite']);
-}
-public function login()
-{
-    $this->viewBuilder()->setLayout('login');
-    $this->request->allowMethod(['get', 'post']);
-    $result = $this->Authentication->getResult();
 
-    if ($result->isValid()) {
-        $identity = $this->request->getAttribute('identity');
-
-        // Redirect Employee-role users to the Self-Service Portal
-        try {
-            if ($identity && isset($identity->role_id)) {
-                $role = $this->fetchTable('Roles')->get($identity->role_id);
-                if (strtolower((string)$role->get('name')) === 'employee') {
-                    return $this->redirect('/portal/dashboard');
-                }
-            }
-        } catch (\Exception $e) { }
-
-        $redirect = $this->request->getQuery('redirect', [
-            'controller' => 'Customers',
-            'action' => 'index',
-        ]);
-        return $this->redirect($redirect);
-    }
-
-    //if ($this->request->is('post') && !$result->isValid()) {
-      //  $this->Flash->error('Invalid email or password');
-    //}
-   
-}
-
-public function logout()
-{
-    $this->Authentication->logout();
-    return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-}
-public function register()
-    {
-        $user = $this->fetchTable('Users')->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $user = $this->fetchTable('Users')->patchEntity($user, $this->request->getData());
-            if ($this->fetchTable('Users')->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
-        }
-        $roles = $this->fetchTable('Users')->Roles->find('list', limit: 200)->all();
-        $this->set(compact('user', 'roles'));
-    }
-
-    public function acceptInvite($token = null)
-    {
-        $this->viewBuilder()->setLayout('login'); // use simple layout for setting password
-        $invitationsTable = $this->fetchTable('Invitations');
-        $invitation = $invitationsTable->find()
-            ->where(['token' => $token, 'status' => 'pending'])
-            ->first();
-
-        if (!$invitation) {
-            $this->Flash->error('Invalid or expired invitation token.');
-            return $this->redirect(['action' => 'login']);
-        }
-
-        $user = $this->fetchTable('Users')->newEmptyEntity();
-        if ($this->request->is(['post', 'put'])) {
-            $data = $this->request->getData();
-            // Force data from invitation
-            $data['email'] = $invitation->email;
-            $data['role_id'] = $invitation->role_id;
-            $data['company_id'] = $invitation->company_id;
-
-            $user = $this->fetchTable('Users')->patchEntity($user, $data);
-            if ($this->fetchTable('Users')->save($user)) {
-                
-                // Mark invite accepted
-                $invitation->status = 'accepted';
-                $invitationsTable->save($invitation);
-
-                $this->Flash->success('Your account has been created. You can now login.');
-                return $this->redirect(['action' => 'login']);
-            }
-            $this->Flash->error('Unable to create account. Please ensure your password matches requirements.');
-        }
-
-        $this->set(compact('user', 'invitation'));
-    }
+    // -----------------------------------------------------------------------
+    // SWITCH COMPANY (super-admin) — session-only, no DB mutation
+    // -----------------------------------------------------------------------
 
     /**
-     * Super Admin: Switch the active tenant context to any company.
      * POST /users/switch-company
+     *
+     * Stores the target company_id in the session.
+     * AppController reads it on every request and writes it to
+     * Configure::write('Tenant.company_id') so TenantAwareBehavior
+     * transparently scopes all ORM queries to the switched company.
+     *
+     * The authenticated user record is NEVER modified.
+     *
+     * @return \Cake\Http\Response|null
      */
     public function switchCompany()
     {
         $this->request->allowMethod(['post']);
-        $identity = $this->request->getAttribute('identity');
-        if (!$identity) {
-            return $this->redirect('/');
-        }
+        $authUser  = $this->Authentication->getIdentity();
+        $session   = $this->request->getSession();
 
-        // Verify the requesting user is a super admin
-        $isSuperAdmin = false;
-        try {
-            $role = $this->fetchTable('Roles')->get($identity->role_id);
-            $isSuperAdmin = in_array(strtolower($role->get('name')), ['super admin', 'super administrator']);
-        } catch (\Exception $e) { }
+        // Super-admin: company_id = 1, role_id = 3 (Super Admin), or specific email
+        $isSuperAdmin = (
+            (int)$authUser->get('company_id') === 1 ||
+            (int)$authUser->get('role_id') === 3 ||
+            strtolower((string)($authUser->get('email') ?? '')) === 'tasara@gmail.com'
+        );
 
         if (!$isSuperAdmin) {
-            $this->Flash->error(__('Only Super Admins can switch companies.'));
-            return $this->redirect($this->referer('/'));
+            $this->Flash->error('You do not have permission to switch companies.');
+            return $this->redirect(['controller' => 'Dashboard', 'action' => 'index']);
         }
 
-        $companyId = (int)$this->request->getData('company_id');
-        if ($companyId) {
-            $this->request->getSession()->write('SuperAdmin.switched_company_id', $companyId);
-            // Get company name for feedback
-            try {
-                $conn = $this->fetchTable('Companies')->getConnection();
-                $row = $conn->execute('SELECT name FROM companies WHERE id = ?', [$companyId])->fetch('assoc');
-                $companyName = $row['name'] ?? 'Company #' . $companyId;
-            } catch (\Exception $e) {
-                $companyName = 'Company #' . $companyId;
-            }
-            $this->Flash->success(__("Now viewing as: {$companyName}"));
-        } else {
-            $this->Flash->error(__('Invalid company selected.'));
+        $targetId = (int)$this->request->getData('company_id');
+        $Companies = $this->fetchTable('Companies');
+        $company   = $Companies->find()
+            ->select(['id', 'name'])
+            ->where(['id' => $targetId])
+            ->applyOptions(['ignoreTenant' => true])
+            ->first();
+
+        if (!$company) {
+            $this->Flash->error('Company not found.');
+            return $this->redirect(['controller' => 'Dashboard', 'action' => 'index']);
         }
 
-        return $this->redirect($this->referer('/'));
+        // Write switch into session — AppController picks this up automatically
+        $session->write('SuperAdmin.switched_company_id', $targetId);
+        $session->write('SuperAdmin.active', true);
+
+        $this->Flash->success("Now viewing as: {$company->name}. Your account has not been changed.");
+        return $this->redirect(['controller' => 'Dashboard', 'action' => 'index']);
     }
 
     /**
-     * Super Admin: Exit company switch — revert to own context.
      * POST /users/exit-company-switch
+     * Clears the session switch — restores the super-admin's own company context.
+     *
+     * @return \Cake\Http\Response|null
      */
     public function exitCompanySwitch()
     {
         $this->request->allowMethod(['post']);
-        $this->request->getSession()->delete('SuperAdmin.switched_company_id');
-        $this->Flash->success(__('Returned to your own company context.'));
-        return $this->redirect($this->referer('/'));
+        $session = $this->request->getSession();
+
+        $session->delete('SuperAdmin.switched_company_id');
+        $session->delete('SuperAdmin.active');
+
+        $this->Flash->success('Exited company view. Back to your own company.');
+        return $this->redirect(['controller' => 'Dashboard', 'action' => 'index']);
+    }
+
+    // -----------------------------------------------------------------------
+    // ACCEPT INVITATION
+    // -----------------------------------------------------------------------
+
+    /**
+     * GET/POST /users/accept-invite/{token}
+     * Allows an invited user to set up their password and activate account.
+     *
+     * @param string $token Invitation token.
+     * @return \Cake\Http\Response|null
+     */
+    public function acceptInvite(string $token)
+    {
+        $Invitations = $this->fetchTable('Invitations');
+        $invitation  = $Invitations->find()
+            ->where(['Invitations.token' => $token, 'Invitations.used' => 0])
+            ->first();
+
+        if (!$invitation) {
+            $this->Flash->error('Invalid or expired invitation link.');
+            return $this->redirect(['action' => 'login']);
+        }
+
+        $Users = $this->fetchTable('Users');
+        $user  = $Users->newEmptyEntity();
+
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            $data['email']      = $invitation->email;
+            $data['company_id'] = $invitation->company_id;
+            $data['role_id']    = $invitation->role_id ?? null;
+
+            if (!empty($data['password'])) {
+                $data['password'] = (new \Authentication\PasswordHasher\DefaultPasswordHasher())->hash($data['password']);
+            }
+
+            $user = $Users->patchEntity($user, $data);
+            if ($Users->save($user)) {
+                // Mark invitation as used
+                $invitation->used = 1;
+                $Invitations->save($invitation);
+
+                $this->Flash->success('Account activated! Please log in.');
+                return $this->redirect(['action' => 'login']);
+            }
+            $this->Flash->error('Could not activate account. Please check for errors.');
+        }
+
+        $this->set(compact('invitation', 'user'));
     }
 }

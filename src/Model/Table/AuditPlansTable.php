@@ -108,3 +108,4 @@ class AuditPlansTable extends Table
         return $rules;
     }
 }
+

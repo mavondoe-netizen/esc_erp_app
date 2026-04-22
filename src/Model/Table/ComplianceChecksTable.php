@@ -100,3 +100,4 @@ class ComplianceChecksTable extends Table
         return $rules;
     }
 }
+

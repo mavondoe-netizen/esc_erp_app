@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property string $description
  * @property string $status
  * @property float $total
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Customer $customer
  * @property \App\Model\Entity\InvoiceItem[] $invoice_items
@@ -39,6 +40,7 @@ class Invoice extends Entity
         'description' => true,
         'status' => true,
         'total' => true,
+        'company_id' => true,
         'customer' => true,
         'invoice_items' => true,
         'accounts' => true,

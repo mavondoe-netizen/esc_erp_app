@@ -17,11 +17,11 @@ class DeductionsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Deductions')->find();
+        $query = $this->Deductions->find()
+            ->contain(['Accounts']);
         $deductions = $this->paginate($query);
 
-        $zimraOptions = \App\Utility\ZimraMapping::getOptions();
-        $this->set(compact('deductions', 'zimraOptions'));
+        $this->set(compact('deductions'));
     }
 
     /**
@@ -33,7 +33,7 @@ class DeductionsController extends AppController
      */
     public function view($id = null)
     {
-        $deduction = $this->fetchTable('Deductions')->get($id, contain: []);
+        $deduction = $this->Deductions->get($id, contain: ['Accounts']);
         $this->set(compact('deduction'));
     }
 
@@ -44,24 +44,30 @@ class DeductionsController extends AppController
      */
     public function add()
     {
-        $deduction = $this->fetchTable('Deductions')->newEmptyEntity();
+        $deduction = $this->Deductions->newEmptyEntity();
         if ($this->request->is('post')) {
-            $deduction = $this->fetchTable('Deductions')->patchEntity($deduction, $this->request->getData());
-            if ($this->fetchTable('Deductions')->save($deduction)) {
+            $deduction = $this->Deductions->patchEntity($deduction, $this->request->getData());
+            if ($this->Deductions->save($deduction)) {
                 $this->Flash->success(__('The deduction has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The deduction could not be saved. Please, try again.'));
         }
-        $accounts = $this->fetchTable('Deductions')->Accounts->find('list', limit: 200)->all();
-        $zimraOptions = \App\Utility\ZimraMapping::getOptions();
+        $accounts = $this->Deductions->Accounts->find('list', limit: 200)->all();
         $calculationTypes = [
             'Fixed Amount' => 'Fixed Amount',
-            'Percentage of Basic Salary' => 'Percentage of Basic Salary',
-            'Hourly/Daily Rate' => 'Hourly/Daily Rate (Units * Rate)'
+            'Percentage of Total Gross' => 'Percentage of Total Gross',
+            'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $this->set(compact('deduction', 'accounts', 'zimraOptions', 'calculationTypes'));
+        $zimraOptions = [
+            'Pension' => 'Pension Contribution',
+            'Medical' => 'Medical Aid',
+            'Union' => 'Union Dues',
+            'Insurance' => 'Insurance',
+            'Tax' => 'Income Tax',
+        ];
+        $this->set(compact('deduction', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 
     /**
@@ -73,24 +79,30 @@ class DeductionsController extends AppController
      */
     public function edit($id = null)
     {
-        $deduction = $this->fetchTable('Deductions')->get($id, contain: []);
+        $deduction = $this->Deductions->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $deduction = $this->fetchTable('Deductions')->patchEntity($deduction, $this->request->getData());
-            if ($this->fetchTable('Deductions')->save($deduction)) {
+            $deduction = $this->Deductions->patchEntity($deduction, $this->request->getData());
+            if ($this->Deductions->save($deduction)) {
                 $this->Flash->success(__('The deduction has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The deduction could not be saved. Please, try again.'));
         }
-        $accounts = $this->fetchTable('Deductions')->Accounts->find('list', limit: 200)->all();
-        $zimraOptions = \App\Utility\ZimraMapping::getOptions();
+        $accounts = $this->Deductions->Accounts->find('list', limit: 200)->all();
         $calculationTypes = [
             'Fixed Amount' => 'Fixed Amount',
-            'Percentage of Basic Salary' => 'Percentage of Basic Salary',
-            'Hourly/Daily Rate' => 'Hourly/Daily Rate (Units * Rate)'
+            'Percentage of Total Gross' => 'Percentage of Total Gross',
+            'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $this->set(compact('deduction', 'accounts', 'zimraOptions', 'calculationTypes'));
+        $zimraOptions = [
+            'Pension' => 'Pension Contribution',
+            'Medical' => 'Medical Aid',
+            'Union' => 'Union Dues',
+            'Insurance' => 'Insurance',
+            'Tax' => 'Income Tax',
+        ];
+        $this->set(compact('deduction', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 
     /**
@@ -103,8 +115,8 @@ class DeductionsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $deduction = $this->fetchTable('Deductions')->get($id);
-        if ($this->fetchTable('Deductions')->delete($deduction)) {
+        $deduction = $this->Deductions->get($id);
+        if ($this->Deductions->delete($deduction)) {
             $this->Flash->success(__('The deduction has been deleted.'));
         } else {
             $this->Flash->error(__('The deduction could not be deleted. Please, try again.'));

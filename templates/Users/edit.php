@@ -29,7 +29,9 @@
                     echo $this->Form->control('password');
                     echo $this->Form->control('role_id', ['options' => $roles, 'empty' => true]);
                     echo $this->Form->control('employee_id', ['options' => $employees, 'empty' => true]);
-                    echo $this->Form->control('company_id', ['options' => $companies, 'empty' => true]);
+                    if (isset($companies)) {
+                        echo $this->Form->control('company_id', ['options' => $companies, 'empty' => true]);
+                    }
                     echo $this->Form->control('department_id');
                 ?>
             </fieldset>

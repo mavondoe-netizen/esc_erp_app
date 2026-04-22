@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * AssetLogs Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\AssetsTable&\Cake\ORM\Association\BelongsTo $Assets
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users

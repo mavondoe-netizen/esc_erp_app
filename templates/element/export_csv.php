@@ -1,6 +1,26 @@
+<?php
+$companyName = '';
+if (!empty($switchedCompanyName)) {
+    $companyName = $switchedCompanyName;
+} else {
+    $companyId = \Cake\Core\Configure::read('Tenant.company_id');
+    if ($companyId) {
+        try {
+            $company = \Cake\ORM\TableRegistry::getTableLocator()->get('Companies')->get($companyId);
+            $companyName = $company->name;
+        } catch (\Exception $e) {}
+    }
+}
+?>
 <script>
 function exportTableToCSV(filename, tableSelector = 'table.acc-table') {
     let csv = [];
+    let companyName = <?= json_encode($companyName) ?>;
+    if (companyName) {
+        csv.push(['"' + companyName.replace(/"/g, '""') + '"'].join(","));
+        csv.push([]); // blank row
+    }
+    
     let rows = document.querySelectorAll(tableSelector + " tr");
     
     for (let i = 0; i < rows.length; i++) {

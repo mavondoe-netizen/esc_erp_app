@@ -17,7 +17,7 @@ class ContactsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Contacts')->find();
+        $query = $this->Contacts->find();
         $contacts = $this->paginate($query);
 
         $this->set(compact('contacts'));
@@ -32,7 +32,7 @@ class ContactsController extends AppController
      */
     public function view($id = null)
     {
-        $contact = $this->fetchTable('Contacts')->get($id, contain: ['Customers', 'Emails', 'Meetings', 'Suppliers', 'Tenants']);
+        $contact = $this->Contacts->get($id, contain: ['Customers', 'Deals', 'Emails', 'Meetings', 'Suppliers', 'Tenants']);
         $this->set(compact('contact'));
     }
 
@@ -43,10 +43,10 @@ class ContactsController extends AppController
      */
     public function add()
     {
-        $contact = $this->fetchTable('Contacts')->newEmptyEntity();
+        $contact = $this->Contacts->newEmptyEntity();
         if ($this->request->is('post')) {
-            $contact = $this->fetchTable('Contacts')->patchEntity($contact, $this->request->getData());
-            if ($this->fetchTable('Contacts')->save($contact)) {
+            $contact = $this->Contacts->patchEntity($contact, $this->request->getData());
+            if ($this->Contacts->save($contact)) {
                 $this->Flash->success(__('The contact has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -65,10 +65,10 @@ class ContactsController extends AppController
      */
     public function edit($id = null)
     {
-        $contact = $this->fetchTable('Contacts')->get($id, contain: []);
+        $contact = $this->Contacts->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $contact = $this->fetchTable('Contacts')->patchEntity($contact, $this->request->getData());
-            if ($this->fetchTable('Contacts')->save($contact)) {
+            $contact = $this->Contacts->patchEntity($contact, $this->request->getData());
+            if ($this->Contacts->save($contact)) {
                 $this->Flash->success(__('The contact has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -88,8 +88,8 @@ class ContactsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $contact = $this->fetchTable('Contacts')->get($id);
-        if ($this->fetchTable('Contacts')->delete($contact)) {
+        $contact = $this->Contacts->get($id);
+        if ($this->Contacts->delete($contact)) {
             $this->Flash->success(__('The contact has been deleted.'));
         } else {
             $this->Flash->error(__('The contact could not be deleted. Please, try again.'));

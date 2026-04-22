@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Suppliers Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\ContactsTable&\Cake\ORM\Association\BelongsTo $Contacts
  * @property \App\Model\Table\BillsTable&\Cake\ORM\Association\HasMany $Bills
  * @property \App\Model\Table\TransactionsTable&\Cake\ORM\Association\HasMany $Transactions
@@ -96,6 +97,7 @@ class SuppliersTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['contact_id'], 'Contacts'), ['errorField' => 'contact_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

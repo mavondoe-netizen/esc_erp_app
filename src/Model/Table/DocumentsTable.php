@@ -111,3 +111,4 @@ class DocumentsTable extends Table
         return $rules;
     }
 }
+

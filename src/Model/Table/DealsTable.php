@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Deals Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\ContactsTable&\Cake\ORM\Association\BelongsTo $Contacts
  *
  * @method \App\Model\Entity\Deal newEmptyEntity()

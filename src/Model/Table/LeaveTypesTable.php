@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * LeaveTypes Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\LeaveApplicationsTable&\Cake\ORM\Association\HasMany $LeaveApplications
  * @property \App\Model\Table\LeaveBalancesTable&\Cake\ORM\Association\HasMany $LeaveBalances
  *
@@ -27,8 +28,6 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\LeaveType>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\LeaveType> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\LeaveType>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\LeaveType>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\LeaveType>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\LeaveType> deleteManyOrFail(iterable $entities, array $options = [])
- *
- * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class LeaveTypesTable extends Table
 {
@@ -55,6 +54,9 @@ class LeaveTypesTable extends Table
         ]);
         $this->hasMany('LeaveBalances', [
             'foreignKey' => 'leave_type_id',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -85,5 +87,19 @@ class LeaveTypesTable extends Table
             ->notEmptyString('is_active');
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+
+        return $rules;
     }
 }

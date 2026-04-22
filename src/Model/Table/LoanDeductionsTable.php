@@ -11,8 +11,10 @@ use Cake\Validation\Validator;
 /**
  * LoanDeductions Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\LoansTable&\Cake\ORM\Association\BelongsTo $Loans
  * @property \App\Model\Table\EmployeesTable&\Cake\ORM\Association\BelongsTo $Employees
+ * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  *
  * @method \App\Model\Entity\LoanDeduction newEmptyEntity()
  * @method \App\Model\Entity\LoanDeduction newEntity(array $data, array $options = [])
@@ -56,6 +58,9 @@ class LoanDeductionsTable extends Table
         $this->belongsTo('Employees', [
             'foreignKey' => 'employee_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -110,6 +115,7 @@ class LoanDeductionsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
         $rules->add($rules->existsIn(['loan_id'], 'Loans'), ['errorField' => 'loan_id']);
         $rules->add($rules->existsIn(['employee_id'], 'Employees'), ['errorField' => 'employee_id']);
 

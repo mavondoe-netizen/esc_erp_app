@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property int $contact_id
  * @property string $industry
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Contact $contact
  * @property \App\Model\Entity\Bill[] $bills

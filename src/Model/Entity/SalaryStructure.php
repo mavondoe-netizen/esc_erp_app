@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  * @property bool|null $is_active
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\Role $role
@@ -42,6 +43,7 @@ class SalaryStructure extends Entity
         'is_active' => true,
         'created' => true,
         'modified' => true,
+        'company_id' => true,
         'user' => true,
         'role' => true,
         'payroll_records' => true,

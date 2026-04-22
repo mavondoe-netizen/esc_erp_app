@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Incidents Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\LossEventsTable&\Cake\ORM\Association\HasMany $LossEvents
  *
@@ -47,6 +48,7 @@ class IncidentsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('TenantAware');
 
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',

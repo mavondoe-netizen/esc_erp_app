@@ -71,7 +71,7 @@ $this->assign('title', 'Statement of Cash Flows');
             </tr>
             <tr>
                 <td style="padding-left: 20px;"><strong>Net Income</strong></td>
-                <td class="text-right" style="font-weight: bold;"><?= $this->Number->format($report['NetIncome'], ['places' => 2]) ?></td>
+                <td class="text-right" style="font-weight: bold;"><?= $this->Number->format($report['NetIncome'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
             <tr>
                 <td colspan="2" style="padding-left: 20px; font-style: italic; color: #666;">Adjustments to reconcile net income to net cash provided by operating activities:</td>
@@ -89,12 +89,44 @@ $this->assign('title', 'Statement of Cash Flows');
                         ]
                     ], ['target' => '_blank']) ?>
                 </td>
-                <td class="text-right"><?= $this->Number->format($data['actual'], ['places' => 2]) ?></td>
+                <td class="text-right"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
             <?php endforeach; ?>
             <tr style="background: #fdfdfd;">
                 <td><strong>Net Cash Provided by (Used in) Operating Activities</strong></td>
-                <td class="acc-subtotal"><?= $this->Number->format($totals['net_cash_operating'], ['places' => 2]) ?></td>
+                <td class="acc-subtotal"><?= $this->Number->format($totals['net_cash_operating'] ?? 0.0, ['places' => 2]) ?></td>
+            </tr>
+
+            <!-- SPACE -->
+            <tr><td colspan="2" style="height: 30px; border:none;"></td></tr>
+
+            <!-- INVESTING ACTIVITIES -->
+            <tr>
+                <td colspan="2" class="acc-header" style="background:#e8f8f4;">CASH FLOWS FROM INVESTING ACTIVITIES</td>
+            </tr>
+            <?php if (empty($report['InvestingActivities'])): ?>
+                <tr><td colspan="2" class="text-center text-muted">No investing activities recorded</td></tr>
+            <?php else: ?>
+                <?php foreach ($report['InvestingActivities'] as $accName => $data): ?>
+                <tr>
+                    <td style="padding-left: 40px;">
+                        Change in <?= $this->Html->link(h($accName), [
+                            'action' => 'ledger',
+                            '?' => [
+                                'account_id' => $data['account_id'],
+                                'start_date' => $startDate,
+                                'end_date' => $endDate,
+                                'currency' => current($this->getRequest()->getQueryParams())['currency'] ?? 'USD'
+                            ]
+                        ], ['target' => '_blank']) ?>
+                    </td>
+                    <td class="text-right"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            <tr style="background: #fdfdfd;">
+                <td><strong>Net Cash Provided by (Used in) Investing Activities</strong></td>
+                <td class="acc-subtotal"><?= $this->Number->format($totals['investing'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
 
             <!-- SPACE -->
@@ -120,19 +152,19 @@ $this->assign('title', 'Statement of Cash Flows');
                         ]
                     ], ['target' => '_blank']) ?>
                 </td>
-                <td class="text-right"><?= $this->Number->format($data['actual'], ['places' => 2]) ?></td>
+                <td class="text-right"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
             <?php endforeach; ?>
             <tr style="background: #fdfdfd;">
                 <td><strong>Net Cash Provided by (Used in) Financing Activities</strong></td>
-                <td class="acc-subtotal"><?= $this->Number->format($totals['net_cash_financing'], ['places' => 2]) ?></td>
+                <td class="acc-subtotal"><?= $this->Number->format($totals['net_cash_financing'] ?? 0.0, ['places' => 2]) ?></td>
             </tr>
 
             <!-- TOTAL CASH INCREASE -->
             <tr style="background: #fafafa;">
                 <td style="font-size: 1.1em; padding-top: 20px; padding-bottom: 20px;"><strong>NET INCREASE (DECREASE) IN CASH</strong></td>
                 <td class="acc-grand-total" style="padding-top: 20px; padding-bottom: 20px; <?= $totals['net_increase_cash'] >= 0 ? 'color: #38761d;' : 'color: #cc0000;' ?>">
-                    <?= $this->Number->format($totals['net_increase_cash'], ['places' => 2]) ?>
+                    <?= $this->Number->format($totals['net_increase_cash'] ?? 0.0, ['places' => 2]) ?>
                 </td>
             </tr>
         </table>

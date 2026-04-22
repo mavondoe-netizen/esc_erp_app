@@ -111,3 +111,4 @@ class EmailsTable extends Table
         return $rules;
     }
 }
+

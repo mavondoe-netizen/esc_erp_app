@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * AssetCategories Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  *
  * @method \App\Model\Entity\AssetCategory newEmptyEntity()

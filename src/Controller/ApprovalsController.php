@@ -17,7 +17,7 @@ class ApprovalsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Approvals')->find();
+        $query = $this->Approvals->find();
         $approvals = $this->paginate($query);
 
         $this->set(compact('approvals'));
@@ -32,7 +32,7 @@ class ApprovalsController extends AppController
      */
     public function view($id = null)
     {
-        $approval = $this->fetchTable('Approvals')->get($id, contain: []);
+        $approval = $this->Approvals->get($id, contain: []);
         $this->set(compact('approval'));
     }
 
@@ -43,10 +43,10 @@ class ApprovalsController extends AppController
      */
     public function add()
     {
-        $approval = $this->fetchTable('Approvals')->newEmptyEntity();
+        $approval = $this->Approvals->newEmptyEntity();
         if ($this->request->is('post')) {
-            $approval = $this->fetchTable('Approvals')->patchEntity($approval, $this->request->getData());
-            if ($this->fetchTable('Approvals')->save($approval)) {
+            $approval = $this->Approvals->patchEntity($approval, $this->request->getData());
+            if ($this->Approvals->save($approval)) {
                 $this->Flash->success(__('The approval has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -65,10 +65,10 @@ class ApprovalsController extends AppController
      */
     public function edit($id = null)
     {
-        $approval = $this->fetchTable('Approvals')->get($id, contain: []);
+        $approval = $this->Approvals->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $approval = $this->fetchTable('Approvals')->patchEntity($approval, $this->request->getData());
-            if ($this->fetchTable('Approvals')->save($approval)) {
+            $approval = $this->Approvals->patchEntity($approval, $this->request->getData());
+            if ($this->Approvals->save($approval)) {
                 $this->Flash->success(__('The approval has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -88,8 +88,8 @@ class ApprovalsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $approval = $this->fetchTable('Approvals')->get($id);
-        if ($this->fetchTable('Approvals')->delete($approval)) {
+        $approval = $this->Approvals->get($id);
+        if ($this->Approvals->delete($approval)) {
             $this->Flash->success(__('The approval has been deleted.'));
         } else {
             $this->Flash->error(__('The approval could not be deleted. Please, try again.'));

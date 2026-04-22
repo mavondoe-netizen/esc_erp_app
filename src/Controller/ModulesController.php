@@ -15,18 +15,11 @@ class ModulesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-
-
     public function index()
     {
-        $query = $this->Modules->find();
-        
-        // Pass settings array dynamically into the paginate trait
-        $modules = $this->paginate($query, [
-            'sortableFields' => [
-                'id', 'name', 'model', 'is_active', 'created', 'modified'
-            ]
-        ]);
+        $query = $this->Modules->find()
+            ->contain(['Companies']);
+        $modules = $this->paginate($query);
 
         $this->set(compact('modules'));
     }
@@ -40,7 +33,7 @@ class ModulesController extends AppController
      */
     public function view($id = null)
     {
-        $module = $this->Modules->get($id, contain: []);
+        $module = $this->Modules->get($id, contain: ['Companies']);
         $this->set(compact('module'));
     }
 
@@ -61,17 +54,8 @@ class ModulesController extends AppController
             }
             $this->Flash->error(__('The module could not be saved. Please, try again.'));
         }
-        $conn = \Cake\Datasource\ConnectionManager::get('default');
-        $tables = $conn->getSchemaCollection()->listTables();
-        $excluded = ['phinxlog', 'sessions', 'audit_logs'];
-        
-        $modelsOptions = [];
-        foreach (array_diff($tables, $excluded) as $t) {
-            $alias = \Cake\Utility\Inflector::camelize($t);
-            $modelsOptions[$alias] = \Cake\Utility\Inflector::humanize($t);
-        }
         $companies = $this->Modules->Companies->find('list', limit: 200)->all();
-        $this->set(compact('module', 'modelsOptions', 'companies'));
+        $this->set(compact('module', 'companies'));
     }
 
     /**
@@ -93,17 +77,8 @@ class ModulesController extends AppController
             }
             $this->Flash->error(__('The module could not be saved. Please, try again.'));
         }
-        $conn = \Cake\Datasource\ConnectionManager::get('default');
-        $tables = $conn->getSchemaCollection()->listTables();
-        $excluded = ['phinxlog', 'sessions', 'audit_logs'];
-        
-        $modelsOptions = [];
-        foreach (array_diff($tables, $excluded) as $t) {
-            $alias = \Cake\Utility\Inflector::camelize($t);
-            $modelsOptions[$alias] = \Cake\Utility\Inflector::humanize($t);
-        }
         $companies = $this->Modules->Companies->find('list', limit: 200)->all();
-        $this->set(compact('module', 'modelsOptions', 'companies'));
+        $this->set(compact('module', 'companies'));
     }
 
     /**
@@ -124,27 +99,5 @@ class ModulesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
-    }
-
-    /**
-     * Toggle method
-     *
-     * @param string|null $id Module id.
-     * @return \Cake\Http\Response|null Redirects back.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function toggle($id = null)
-    {
-        $this->request->allowMethod(['post', 'put']);
-        $module = $this->Modules->get($id);
-        $module->is_active = !$module->is_active;
-        if ($this->Modules->save($module)) {
-            $status = $module->is_active ? 'activated' : 'deactivated';
-            $this->Flash->success(__("The module {0} has been {1}.", $module->name, $status));
-        } else {
-            $this->Flash->error(__('The module status could not be changed. Please, try again.'));
-        }
-
-        return $this->redirect($this->referer(['controller' => 'Dashboard', 'action' => 'index']));
     }
 }

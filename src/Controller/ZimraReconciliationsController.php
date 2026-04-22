@@ -72,7 +72,6 @@ class ZimraReconciliationsController extends AppController
         $zimraReconciliation = $this->ZimraReconciliations->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $zimraReconciliation = $this->ZimraReconciliations->patchEntity($zimraReconciliation, $this->request->getData());
-            $zimraReconciliation->variance = $zimraReconciliation->assessed_tax_amount - $zimraReconciliation->payroll_tax_amount;
             if ($this->ZimraReconciliations->save($zimraReconciliation)) {
                 $this->Flash->success(__('The zimra reconciliation has been saved.'));
 
@@ -105,40 +104,4 @@ class ZimraReconciliationsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
-
-    /**
-     * Generate Monthly Reconciliations
-     */
-    public function generate()
-    {
-        $this->request->allowMethod(['post']);
-        $payPeriodId = (int)$this->request->getData('pay_period_id');
-        $zimraService = new \App\Service\Payroll\ZimraService();
-        if ($zimraService->generateMonthlyReconciliation($payPeriodId)) {
-            $this->Flash->success(__('Monthly reconciliations generated successfully.'));
-        } else {
-            $this->Flash->error(__('Could not generate reconciliations.'));
-        }
-        return $this->redirect(['action' => 'index']);
-    }
-
-    /**
-     * Clear Variance via Ledger Resolution
-     */
-    public function clear($id = null)
-    {
-        $zimraReconciliation = $this->ZimraReconciliations->get($id, contain: ['Employees', 'PayPeriods']);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $resolutionReference = $this->request->getData('cleared_via');
-            $zimraService = new \App\Service\Payroll\ZimraService();
-            if ($zimraService->clearVariance($zimraReconciliation->id, $resolutionReference)) {
-                $this->Flash->success(__('Variance cleared successfully.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('Could not clear variance or variance is 0.'));
-            }
-        }
-        $this->set(compact('zimraReconciliation'));
-    }
 }
-

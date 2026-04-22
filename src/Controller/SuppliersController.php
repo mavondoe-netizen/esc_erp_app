@@ -17,7 +17,7 @@ class SuppliersController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Suppliers')->find()
+        $query = $this->Suppliers->find()
             ->contain(['Contacts']);
         $suppliers = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class SuppliersController extends AppController
      */
     public function view($id = null)
     {
-        $supplier = $this->fetchTable('Suppliers')->get($id, contain: ['Contacts', 'Bills', 'Transactions']);
+        $supplier = $this->Suppliers->get($id, contain: ['Contacts', 'Bills', 'Transactions']);
         $this->set(compact('supplier'));
     }
 
@@ -44,17 +44,26 @@ class SuppliersController extends AppController
      */
     public function add()
     {
-        $supplier = $this->fetchTable('Suppliers')->newEmptyEntity();
+        $supplier = $this->Suppliers->newEmptyEntity();
         if ($this->request->is('post')) {
-            $supplier = $this->fetchTable('Suppliers')->patchEntity($supplier, $this->request->getData());
-            if ($this->fetchTable('Suppliers')->save($supplier)) {
+            $supplier = $this->Suppliers->patchEntity($supplier, $this->request->getData());
+            
+            if ($this->request->getQuery('popup')) {
+                if ($this->Suppliers->save($supplier)) {
+                    $this->set('popupResult', ['id' => $supplier->id, 'name' => $supplier->name]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
+            }
+
+            if ($this->Suppliers->save($supplier)) {
                 $this->Flash->success(__('The supplier has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The supplier could not be saved. Please, try again.'));
         }
-        $contacts = $this->fetchTable('Suppliers')->Contacts->find('list', limit: 200)->all();
+        $contacts = $this->Suppliers->Contacts->find('list', limit: 200)->all();
         $this->set(compact('supplier', 'contacts'));
     }
 
@@ -67,17 +76,17 @@ class SuppliersController extends AppController
      */
     public function edit($id = null)
     {
-        $supplier = $this->fetchTable('Suppliers')->get($id, contain: []);
+        $supplier = $this->Suppliers->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $supplier = $this->fetchTable('Suppliers')->patchEntity($supplier, $this->request->getData());
-            if ($this->fetchTable('Suppliers')->save($supplier)) {
+            $supplier = $this->Suppliers->patchEntity($supplier, $this->request->getData());
+            if ($this->Suppliers->save($supplier)) {
                 $this->Flash->success(__('The supplier has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The supplier could not be saved. Please, try again.'));
         }
-        $contacts = $this->fetchTable('Suppliers')->Contacts->find('list', limit: 200)->all();
+        $contacts = $this->Suppliers->Contacts->find('list', limit: 200)->all();
         $this->set(compact('supplier', 'contacts'));
     }
 
@@ -91,8 +100,8 @@ class SuppliersController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $supplier = $this->fetchTable('Suppliers')->get($id);
-        if ($this->fetchTable('Suppliers')->delete($supplier)) {
+        $supplier = $this->Suppliers->get($id);
+        if ($this->Suppliers->delete($supplier)) {
             $this->Flash->success(__('The supplier has been deleted.'));
         } else {
             $this->Flash->error(__('The supplier could not be deleted. Please, try again.'));

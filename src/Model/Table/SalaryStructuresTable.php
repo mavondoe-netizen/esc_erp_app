@@ -30,6 +30,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\SalaryStructure>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\SalaryStructure> deleteManyOrFail(iterable $entities, array $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class SalaryStructuresTable extends Table
 {
@@ -59,6 +60,9 @@ class SalaryStructuresTable extends Table
         ]);
         $this->hasMany('PayrollRecords', [
             'foreignKey' => 'salary_structure_id',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -98,6 +102,10 @@ class SalaryStructuresTable extends Table
             ->boolean('is_active')
             ->allowEmptyString('is_active');
 
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
+
         return $validator;
     }
 
@@ -112,6 +120,7 @@ class SalaryStructuresTable extends Table
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
         $rules->add($rules->existsIn(['role_id'], 'Roles'), ['errorField' => 'role_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

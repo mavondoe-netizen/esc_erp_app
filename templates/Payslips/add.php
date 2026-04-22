@@ -21,10 +21,30 @@
                 
                 <div class="row">
                     <div class="column column-33">
-                        <?= $this->Form->control('employee_id', ['options' => $employees, 'empty' => 'Select Employee', 'id' => 'employee-select', 'class' => 'form-control']) ?>
+                        <div style="display: flex; align-items: flex-end; gap: 8px;">
+                            <div style="flex-grow: 1;">
+                                <?= $this->Form->control('employee_id', ['options' => $employees, 'empty' => 'Select Employee', 'id' => 'employee-select', 'class' => 'form-control']) ?>
+                            </div>
+                            <button type="button" class="global-quick-add-btn button button-outline" data-url="/employees/index?popup=1" data-target-dropdown="employee-select" style="margin-bottom: 1.5rem; padding: 0.65rem 0.8rem;" title="Search Employee">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <button type="button" class="global-quick-add-btn button button-outline" data-url="/employees/add?popup=1" data-target-dropdown="employee-select" style="margin-bottom: 1.5rem; padding: 0.65rem 0.8rem;" title="Add New Employee">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="column column-33">
-                        <?= $this->Form->control('pay_period_id', ['options' => $payPeriods, 'class' => 'form-control']) ?>
+                        <div style="display: flex; align-items: flex-end; gap: 8px;">
+                            <div style="flex-grow: 1;">
+                                <?= $this->Form->control('pay_period_id', ['options' => $payPeriods, 'id' => 'pay-period-id', 'class' => 'form-control']) ?>
+                            </div>
+                            <button type="button" class="global-quick-add-btn button button-outline" data-url="/pay-periods/index?popup=1" data-target-dropdown="pay-period-id" style="margin-bottom: 1.5rem; padding: 0.65rem 0.8rem;" title="Search Pay Period">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <button type="button" class="global-quick-add-btn button button-outline" data-url="/pay-periods/add?popup=1" data-target-dropdown="pay-period-id" style="margin-bottom: 1.5rem; padding: 0.65rem 0.8rem;" title="Add New Pay Period">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="column column-33">
                         <?= $this->Form->control('generated_date', ['type' => 'date', 'value' => date('Y-m-d'), 'class' => 'form-control']) ?>

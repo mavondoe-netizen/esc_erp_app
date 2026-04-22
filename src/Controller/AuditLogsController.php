@@ -17,8 +17,8 @@ class AuditLogsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('AuditLogs')->find()
-            ->contain(['Users']);
+        $query = $this->AuditLogs->find()
+            ->contain(['Users', 'Companies']);
         $auditLogs = $this->paginate($query);
 
         $this->set(compact('auditLogs'));
@@ -33,7 +33,7 @@ class AuditLogsController extends AppController
      */
     public function view($id = null)
     {
-        $auditLog = $this->fetchTable('AuditLogs')->get($id, contain: ['Users']);
+        $auditLog = $this->AuditLogs->get($id, contain: ['Users', 'Companies']);
         $this->set(compact('auditLog'));
     }
 
@@ -44,18 +44,19 @@ class AuditLogsController extends AppController
      */
     public function add()
     {
-        $auditLog = $this->fetchTable('AuditLogs')->newEmptyEntity();
+        $auditLog = $this->AuditLogs->newEmptyEntity();
         if ($this->request->is('post')) {
-            $auditLog = $this->fetchTable('AuditLogs')->patchEntity($auditLog, $this->request->getData());
-            if ($this->fetchTable('AuditLogs')->save($auditLog)) {
+            $auditLog = $this->AuditLogs->patchEntity($auditLog, $this->request->getData());
+            if ($this->AuditLogs->save($auditLog)) {
                 $this->Flash->success(__('The audit log has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The audit log could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('AuditLogs')->Users->find('list', limit: 200)->all();
-        $this->set(compact('auditLog', 'users'));
+        $users = $this->AuditLogs->Users->find('list', limit: 200)->all();
+        $companies = $this->AuditLogs->Companies->find('list', limit: 200)->all();
+        $this->set(compact('auditLog', 'users', 'companies'));
     }
 
     /**
@@ -67,18 +68,19 @@ class AuditLogsController extends AppController
      */
     public function edit($id = null)
     {
-        $auditLog = $this->fetchTable('AuditLogs')->get($id, contain: []);
+        $auditLog = $this->AuditLogs->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $auditLog = $this->fetchTable('AuditLogs')->patchEntity($auditLog, $this->request->getData());
-            if ($this->fetchTable('AuditLogs')->save($auditLog)) {
+            $auditLog = $this->AuditLogs->patchEntity($auditLog, $this->request->getData());
+            if ($this->AuditLogs->save($auditLog)) {
                 $this->Flash->success(__('The audit log has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The audit log could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('AuditLogs')->Users->find('list', limit: 200)->all();
-        $this->set(compact('auditLog', 'users'));
+        $users = $this->AuditLogs->Users->find('list', limit: 200)->all();
+        $companies = $this->AuditLogs->Companies->find('list', limit: 200)->all();
+        $this->set(compact('auditLog', 'users', 'companies'));
     }
 
     /**
@@ -91,8 +93,8 @@ class AuditLogsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $auditLog = $this->fetchTable('AuditLogs')->get($id);
-        if ($this->fetchTable('AuditLogs')->delete($auditLog)) {
+        $auditLog = $this->AuditLogs->get($id);
+        if ($this->AuditLogs->delete($auditLog)) {
             $this->Flash->success(__('The audit log has been deleted.'));
         } else {
             $this->Flash->error(__('The audit log could not be deleted. Please, try again.'));

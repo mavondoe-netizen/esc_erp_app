@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * AuditLogs Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  *
  * @method \App\Model\Entity\AuditLog newEmptyEntity()

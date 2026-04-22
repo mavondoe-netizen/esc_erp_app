@@ -49,7 +49,7 @@ class CompaniesTable extends Table
     {
         parent::initialize($config);
 
-        $this->addBehavior('TenantAware');
+        $this->addBehavior('TenantAware', ['isRoot' => true]);
 
         $this->setTable('companies');
         $this->setDisplayField('name');

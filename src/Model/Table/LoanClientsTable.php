@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * LoanClients Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\EmployeesTable&\Cake\ORM\Association\BelongsTo $Employees
  *

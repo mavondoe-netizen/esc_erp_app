@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\Date $start_date
  * @property \Cake\I18n\Date $end_date
  * @property string|null $status
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Payslip[] $payslips
  */
@@ -32,6 +33,7 @@ class PayPeriod extends Entity
         'start_date' => true,
         'end_date' => true,
         'status' => true,
+        'company_id' => true,
         'payslips' => true,
     ];
 }

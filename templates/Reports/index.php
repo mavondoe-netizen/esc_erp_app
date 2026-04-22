@@ -64,6 +64,17 @@ $this->assign('title', 'Reports Dashboard');
             </div>
         </div>
 
+        <!-- Trial Balance -->
+        <div class="col-md-6 mb-4">
+            <div class="card" style="border-left: 5px solid #4a90e2; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="card-body">
+                    <h4 class="card-title">Trial Balance</h4>
+                    <p class="card-text text-muted">A summary of the balances of all ledger accounts to verify that total debits equal total credits.</p>
+                    <?= $this->Html->link(__('Open Trial Balance'), ['action' => 'trialBalance'], ['class' => 'button button-outline']) ?>
+                </div>
+            </div>
+        </div>
+
         <!-- Bank Schedule -->
         <div class="col-md-12 mb-4">
             <div class="card" style="border-left: 5px solid #134f5c; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">

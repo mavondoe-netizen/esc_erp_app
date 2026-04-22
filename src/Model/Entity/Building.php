@@ -13,7 +13,7 @@ use Cake\ORM\Entity;
  * @property string $address
  * @property int $investor_id
  * @property \Cake\I18n\DateTime $start_date
- * @property bool $isvacant
+
  *
  * @property \App\Model\Entity\Investor $investor
  * @property \App\Model\Entity\Bill[] $bills
@@ -36,10 +36,35 @@ class Building extends Entity
         'address' => true,
         'investor_id' => true,
         'start_date' => true,
-        'isvacant' => true,
+
         'investor' => true,
         'bills' => true,
         'transactions' => true,
         'units' => true,
     ];
+    /**
+     * Virtual property for occupancy rate.
+     * Calculated as (Occupied Units / Total Units) * 100
+     *
+     * @return float|int
+     */
+    protected function _getOccupancyRate()
+    {
+        if (empty($this->units)) {
+            return 0;
+        }
+
+        $totalUnits = count($this->units);
+        $vacantUnits = 0;
+
+        foreach ($this->units as $unit) {
+            if ($unit->isvacant) {
+                $vacantUnits++;
+            }
+        }
+
+        $occupiedUnits = $totalUnits - $vacantUnits;
+
+        return ($occupiedUnits / $totalUnits) * 100;
+    }
 }

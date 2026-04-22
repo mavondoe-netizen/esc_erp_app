@@ -78,6 +78,10 @@ class UnitsTable extends Table
             ->requirePresence('area', 'create')
             ->notEmptyString('area');
 
+        $validator
+            ->boolean('isvacant')
+            ->allowEmptyString('isvacant');
+
         return $validator;
     }
 

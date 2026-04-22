@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property bool $is_active
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\LeaveApplication[] $leave_applications
  * @property \App\Model\Entity\LeaveBalance[] $leave_balances
@@ -35,6 +36,7 @@ class LeaveType extends Entity
         'description' => true,
         'default_days_per_year' => true,
         'is_active' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'leave_applications' => true,

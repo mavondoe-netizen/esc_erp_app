@@ -17,8 +17,8 @@ class PermissionsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Permissions')->find()
-            ->contain(['Roles']);
+        $query = $this->Permissions->find()
+            ->contain(['Roles', 'Companies']);
         $permissions = $this->paginate($query);
 
         $this->set(compact('permissions'));
@@ -33,7 +33,7 @@ class PermissionsController extends AppController
      */
     public function view($id = null)
     {
-        $permission = $this->fetchTable('Permissions')->get($id, contain: ['Roles']);
+        $permission = $this->Permissions->get($id, contain: ['Roles', 'Companies']);
         $this->set(compact('permission'));
     }
 
@@ -44,31 +44,20 @@ class PermissionsController extends AppController
      */
     public function add()
     {
-        $permission = $this->fetchTable('Permissions')->newEmptyEntity();
+        $permission = $this->Permissions->newEmptyEntity();
         if ($this->request->is('post')) {
-            $permission = $this->fetchTable('Permissions')->patchEntity($permission, $this->request->getData());
-            if ($this->fetchTable('Permissions')->save($permission)) {
+            $permission = $this->Permissions->patchEntity($permission, $this->request->getData());
+            if ($this->Permissions->save($permission)) {
                 $this->Flash->success(__('The permission has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The permission could not be saved. Please, try again.'));
         }
-        $conn = \Cake\Datasource\ConnectionManager::get('default');
-        $tables = $conn->getSchemaCollection()->listTables();
-        $excluded = ['phinxlog', 'sessions', 'audit_logs'];
-        
-        $modelsOptions = [];
-        foreach (array_diff($tables, $excluded) as $t) {
-            $alias = \Cake\Utility\Inflector::camelize($t);
-            $modelsOptions[$alias] = \Cake\Utility\Inflector::humanize($t);
-        }
+        $roles = $this->Permissions->Roles->find('list', limit: 200)->all();
         $companies = $this->Permissions->Companies->find('list', limit: 200)->all();
-        $roles = $this->fetchTable('Permissions')->Roles->find('list', limit: 200)->all();
-        $this->set(compact('permission', 'modelsOptions', 'companies','roles'));
+        $this->set(compact('permission', 'roles', 'companies'));
     }
-        
-     
 
     /**
      * Edit method
@@ -79,28 +68,19 @@ class PermissionsController extends AppController
      */
     public function edit($id = null)
     {
-        $permission = $this->fetchTable('Permissions')->get($id, contain: []);
+        $permission = $this->Permissions->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $permission = $this->fetchTable('Permissions')->patchEntity($permission, $this->request->getData());
-            if ($this->fetchTable('Permissions')->save($permission)) {
+            $permission = $this->Permissions->patchEntity($permission, $this->request->getData());
+            if ($this->Permissions->save($permission)) {
                 $this->Flash->success(__('The permission has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The permission could not be saved. Please, try again.'));
         }
-        $conn = \Cake\Datasource\ConnectionManager::get('default');
-        $tables = $conn->getSchemaCollection()->listTables();
-        $excluded = ['phinxlog', 'sessions', 'audit_logs'];
-        
-        $modelsOptions = [];
-        foreach (array_diff($tables, $excluded) as $t) {
-            $alias = \Cake\Utility\Inflector::camelize($t);
-            $modelsOptions[$alias] = \Cake\Utility\Inflector::humanize($t);
-        }
+        $roles = $this->Permissions->Roles->find('list', limit: 200)->all();
         $companies = $this->Permissions->Companies->find('list', limit: 200)->all();
-        $roles = $this->fetchTable('Permissions')->Roles->find('list', limit: 200)->all();
-        $this->set(compact('permission', 'modelsOptions', 'companies','roles'));
+        $this->set(compact('permission', 'roles', 'companies'));
     }
 
     /**
@@ -113,8 +93,8 @@ class PermissionsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $permission = $this->fetchTable('Permissions')->get($id);
-        if ($this->fetchTable('Permissions')->delete($permission)) {
+        $permission = $this->Permissions->get($id);
+        if ($this->Permissions->delete($permission)) {
             $this->Flash->success(__('The permission has been deleted.'));
         } else {
             $this->Flash->error(__('The permission could not be deleted. Please, try again.'));

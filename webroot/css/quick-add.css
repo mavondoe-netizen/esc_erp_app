@@ -1,0 +1,26 @@
+/* Quick Add Button Group Styles */
+.quick-add-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    width: 100%;
+}
+
+.quick-add-group > div {
+    flex-grow: 1;
+}
+
+.quick-add-group .button-outline {
+    margin-bottom: 0; /* Align with input */
+    padding: 0.65rem 0.8rem;
+    height: 42px; /* Standard input height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+}
+
+/* Adjust margin when using CakePHP FormHelper labels */
+.quick-add-group .form-control-wrapper {
+    margin-bottom: 0;
+}

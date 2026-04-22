@@ -180,11 +180,24 @@ class PayrollService
         $setting = $settingsTable->find()->first();
         $nssaRate = $setting && isset($setting->nssa_rate) ? (float)$setting->nssa_rate / 100 : 0.045; // default 4.5%
 
+        // --- Proportions for NSSA / Pension split ---
+        // These must follow BASIC SALARY proportions, not gross earnings
+        $totalBaseBasicSalary = $usdBasicSalary + ($zwgBasicSalary / $exchangeRate);
+        $usdBasicProportion = $totalBaseBasicSalary > 0 ? ($usdBasicSalary / $totalBaseBasicSalary) : 1;
+        $zwgBasicProportion = 1 - $usdBasicProportion;
+
         // Base USD Deductions
-        // NSSA 4.5% of basic salary with max of 31.50 USD
-        $baseNssa = min($baseBasicSalary * $nssaRate, 31.50);
-        // Pension fixed at 10% of basic salary
-        $basePension = $baseBasicSalary * 0.10; 
+        // NSSA uses Insurable Earnings (baseNssaGross), capped at statutory ceiling (e.g., $700 ceiling * 4.5% = $31.50)
+        $nssaCeiling = $setting && isset($setting->nssa_ceiling) ? (float)$setting->nssa_ceiling : 700.00;
+        $insurableEarnings = min($baseNssaGross, $nssaCeiling);
+        $baseNssa = $insurableEarnings * $nssaRate;
+        
+        // Pension uses Pensionable Gross
+        $basePension = $basePensionableGross * 0.10;
+
+        // APWCS (employer-only) uses Basic Salary 
+        $apwcsRate = $setting && isset($setting->apwcs_rate) ? (float)$setting->apwcs_rate / 100 : 0.01;
+        $baseApwcs = $baseBasicSalary * $apwcsRate;
 
         // Final Base Taxable Income
         $finalBaseTaxableIncome = max(0, $baseTaxableIncome - $basePension - $baseNssa);
@@ -256,35 +269,48 @@ class PayrollService
         $totalBasePayeAfterCredits = $basePayeAfterCredits + $grossUpExtraTaxesUSD['PAYE'];
         $totalBaseAidsLevy = $baseAidsLevy + $grossUpExtraTaxesUSD['Aids Levy'];
 
-        // 3. Subdivide base taxes proportionally back into currencies based on respective Gross
+        // --- Gross earnings proportions (for PAYE, Aids Levy, ZIMDEF, SDF) ---
         $totalBaseGross = $usdGross + ($zwgGross / $exchangeRate);
         // Default to USD proportion 1 if nothing earned
         $usdProportion = $totalBaseGross > 0 ? ($usdGross / $totalBaseGross) : 1;
         $zwgProportion = 1 - $usdProportion;
 
         $baseZimdef = $totalBaseGross * 0.01;
-        $baseSdf = $totalBaseGross * 0.005;
+        $baseSdf    = $totalBaseGross * 0.005;
 
         $taxes = [];
 
         // Distribute proportionally if there's any respective earning
+        if ($usdBasicProportion > 0) {
+            // NSSA & Pension use BASIC SALARY proportion
+            if ($baseNssa   > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'USD', 'name' => 'NSSA',    'amount' => round($baseNssa   * $usdBasicProportion, 2)];
+            if ($basePension > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'USD', 'name' => 'Pension', 'amount' => round($basePension * $usdBasicProportion, 2)];
+            // APWCS is employer-only, split by basic salary proportion
+            if ($baseApwcs  > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'USD', 'name' => 'APWCS',   'amount' => round($baseApwcs  * $usdBasicProportion, 2)];
+        }
+
         if ($usdProportion > 0) {
-            if ($baseNssa > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'USD', 'name' => 'NSSA', 'amount' => round($baseNssa * $usdProportion, 2)];
-            if ($basePension > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'USD', 'name' => 'Pension', 'amount' => round($basePension * $usdProportion, 2)];
-            if ($totalBasePayeAfterCredits > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'USD', 'name' => 'PAYE', 'amount' => round($totalBasePayeAfterCredits * $usdProportion, 2)];
-            if ($totalBaseAidsLevy > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'USD', 'name' => 'Aids Levy', 'amount' => round($totalBaseAidsLevy * $usdProportion, 2)];
-            if ($baseZimdef > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'USD', 'name' => 'ZIMDEF', 'amount' => round($baseZimdef * $usdProportion, 2)];
-            if ($baseSdf > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'USD', 'name' => 'SDF', 'amount' => round($baseSdf * $usdProportion, 2)];
+            // PAYE, Aids Levy, ZIMDEF, SDF use GROSS proportion
+            if ($totalBasePayeAfterCredits > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'USD', 'name' => 'PAYE',      'amount' => round($totalBasePayeAfterCredits * $usdProportion, 2)];
+            if ($totalBaseAidsLevy         > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'USD', 'name' => 'Aids Levy', 'amount' => round($totalBaseAidsLevy         * $usdProportion, 2)];
+            if ($baseZimdef                > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'USD', 'name' => 'ZIMDEF',    'amount' => round($baseZimdef * $usdProportion, 2)];
+            if ($baseSdf                   > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'USD', 'name' => 'SDF',       'amount' => round($baseSdf    * $usdProportion, 2)];
+        }
+
+        if ($zwgBasicProportion > 0) {
+            // NSSA & Pension use BASIC SALARY proportion (converted to ZWG)
+            if ($baseNssa   > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'ZWG', 'name' => 'NSSA',    'amount' => round($baseNssa   * $zwgBasicProportion * $exchangeRate, 2)];
+            if ($basePension > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'ZWG', 'name' => 'Pension', 'amount' => round($basePension * $zwgBasicProportion * $exchangeRate, 2)];
+            // APWCS employer-only in ZWG
+            if ($baseApwcs  > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'ZWG', 'name' => 'APWCS',   'amount' => round($baseApwcs  * $zwgBasicProportion * $exchangeRate, 2)];
         }
 
         if ($zwgProportion > 0) {
-            // Convert the mapped USD portion back into ZWG for the final payslip deduction line
-            if ($baseNssa > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'ZWG', 'name' => 'NSSA', 'amount' => round($baseNssa * $zwgProportion * $exchangeRate, 2)];
-            if ($basePension > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'ZWG', 'name' => 'Pension', 'amount' => round($basePension * $zwgProportion * $exchangeRate, 2)];
-            if ($totalBasePayeAfterCredits > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'ZWG', 'name' => 'PAYE', 'amount' => round($totalBasePayeAfterCredits * $zwgProportion * $exchangeRate, 2)];
-            if ($totalBaseAidsLevy > 0) $taxes[] = ['item_type' => 'Tax', 'currency' => 'ZWG', 'name' => 'Aids Levy', 'amount' => round($totalBaseAidsLevy * $zwgProportion * $exchangeRate, 2)];
-            if ($baseZimdef > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'ZWG', 'name' => 'ZIMDEF', 'amount' => round($baseZimdef * $zwgProportion * $exchangeRate, 2)];
-            if ($baseSdf > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'ZWG', 'name' => 'SDF', 'amount' => round($baseSdf * $zwgProportion * $exchangeRate, 2)];
+            // PAYE, Aids Levy, ZIMDEF, SDF use GROSS proportion (converted to ZWG)
+            if ($totalBasePayeAfterCredits > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'ZWG', 'name' => 'PAYE',      'amount' => round($totalBasePayeAfterCredits * $zwgProportion * $exchangeRate, 2)];
+            if ($totalBaseAidsLevy         > 0) $taxes[] = ['item_type' => 'Tax',                'currency' => 'ZWG', 'name' => 'Aids Levy', 'amount' => round($totalBaseAidsLevy         * $zwgProportion * $exchangeRate, 2)];
+            if ($baseZimdef                > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'ZWG', 'name' => 'ZIMDEF',    'amount' => round($baseZimdef * $zwgProportion * $exchangeRate, 2)];
+            if ($baseSdf                   > 0) $taxes[] = ['item_type' => 'Company Contribution', 'currency' => 'ZWG', 'name' => 'SDF',       'amount' => round($baseSdf    * $zwgProportion * $exchangeRate, 2)];
         }
 
         return [

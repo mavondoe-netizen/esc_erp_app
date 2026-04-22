@@ -17,7 +17,7 @@ class SalaryStructuresController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('SalaryStructures')->find()
+        $query = $this->SalaryStructures->find()
             ->contain(['Users', 'Roles']);
         $salaryStructures = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class SalaryStructuresController extends AppController
      */
     public function view($id = null)
     {
-        $salaryStructure = $this->fetchTable('SalaryStructures')->get($id, contain: ['Users', 'Roles', 'PayrollRecords']);
+        $salaryStructure = $this->SalaryStructures->get($id, contain: ['Users', 'Roles', 'PayrollRecords']);
         $this->set(compact('salaryStructure'));
     }
 
@@ -44,18 +44,18 @@ class SalaryStructuresController extends AppController
      */
     public function add()
     {
-        $salaryStructure = $this->fetchTable('SalaryStructures')->newEmptyEntity();
+        $salaryStructure = $this->SalaryStructures->newEmptyEntity();
         if ($this->request->is('post')) {
-            $salaryStructure = $this->fetchTable('SalaryStructures')->patchEntity($salaryStructure, $this->request->getData());
-            if ($this->fetchTable('SalaryStructures')->save($salaryStructure)) {
+            $salaryStructure = $this->SalaryStructures->patchEntity($salaryStructure, $this->request->getData());
+            if ($this->SalaryStructures->save($salaryStructure)) {
                 $this->Flash->success(__('The salary structure has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The salary structure could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('SalaryStructures')->Users->find('list', limit: 200)->all();
-        $roles = $this->fetchTable('SalaryStructures')->Roles->find('list', limit: 200)->all();
+        $users = $this->SalaryStructures->Users->find('list', limit: 200)->all();
+        $roles = $this->SalaryStructures->Roles->find('list', limit: 200)->all();
         $this->set(compact('salaryStructure', 'users', 'roles'));
     }
 
@@ -68,18 +68,18 @@ class SalaryStructuresController extends AppController
      */
     public function edit($id = null)
     {
-        $salaryStructure = $this->fetchTable('SalaryStructures')->get($id, contain: []);
+        $salaryStructure = $this->SalaryStructures->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $salaryStructure = $this->fetchTable('SalaryStructures')->patchEntity($salaryStructure, $this->request->getData());
-            if ($this->fetchTable('SalaryStructures')->save($salaryStructure)) {
+            $salaryStructure = $this->SalaryStructures->patchEntity($salaryStructure, $this->request->getData());
+            if ($this->SalaryStructures->save($salaryStructure)) {
                 $this->Flash->success(__('The salary structure has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The salary structure could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('SalaryStructures')->Users->find('list', limit: 200)->all();
-        $roles = $this->fetchTable('SalaryStructures')->Roles->find('list', limit: 200)->all();
+        $users = $this->SalaryStructures->Users->find('list', limit: 200)->all();
+        $roles = $this->SalaryStructures->Roles->find('list', limit: 200)->all();
         $this->set(compact('salaryStructure', 'users', 'roles'));
     }
 
@@ -93,8 +93,8 @@ class SalaryStructuresController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $salaryStructure = $this->fetchTable('SalaryStructures')->get($id);
-        if ($this->fetchTable('SalaryStructures')->delete($salaryStructure)) {
+        $salaryStructure = $this->SalaryStructures->get($id);
+        if ($this->SalaryStructures->delete($salaryStructure)) {
             $this->Flash->success(__('The salary structure has been deleted.'));
         } else {
             $this->Flash->error(__('The salary structure could not be deleted. Please, try again.'));

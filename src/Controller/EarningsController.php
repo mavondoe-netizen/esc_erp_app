@@ -17,12 +17,11 @@ class EarningsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Earnings')->find()
+        $query = $this->Earnings->find()
             ->contain(['Accounts']);
         $earnings = $this->paginate($query);
 
-        $zimraOptions = \App\Utility\ZimraMapping::getOptions();
-        $this->set(compact('earnings', 'zimraOptions'));
+        $this->set(compact('earnings'));
     }
 
     /**
@@ -34,7 +33,7 @@ class EarningsController extends AppController
      */
     public function view($id = null)
     {
-        $earning = $this->fetchTable('Earnings')->get($id, contain: ['Accounts']);
+        $earning = $this->Earnings->get($id, contain: ['Accounts']);
         $this->set(compact('earning'));
     }
 
@@ -45,24 +44,30 @@ class EarningsController extends AppController
      */
     public function add()
     {
-        $earning = $this->fetchTable('Earnings')->newEmptyEntity();
+        $earning = $this->Earnings->newEmptyEntity();
         if ($this->request->is('post')) {
-            $earning = $this->fetchTable('Earnings')->patchEntity($earning, $this->request->getData());
-            if ($this->fetchTable('Earnings')->save($earning)) {
+            $earning = $this->Earnings->patchEntity($earning, $this->request->getData());
+            if ($this->Earnings->save($earning)) {
                 $this->Flash->success(__('The earning has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The earning could not be saved. Please, try again.'));
         }
-        $accounts = $this->fetchTable('Earnings')->Accounts->find('list', limit: 200)->all();
-        $zimraOptions = \App\Utility\ZimraMapping::getOptions();
+        $accounts = $this->Earnings->Accounts->find('list', limit: 200)->all();
         $calculationTypes = [
             'Fixed Amount' => 'Fixed Amount',
-            'Percentage of Basic Salary' => 'Percentage of Basic Salary',
-            'Hourly/Daily Rate' => 'Hourly/Daily Rate (Units * Rate)'
+            'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $this->set(compact('earning', 'accounts', 'zimraOptions', 'calculationTypes'));
+        $zimraOptions = [
+            'Salary' => 'Basic Salary',
+            'Bonus' => 'Bonus',
+            'Allowance' => 'Allowances',
+            'Benefit' => 'Benefits',
+            'Commission' => 'Commissions',
+            'Arrears' => 'Arrears',
+        ];
+        $this->set(compact('earning', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 
     /**
@@ -74,24 +79,30 @@ class EarningsController extends AppController
      */
     public function edit($id = null)
     {
-        $earning = $this->fetchTable('Earnings')->get($id, contain: []);
+        $earning = $this->Earnings->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $earning = $this->fetchTable('Earnings')->patchEntity($earning, $this->request->getData());
-            if ($this->fetchTable('Earnings')->save($earning)) {
+            $earning = $this->Earnings->patchEntity($earning, $this->request->getData());
+            if ($this->Earnings->save($earning)) {
                 $this->Flash->success(__('The earning has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The earning could not be saved. Please, try again.'));
         }
-        $accounts = $this->fetchTable('Earnings')->Accounts->find('list', limit: 200)->all();
-        $zimraOptions = \App\Utility\ZimraMapping::getOptions();
+        $accounts = $this->Earnings->Accounts->find('list', limit: 200)->all();
         $calculationTypes = [
             'Fixed Amount' => 'Fixed Amount',
-            'Percentage of Basic Salary' => 'Percentage of Basic Salary',
-            'Hourly/Daily Rate' => 'Hourly/Daily Rate (Units * Rate)'
+            'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $this->set(compact('earning', 'accounts', 'zimraOptions', 'calculationTypes'));
+        $zimraOptions = [
+            'Salary' => 'Basic Salary',
+            'Bonus' => 'Bonus',
+            'Allowance' => 'Allowances',
+            'Benefit' => 'Benefits',
+            'Commission' => 'Commissions',
+            'Arrears' => 'Arrears',
+        ];
+        $this->set(compact('earning', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 
     /**
@@ -104,8 +115,8 @@ class EarningsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $earning = $this->fetchTable('Earnings')->get($id);
-        if ($this->fetchTable('Earnings')->delete($earning)) {
+        $earning = $this->Earnings->get($id);
+        if ($this->Earnings->delete($earning)) {
             $this->Flash->success(__('The earning has been deleted.'));
         } else {
             $this->Flash->error(__('The earning could not be deleted. Please, try again.'));

@@ -11,9 +11,10 @@ use Cake\Validation\Validator;
 /**
  * Contacts Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CustomersTable&\Cake\ORM\Association\HasMany $Customers
  * @property \App\Model\Table\EmailsTable&\Cake\ORM\Association\HasMany $Emails
- * @property \App\Model\Table\InvestorsTable&\Cake\ORM\Association\HasMany $Investors
+
  * @property \App\Model\Table\MeetingsTable&\Cake\ORM\Association\HasMany $Meetings
  * @property \App\Model\Table\SuppliersTable&\Cake\ORM\Association\HasMany $Suppliers
  * @property \App\Model\Table\TenantsTable&\Cake\ORM\Association\HasMany $Tenants
@@ -59,9 +60,7 @@ class ContactsTable extends Table
         $this->hasMany('Emails', [
             'foreignKey' => 'contact_id',
         ]);
-        $this->hasMany('Investors', [
-            'foreignKey' => 'contact_id',
-        ]);
+
         $this->hasMany('Meetings', [
             'foreignKey' => 'contact_id',
         ]);
@@ -70,6 +69,9 @@ class ContactsTable extends Table
         ]);
         $this->hasMany('Tenants', [
             'foreignKey' => 'contact_id',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -99,5 +101,19 @@ class ContactsTable extends Table
             ->notEmptyString('email');
 
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+
+        return $rules;
     }
 }

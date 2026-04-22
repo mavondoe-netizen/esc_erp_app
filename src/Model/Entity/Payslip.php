@@ -29,6 +29,7 @@ use Cake\ORM\Entity;
  * @property string $tax_credits
  * @property string $aids_levy
  * @property string $total_tax
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Employee $employee
  * @property \App\Model\Entity\PayPeriod $pay_period
@@ -65,6 +66,7 @@ class Payslip extends Entity
         'tax_credits' => true,
         'aids_levy' => true,
         'total_tax' => true,
+        'company_id' => true,
         'employee' => true,
         'pay_period' => true,
         'payslip_items' => true,

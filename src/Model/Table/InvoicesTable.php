@@ -13,6 +13,7 @@ use ArrayObject;
 /**
  * Invoices Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CustomersTable&\Cake\ORM\Association\BelongsTo $Customers
  * @property \App\Model\Table\InvoiceItemsTable&\Cake\ORM\Association\HasMany $InvoiceItems
  * @property \App\Model\Table\AccountsTable&\Cake\ORM\Association\BelongsToMany $Accounts
@@ -66,6 +67,9 @@ class InvoicesTable extends Table
             'foreignKey' => 'invoice_id',
             'targetForeignKey' => 'transaction_id',
             'joinTable' => 'invoices_transactions',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -122,6 +126,7 @@ class InvoicesTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['customer_id'], 'Customers'), ['errorField' => 'customer_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

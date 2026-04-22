@@ -26,6 +26,8 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\PayPeriod>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PayPeriod> saveManyOrFail(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\PayPeriod>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PayPeriod>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\PayPeriod>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\PayPeriod> deleteManyOrFail(iterable $entities, array $options = [])
+ *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class PayPeriodsTable extends Table
 {
@@ -42,13 +44,16 @@ class PayPeriodsTable extends Table
         $this->addBehavior('TenantAware');
 
         $this->setTable('pay_periods');
-        $this->setDisplayField('id');
+        $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
         $this->hasMany('Payslips', [
             'foreignKey' => 'pay_period_id',
             'dependent' => true,
             'cascadeCallbacks' => true,
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -80,6 +85,24 @@ class PayPeriodsTable extends Table
             ->scalar('status')
             ->allowEmptyString('status');
 
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
+
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+
+        return $rules;
     }
 }

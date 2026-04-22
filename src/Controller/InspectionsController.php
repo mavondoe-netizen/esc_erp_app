@@ -17,7 +17,7 @@ class InspectionsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Inspections')->find()
+        $query = $this->Inspections->find()
             ->contain(['Customers', 'Inspectors']);
         $inspections = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class InspectionsController extends AppController
      */
     public function view($id = null)
     {
-        $inspection = $this->fetchTable('Inspections')->get($id, contain: ['Customers', 'Inspectors']);
+        $inspection = $this->Inspections->get($id, contain: ['Customers', 'Inspectors']);
         $this->set(compact('inspection'));
     }
 
@@ -44,18 +44,18 @@ class InspectionsController extends AppController
      */
     public function add()
     {
-        $inspection = $this->fetchTable('Inspections')->newEmptyEntity();
+        $inspection = $this->Inspections->newEmptyEntity();
         if ($this->request->is('post')) {
-            $inspection = $this->fetchTable('Inspections')->patchEntity($inspection, $this->request->getData());
-            if ($this->fetchTable('Inspections')->save($inspection)) {
+            $inspection = $this->Inspections->patchEntity($inspection, $this->request->getData());
+            if ($this->Inspections->save($inspection)) {
                 $this->Flash->success(__('The inspection has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The inspection could not be saved. Please, try again.'));
         }
-        $customers = $this->fetchTable('Inspections')->Customers->find('list', limit: 200)->all();
-        $inspectors = $this->fetchTable('Inspections')->Inspectors->find('list', limit: 200)->all();
+        $customers = $this->Inspections->Customers->find('list', limit: 200)->all();
+        $inspectors = $this->Inspections->Inspectors->find('list', limit: 200)->all();
         $this->set(compact('inspection', 'customers', 'inspectors'));
     }
 
@@ -68,18 +68,18 @@ class InspectionsController extends AppController
      */
     public function edit($id = null)
     {
-        $inspection = $this->fetchTable('Inspections')->get($id, contain: []);
+        $inspection = $this->Inspections->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $inspection = $this->fetchTable('Inspections')->patchEntity($inspection, $this->request->getData());
-            if ($this->fetchTable('Inspections')->save($inspection)) {
+            $inspection = $this->Inspections->patchEntity($inspection, $this->request->getData());
+            if ($this->Inspections->save($inspection)) {
                 $this->Flash->success(__('The inspection has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The inspection could not be saved. Please, try again.'));
         }
-        $customers = $this->fetchTable('Inspections')->Customers->find('list', limit: 200)->all();
-        $inspectors = $this->fetchTable('Inspections')->Inspectors->find('list', limit: 200)->all();
+        $customers = $this->Inspections->Customers->find('list', limit: 200)->all();
+        $inspectors = $this->Inspections->Inspectors->find('list', limit: 200)->all();
         $this->set(compact('inspection', 'customers', 'inspectors'));
     }
 
@@ -93,8 +93,8 @@ class InspectionsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $inspection = $this->fetchTable('Inspections')->get($id);
-        if ($this->fetchTable('Inspections')->delete($inspection)) {
+        $inspection = $this->Inspections->get($id);
+        if ($this->Inspections->delete($inspection)) {
             $this->Flash->success(__('The inspection has been deleted.'));
         } else {
             $this->Flash->error(__('The inspection could not be deleted. Please, try again.'));

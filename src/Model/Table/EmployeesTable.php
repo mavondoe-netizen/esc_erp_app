@@ -28,6 +28,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\Employee>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Employee> deleteManyOrFail(iterable $entities, array $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class EmployeesTable extends Table
 {

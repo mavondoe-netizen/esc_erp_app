@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\Date|null $effective_date
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Loan $loan
  */
@@ -48,6 +49,7 @@ class LoanRestructure extends Entity
         'approved_by' => true,
         'approved_at' => true,
         'effective_date' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'loan' => true,

@@ -3,9 +3,12 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Supplier> $suppliers
  */
+$isPopup = $this->request->getQuery('popup');
 ?>
 <div class="suppliers index content">
-    <?= $this->Html->link(__('New Supplier'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?php if (!$isPopup): ?>
+        <?= $this->Html->link(__('New Supplier'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <?php endif; ?>
     <h3><?= __('Suppliers') ?></h3>
     <div class="table-responsive">
         <table>
@@ -26,9 +29,17 @@
                     <td><?= $supplier->hasValue('contact') ? $this->Html->link($supplier->contact->name, ['controller' => 'Contacts', 'action' => 'view', $supplier->contact->id]) : '' ?></td>
                     <td><?= h($supplier->industry) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $supplier->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $supplier->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $supplier->id], ['confirm' => __('Are you sure you want to delete # {0}?', $supplier->id)]) ?>
+                        <?php if ($isPopup): ?>
+                            <button type="button" class="button button-small select-item-btn" 
+                                    data-id="<?= $supplier->id ?>" 
+                                    data-name="<?= h($supplier->name) ?>">
+                                <?= __('Select') ?>
+                            </button>
+                        <?php else: ?>
+                            <?= $this->Html->link(__('View'), ['action' => 'view', $supplier->id]) ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $supplier->id]) ?>
+                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $supplier->id], ['confirm' => __('Are you sure you want to delete # {0}?', $supplier->id)]) ?>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -46,3 +57,21 @@
         <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
     </div>
 </div>
+
+<?php if ($isPopup): ?>
+<script>
+document.querySelectorAll('.select-item-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        if (window.parent) {
+            window.parent.postMessage({
+                action: 'itemAdded', 
+                id: id,
+                name: name
+            }, '*');
+        }
+    });
+});
+</script>
+<?php endif; ?>

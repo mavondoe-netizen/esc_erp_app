@@ -3,166 +3,236 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\ORM\TableRegistry;
+
 /**
  * Accounts Controller
  *
- * @property \App\Model\Table\AccountsTable $Accounts
+ * Chart of Accounts — CRUD plus an import helper and the opening-balance
+ * management screen.
  */
 class AccountsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
     public function index()
     {
-        $query = $this->fetchTable('Accounts')->find();
-        $accounts = $this->paginate($query);
+        $companyId = $this->request->getAttribute('company_id');
 
-        $this->set(compact('accounts'));
+        $Accounts = $this->fetchTable('Accounts');
+
+        $conditions = ['Accounts.company_id' => $companyId];
+
+        $filterType = $this->request->getQuery('type');
+        if ($filterType) $conditions['Accounts.type'] = $filterType;
+
+        $query = $Accounts->find()
+            ->where($conditions)
+            ->order(['Accounts.type', 'Accounts.category', 'Accounts.name']);
+
+        $accounts = $this->paginate($query, ['limit' => 100]);
+
+        // Summary totals for the sidebar
+        $typeTotals = $Accounts->find()
+            ->select(['type', 'total' => $Accounts->find()->func()->count('*')])
+            ->where(['Accounts.company_id' => $companyId])
+            ->groupBy('type')
+            ->all()
+            ->combine('type', fn($r) => $r->total)
+            ->toArray();
+
+        $this->set(compact('accounts', 'typeTotals'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Account id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
+    public function view(int $id)
     {
-        $account = $this->fetchTable('Accounts')->get($id, contain: ['Invoices',  'BillItems', 'InvoiceItems', 'Receipts', 'Transactions']);
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Accounts = $this->fetchTable('Accounts');
+        $account  = $Accounts->get($id, contain: ['Transactions' => function ($q) {
+            return $q->order(['Transactions.date' => 'DESC'])->limit(50);
+        }]);
+
         $this->set(compact('account'));
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {
-        $account = $this->fetchTable('Accounts')->newEmptyEntity();
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Accounts = $this->fetchTable('Accounts');
+        $account  = $Accounts->newEmptyEntity();
+
         if ($this->request->is('post')) {
-            $account = $this->fetchTable('Accounts')->patchEntity($account, $this->request->getData());
-            if ($this->fetchTable('Accounts')->save($account)) {
-                $this->Flash->success(__('The account has been saved.'));
+            $data               = $this->request->getData();
+            $data['company_id'] = $companyId;
+            $account = $Accounts->patchEntity($account, $data);
 
+            if ($this->request->getQuery('popup')) {
+                if ($Accounts->save($account)) {
+                    $this->set('popupResult', ['id' => $account->id, 'name' => $account->name]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
+            }
+
+            if ($Accounts->save($account)) {
+                $this->Flash->success(__('Account saved.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The account could not be saved. Please, try again.'));
+            $this->Flash->error(__('Could not save account. Check for errors.'));
         }
-        $categories = [
+
+        $types = [
             'Asset' => 'Asset',
             'Liability' => 'Liability',
             'Equity' => 'Equity',
-            'Revenue' => 'Revenue',
-            'Expense' => 'Expense'
+            'Income' => 'Income',
+            'Expense' => 'Expense',
+            'Revenue' => 'Revenue'
         ];
-        $types = [
+        $categories = [
             'Current Asset' => 'Current Asset',
             'Fixed Asset' => 'Fixed Asset',
-            'Non-current Asset' => 'Non-current Asset',
             'Current Liability' => 'Current Liability',
-            'Non-current Liability' => 'Non-current Liability',
-            'Equity' => 'Equity',
+            'Long-term Liability' => 'Long-term Liability',
+            'Owner\'s Equity' => 'Owner\'s Equity',
             'Operating Revenue' => 'Operating Revenue',
-            'Non-operating Revenue' => 'Non-operating Revenue',
+            'Other Income' => 'Other Income',
             'Operating Expense' => 'Operating Expense',
-            'Non-operating Expense' => 'Non-operating Expense'
+            'Other Expense' => 'Other Expense'
         ];
         $subcategories = [
-            'Cash and Bank' => 'Cash and Bank',
+            'Cash and Cash Equivalents' => 'Cash and Cash Equivalents',
             'Accounts Receivable' => 'Accounts Receivable',
             'Inventory' => 'Inventory',
-            'Property Plant & Equipment' => 'Property Plant & Equipment',
+            'Property, Plant and Equipment' => 'Property, Plant and Equipment',
+            'Intangible Assets' => 'Intangible Assets',
             'Accounts Payable' => 'Accounts Payable',
-            'Credit Cards' => 'Credit Cards',
-            'Long-term Liabilities' => 'Long-term Liabilities',
-            'Owner\'s Equity' => 'Owner\'s Equity',
+            'Accrued Expenses' => 'Accrued Expenses',
             'Sales' => 'Sales',
             'Cost of Goods Sold' => 'Cost of Goods Sold',
-            'Operating Expenses' => 'Operating Expenses',
-            'Payroll Expenses' => 'Payroll Expenses',
+            'Salaries and Wages' => 'Salaries and Wages',
+            'Rent' => 'Rent',
+            'Utilities' => 'Utilities',
             'Other' => 'Other'
         ];
-        $this->set(compact('account', 'categories', 'types', 'subcategories'));
+        $this->set(compact('account', 'types', 'categories', 'subcategories'));
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Account id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
+    public function edit(int $id)
     {
-        $account = $this->fetchTable('Accounts')->get($id, contain: ['Invoices']);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $account = $this->fetchTable('Accounts')->patchEntity($account, $this->request->getData());
-            if ($this->fetchTable('Accounts')->save($account)) {
-                $this->Flash->success(__('The account has been saved.'));
+        $companyId = $this->request->getAttribute('company_id');
 
+        $Accounts = $this->fetchTable('Accounts');
+        $account  = $Accounts->get($id);
+
+        if ($this->request->is(['post', 'put'])) {
+            $account = $Accounts->patchEntity($account, $this->request->getData());
+            if ($Accounts->save($account)) {
+                $this->Flash->success(__('Account updated.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The account could not be saved. Please, try again.'));
+            $this->Flash->error(__('Could not update account.'));
         }
-        $categories = [
+
+        $types = [
             'Asset' => 'Asset',
             'Liability' => 'Liability',
             'Equity' => 'Equity',
-            'Revenue' => 'Revenue',
-            'Expense' => 'Expense'
+            'Income' => 'Income',
+            'Expense' => 'Expense',
+            'Revenue' => 'Revenue'
         ];
-        $types = [
+        $categories = [
             'Current Asset' => 'Current Asset',
             'Fixed Asset' => 'Fixed Asset',
-            'Non-current Asset' => 'Non-current Asset',
             'Current Liability' => 'Current Liability',
-            'Non-current Liability' => 'Non-current Liability',
-            'Equity' => 'Equity',
+            'Long-term Liability' => 'Long-term Liability',
+            'Owner\'s Equity' => 'Owner\'s Equity',
             'Operating Revenue' => 'Operating Revenue',
-            'Non-operating Revenue' => 'Non-operating Revenue',
+            'Other Income' => 'Other Income',
             'Operating Expense' => 'Operating Expense',
-            'Non-operating Expense' => 'Non-operating Expense'
+            'Other Expense' => 'Other Expense'
         ];
         $subcategories = [
-            'Cash and Bank' => 'Cash and Bank',
+            'Cash and Cash Equivalents' => 'Cash and Cash Equivalents',
             'Accounts Receivable' => 'Accounts Receivable',
             'Inventory' => 'Inventory',
-            'Fixed Assets' => 'Fixed Assets',
+            'Property, Plant and Equipment' => 'Property, Plant and Equipment',
+            'Intangible Assets' => 'Intangible Assets',
             'Accounts Payable' => 'Accounts Payable',
-            'Credit Cards' => 'Credit Cards',
-            'Long-term Liabilities' => 'Long-term Liabilities',
-            'Owner\'s Equity' => 'Owner\'s Equity',
+            'Accrued Expenses' => 'Accrued Expenses',
             'Sales' => 'Sales',
             'Cost of Goods Sold' => 'Cost of Goods Sold',
-            'Operating Expenses' => 'Operating Expenses',
-            'Payroll Expenses' => 'Payroll Expenses',
+            'Salaries and Wages' => 'Salaries and Wages',
+            'Rent' => 'Rent',
+            'Utilities' => 'Utilities',
             'Other' => 'Other'
         ];
-        $this->set(compact('account', 'categories', 'types', 'subcategories'));
+        $this->set(compact('account', 'types', 'categories', 'subcategories'));
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Account id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
+    public function delete(int $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $account = $this->fetchTable('Accounts')->get($id);
-        if ($this->fetchTable('Accounts')->delete($account)) {
-            $this->Flash->success(__('The account has been deleted.'));
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Accounts = $this->fetchTable('Accounts');
+        $account  = $Accounts->find()
+            ->where(['Accounts.id' => $id, 'Accounts.company_id' => $companyId])
+            ->first();
+
+        if ($account && $Accounts->delete($account)) {
+            $this->Flash->success(__('Account deleted.'));
         } else {
-            $this->Flash->error(__('The account could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Could not delete account. It may have associated transactions.'));
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * Opening Balances management screen.
+     * Displays all accounts with their current opening_balance for batch editing.
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function openingBalances()
+    {
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Accounts = $this->fetchTable('Accounts');
+
+        if ($this->request->is('post')) {
+            $rows = (array)$this->request->getData('balances', []);
+            $errors = [];
+
+            foreach ($rows as $accountId => $balance) {
+                $acc = $Accounts->find()
+                    ->where(['Accounts.id' => (int)$accountId, 'Accounts.company_id' => $companyId])
+                    ->first();
+                if (!$acc) continue;
+
+                $acc->opening_balance = (float)str_replace(',', '', $balance);
+                if (!$Accounts->save($acc, ['validate' => false])) {
+                    $errors[] = "Could not save '{$acc->name}'.";
+                }
+            }
+
+            if (empty($errors)) {
+                $this->Flash->success('Opening balances updated.');
+            } else {
+                $this->Flash->error(implode('<br>', $errors));
+            }
+
+            return $this->redirect(['action' => 'openingBalances']);
+        }
+
+        $accounts = $Accounts->find()
+            ->where(['Accounts.company_id' => $companyId])
+            ->order(['Accounts.type', 'Accounts.category', 'Accounts.name'])
+            ->all();
+
+        $sumOfBalances = $accounts->sumOf('opening_balance');
+        $this->set(compact('accounts', 'sumOfBalances'));
     }
 }

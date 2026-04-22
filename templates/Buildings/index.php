@@ -14,9 +14,9 @@
                     <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('name') ?></th>
                     <th><?= $this->Paginator->sort('address') ?></th>
-                    <th><?= $this->Paginator->sort('investor_id') ?></th>
+                    
                     <th><?= $this->Paginator->sort('start_date') ?></th>
-                    <th><?= $this->Paginator->sort('isvacant') ?></th>
+                    <th><?= __('Occupancy') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -26,9 +26,9 @@
                     <td><?= $this->Number->format($building->id) ?></td>
                     <td><?= h($building->name) ?></td>
                     <td><?= h($building->address) ?></td>
-                    <td><?= $building->hasValue('investor') ? $this->Html->link($building->investor->name, ['controller' => 'Investors', 'action' => 'view', $building->investor->id]) : '' ?></td>
+                    
                     <td><?= h($building->start_date) ?></td>
-                    <td><?= h($building->isvacant) ?></td>
+                    <td><?= $this->Number->format($building->occupancy_rate, ['precision' => 0]) ?>%</td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $building->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $building->id]) ?>

@@ -30,7 +30,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
     
     <!-- Premium Design System -->
     <!-- Premium Design System -->
-    <?= $this->Html->css(['premium', 'bulk_actions', 'sales_bot']) ?>
+    <?= $this->Html->css(['premium', 'bulk_actions', 'sales_bot', 'quick-add']) ?>
 
     <!-- DataTables & Buttons CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
@@ -47,7 +47,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
     <div style="background:linear-gradient(90deg,#f59e0b,#d97706); color:white; padding:8px 1.5rem; display:flex; align-items:center; gap:0.75rem; font-weight:700; font-size:0.9rem; position:sticky; top:0; z-index:9999; box-shadow:0 2px 8px rgba(217,119,6,0.5);">
         <i class="fa fa-flask"></i>
         ⚠ SANDBOX MODE ACTIVE — You are working with test data. Production is unaffected.
-        <a href="/sandbox" style="margin-left:auto; color:white; background:rgba(0,0,0,0.15); padding:3px 14px; border-radius:20px; text-decoration:none; font-size:0.8rem;">Manage Sandbox</a>
+        <a href="<?= $this->Url->build(['controller' => 'Sandbox', 'action' => 'index']) ?>" style="margin-left:auto; color:white; background:rgba(0,0,0,0.15); padding:3px 14px; border-radius:20px; text-decoration:none; font-size:0.8rem;">Manage Sandbox</a>
     </div>
     <?php endif; ?>
 
@@ -55,7 +55,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
     <div style="background:linear-gradient(90deg,#7c3aed,#4f46e5); color:white; padding:8px 1.5rem; display:flex; align-items:center; gap:0.75rem; font-weight:700; font-size:0.9rem; position:sticky; top:0; z-index:9998; box-shadow:0 2px 8px rgba(99,102,241,0.4);">
         <i class="fa fa-building"></i>
         👁 VIEWING AS: <em style="font-style:normal; background:rgba(255,255,255,0.2); padding:1px 10px; border-radius:20px;"><?= h($switchedCompanyName ?? 'Company #' . $switchedCompanyId) ?></em>
-        <?= $this->Form->create(null, ['url' => '/users/exit-company-switch', 'style' => 'margin-left:auto; display:inline;']) ?>
+        <?= $this->Form->create(null, ['url' => ['controller' => 'Users', 'action' => 'exitCompanySwitch'], 'style' => 'margin-left:auto; display:inline;']) ?>
             <?= $this->Form->button('✕ Exit Company View', ['style' => 'background:rgba(255,255,255,0.2); color:white; border:none; padding:3px 14px; border-radius:20px; cursor:pointer; font-weight:700; font-size:0.8rem;']) ?>
         <?= $this->Form->end() ?>
     </div>
@@ -73,11 +73,11 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                     ]) ?>
                 <?php endif; ?>
                 <div class="navbar-brand">
-                    <a href="/">ESCerp_app</a>
+                    <a href="<?= $this->Url->build('/') ?>">ESCerp_app</a>
                 </div>
             </div>
             <div class="navbar-search">
-                <form method="get" action="/search" style="margin: 0; display: flex; gap: 0.5rem;">
+                <form method="get" action="<?= $this->Url->build(['controller' => 'Search', 'action' => 'index']) ?>" style="margin-0; display: flex; gap: 0.5rem;">
                     <input type="search" name="q" placeholder="Search everywhere..." aria-label="Search" style="margin: 0; width: 250px;">
                     <button type="submit" class="btn btn-primary" style="margin: 0;">Search</button>
                 </form>
@@ -85,7 +85,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
             <div style="display:flex; align-items:center; gap:0.75rem; margin-left:auto; padding-right:0;">
                 <?php if (!empty($isSuperAdmin)): ?>
                 <div style="display:flex; align-items:center; gap:0.5rem;">
-                    <?= $this->Form->create(null, ['url' => '/users/switch-company', 'style' => 'display:flex; align-items:center; gap:0.5rem;']) ?>
+                    <?= $this->Form->create(null, ['url' => ['controller' => 'Users', 'action' => 'switchCompany'], 'style' => 'display:flex; align-items:center; gap:0.5rem;']) ?>
                         <label for="company-switcher" style="color:#64748b; font-size:0.82rem; white-space:nowrap; font-weight:600;">
                             <i class="fa fa-building"></i> View as:
                         </label>
@@ -106,7 +106,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                 </div>
                 <?php endif; ?>
                 <?php if (!empty($isAdminOrSuper)): ?>
-                <a href="/sandbox" title="Sandbox Environment" style="color:#64748b; font-size:0.85rem; text-decoration:none; display:flex; align-items:center; gap:0.35rem;">
+                <a href="<?= $this->Url->build(['controller' => 'Sandbox', 'action' => 'index']) ?>" title="Sandbox Environment" style="color:#64748b; font-size:0.85rem; text-decoration:none; display:flex; align-items:center; gap:0.35rem;">
                     <i class="fa fa-flask"></i> Sandbox
                 </a>
                 <?php endif; ?>
@@ -123,7 +123,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                 <nav class="sidebar-nav">
 
                     <!-- Dashboard -->
-                    <a href="/Dashboard" class="sidebar-link sidebar-home <?= ($this->request->getParam('controller') === 'Dashboard') ? 'active' : '' ?>">
+                    <a href="<?= $this->Url->build(['controller' => 'Dashboard', 'action' => 'index']) ?>" class="sidebar-link sidebar-home <?= ($this->request->getParam('controller') === 'Dashboard') ? 'active' : '' ?>">
                         <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
                     </a>
 
@@ -178,13 +178,14 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                     </div>
 
                     <!-- INVOICING / SALES -->
-                    <?php $ga = $groupActive(['Invoices','Payments','Receipts','Estimates','DebitNotes','CreditNotes']); ?>
+                    <?php $ga = $groupActive(['Invoices', 'Customers', 'Payments', 'Receipts', 'Estimates', 'DebitNotes', 'CreditNotes']); ?>
                     <div class="nav-group <?= $ga ?>">
                         <div class="nav-group-header" onclick="toggleGroup(this)">
                             <span><i class="fas fa-file-invoice-dollar"></i> Invoicing</span>
                             <i class="fas fa-chevron-down nav-arrow"></i>
                         </div>
                         <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-user-tie"></i> Customers', ['controller' => 'Customers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Customers' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-file-invoice"></i> Invoices', ['controller' => 'Invoices', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Invoices' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-money-bill-wave"></i> Payments', ['controller' => 'Payments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Payments' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-receipt"></i> Receipts', ['controller' => 'Receipts', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Receipts' ? ' active' : '')]) ?>
@@ -316,15 +317,16 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                             <?= $this->Html->link('<i class="fas fa-puzzle-piece"></i> Modules', ['controller' => 'Modules', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Modules' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-project-diagram"></i> Approval Flows', ['controller' => 'ApprovalFlows', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ApprovalFlows' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-database"></i> Database Backups', ['controller' => 'Backups', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Backups' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-cog"></i> Server Settings', ['controller' => 'Settings', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Settings' ? ' active' : '')]) ?>
                             <?php if (!empty($isAdminOrSuper)): ?>
-                            <a href="/sandbox" class="nav-sub-link"><i class="fas fa-flask"></i> Sandbox</a>
+                            <a href="<?= $this->Url->build('/sandbox') ?>" class="nav-sub-link"><i class="fas fa-flask"></i> Sandbox</a>
                             <?php endif; ?>
                         </div>
                     </div>
 
                     <!-- MY PORTAL (if linked employee) -->
                     <?php if ($identity && !empty($identity->employee_id)): ?>
-                    <a href="/portal/dashboard" class="sidebar-link <?= ($ctrl === 'Portal') ? 'active' : '' ?>">
+                    <a href="<?= $this->Url->build('/portal/dashboard') ?>" class="sidebar-link <?= ($ctrl === 'Portal') ? 'active' : '' ?>">
                         <i class="fas fa-id-card"></i> <span>My Portal</span>
                     </a>
                     <?php endif; ?>
@@ -334,6 +336,21 @@ $cakeDescription = 'ESCerp App - Premium ERP';
 
             <!-- Main Content Area -->
             <main class="app-content">
+                <style>
+                    .message { 
+                        padding: 1rem 1.5rem; 
+                        margin-bottom: 2rem; 
+                        border-radius: 8px; 
+                        font-weight: 500; 
+                        cursor: pointer; 
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+                        transition: opacity 0.3s;
+                    }
+                    .message.success { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+                    .message.error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+                    .message.info { background-color: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+                    .message.hidden { display: none; }
+                </style>
                 <?= $this->Flash->render() ?>
                 <?= $this->fetch('content') ?>
             </main>
@@ -618,6 +635,63 @@ $cakeDescription = 'ESCerp App - Premium ERP';
     </div>
 
     <!-- Bot logic -->
-    <?= $this->Html->script('sales_bot') ?>
+    <!-- Global Quick Add Modal -->
+    <div id="globalQuickAddModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+       <div style="background:#fff; width:80%; height:80%; max-width:800px; border-radius:8px; display:flex; flex-direction:column; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+           <div style="padding:15px 20px; background:#f4f4f4; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
+               <h4 style="margin:0;">Quick Add Record</h4>
+               <button type="button" class="button button-clear" onclick="document.getElementById('globalQuickAddModal').style.display='none'; document.getElementById('globalQuickAddIframe').src='';" style="padding:0; margin:0; font-size:1.5em; line-height:1; color:#dc3545;">&times;</button>
+           </div>
+           <iframe id="globalQuickAddIframe" style="flex-grow:1; border:none; width:100%;" src=""></iframe>
+       </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle trigger clicks
+        document.body.addEventListener('click', function(e) {
+            if (e.target.matches('.global-quick-add-btn') || e.target.closest('.global-quick-add-btn')) {
+                const btn = e.target.matches('.global-quick-add-btn') ? e.target : e.target.closest('.global-quick-add-btn');
+                let url = btn.getAttribute('data-url');
+                const targetDropdownId = btn.getAttribute('data-target-dropdown');
+                
+                // Store target locally on the modal so message listener knows where to inject
+                const modal = document.getElementById('globalQuickAddModal');
+                modal.setAttribute('data-active-dropdown', targetDropdownId);
+
+                const appBase = '<?= rtrim($this->Url->build('/'), '/') ?>';
+                if (url && url.startsWith('/') && appBase !== '') {
+                    url = appBase + url;
+                }
+                
+                document.getElementById('globalQuickAddIframe').src = url;
+                modal.style.display = 'flex';
+            }
+        });
+
+        // Listen for iframe success callback
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.action === 'itemAdded') {
+                const modal = document.getElementById('globalQuickAddModal');
+                modal.style.display = 'none';
+                document.getElementById('globalQuickAddIframe').src = '';
+                
+                const dropdownId = modal.getAttribute('data-active-dropdown');
+                if (dropdownId) {
+                    const dropdown = document.getElementById(dropdownId);
+                    if (dropdown) {
+                        const newOption = new Option(event.data.name, event.data.id, true, true);
+                        if (typeof $ !== 'undefined' && $(dropdown).hasClass('select2-hidden-accessible')) {
+                            $(dropdown).append(newOption).trigger('change');
+                        } else {
+                            dropdown.add(newOption);
+                            dropdown.value = event.data.id;
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
     <div class="index-header">
         <h2 class="index-title"><i class="fas fa-database"></i> Database Backups</h2>
         <div class="actions">
-            <?= $this->Html->link(__('<i class="fas fa-plus"></i> Create New Backup'), ['action' => 'create'], ['class' => 'button', 'escape' => false]) ?>
+            <?= $this->Form->postLink(__('<i class="fas fa-plus"></i> Create New Backup'), ['action' => 'create'], ['class' => 'button', 'escape' => false, 'confirm' => 'Are you sure you want to generate a new manual database backup?']) ?>
         </div>
     </div>
 

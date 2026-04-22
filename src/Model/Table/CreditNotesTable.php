@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * CreditNotes Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\CustomersTable&\Cake\ORM\Association\BelongsTo $Customers
  * @property \App\Model\Table\CreditNoteItemsTable&\Cake\ORM\Association\HasMany $CreditNoteItems

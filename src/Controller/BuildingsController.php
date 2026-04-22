@@ -17,8 +17,7 @@ class BuildingsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Buildings')->find()
-            ->contain(['Investors']);
+        $query = $this->Buildings->find()->contain(['Units']);
         $buildings = $this->paginate($query);
 
         $this->set(compact('buildings'));
@@ -33,7 +32,7 @@ class BuildingsController extends AppController
      */
     public function view($id = null)
     {
-        $building = $this->fetchTable('Buildings')->get($id, contain: ['Investors', 'Bills', 'Transactions', 'Units']);
+        $building = $this->Buildings->get($id, contain: [ 'Bills', 'Transactions', 'Units']);
         $this->set(compact('building'));
     }
 
@@ -44,18 +43,18 @@ class BuildingsController extends AppController
      */
     public function add()
     {
-        $building = $this->fetchTable('Buildings')->newEmptyEntity();
+        $building = $this->Buildings->newEmptyEntity();
         if ($this->request->is('post')) {
-            $building = $this->fetchTable('Buildings')->patchEntity($building, $this->request->getData());
-            if ($this->fetchTable('Buildings')->save($building)) {
+            $building = $this->Buildings->patchEntity($building, $this->request->getData());
+            if ($this->Buildings->save($building)) {
                 $this->Flash->success(__('The building has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The building could not be saved. Please, try again.'));
         }
-        $investors = $this->fetchTable('Buildings')->Investors->find('list', limit: 200)->all();
-        $this->set(compact('building', 'investors'));
+
+        $this->set(compact('building'));
     }
 
     /**
@@ -67,18 +66,17 @@ class BuildingsController extends AppController
      */
     public function edit($id = null)
     {
-        $building = $this->fetchTable('Buildings')->get($id, contain: []);
+        $building = $this->Buildings->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $building = $this->fetchTable('Buildings')->patchEntity($building, $this->request->getData());
-            if ($this->fetchTable('Buildings')->save($building)) {
+            $building = $this->Buildings->patchEntity($building, $this->request->getData());
+            if ($this->Buildings->save($building)) {
                 $this->Flash->success(__('The building has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The building could not be saved. Please, try again.'));
         }
-        $investors = $this->fetchTable('Buildings')->Investors->find('list', limit: 200)->all();
-        $this->set(compact('building', 'investors'));
+        $this->set(compact('building'));
     }
 
     /**
@@ -91,8 +89,8 @@ class BuildingsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $building = $this->fetchTable('Buildings')->get($id);
-        if ($this->fetchTable('Buildings')->delete($building)) {
+        $building = $this->Buildings->get($id);
+        if ($this->Buildings->delete($building)) {
             $this->Flash->success(__('The building has been deleted.'));
         } else {
             $this->Flash->error(__('The building could not be deleted. Please, try again.'));

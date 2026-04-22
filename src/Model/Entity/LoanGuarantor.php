@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
  * @property string $status
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\LoanApplication $loan_application
  */
@@ -44,6 +45,7 @@ class LoanGuarantor extends Entity
         'monthly_income' => true,
         'currency' => true,
         'status' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'loan_application' => true,

@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property string $currency
  * @property float $amount
  * @property int|null $account_id
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Contact $contact
  * @property \App\Model\Entity\Account $account
@@ -34,6 +35,7 @@ class Receipt extends Entity
         'currency' => true,
         'amount' => true,
         'account_id' => true,
+        'company_id' => true,
         
         'account' => true,
         'transactions' => true,

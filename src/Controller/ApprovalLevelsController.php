@@ -3,98 +3,132 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\ORM\TableRegistry;
+
 /**
  * ApprovalLevels Controller
  *
- * @property \App\Model\Table\ApprovalLevelsTable $ApprovalLevels
+ * CRUD for approval workflow levels/stages.
  */
 class ApprovalLevelsController extends AppController
 {
     /**
-     * Index method
+     * Index — list all approval levels.
      *
-     * @return \Cake\Http\Response|null|void Renders view
+     * @return void
      */
     public function index()
     {
-        $query = $this->fetchTable('ApprovalLevels')->find();
-        $approvalLevels = $this->paginate($query);
+        $companyId = $this->request->getAttribute('company_id');
 
-        $this->set(compact('approvalLevels'));
+        $ApprovalLevels = TableRegistry::getTableLocator()->get('ApprovalLevels');
+        $query = $ApprovalLevels->find()
+            ->where(['ApprovalLevels.company_id' => $companyId])
+            ->contain(['ApprovalFlows'])
+            ->all();
+
+        $this->set('approvalLevels', $query);
     }
 
     /**
-     * View method
+     * View a single approval level.
      *
-     * @param string|null $id Approval Level id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param int $id ApprovalLevel ID.
+     * @return void
      */
-    public function view($id = null)
+    public function view(int $id)
     {
-        $approvalLevel = $this->fetchTable('ApprovalLevels')->get($id, contain: []);
+        $ApprovalLevels = TableRegistry::getTableLocator()->get('ApprovalLevels');
+        $approvalLevel = $ApprovalLevels->get($id, contain: ['ApprovalFlows']);
         $this->set(compact('approvalLevel'));
     }
 
     /**
-     * Add method
+     * Add a new approval level.
      *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Http\Response|null
      */
     public function add()
     {
-        $approvalLevel = $this->fetchTable('ApprovalLevels')->newEmptyEntity();
+        $ApprovalLevels = TableRegistry::getTableLocator()->get('ApprovalLevels');
+        $approvalLevel = $ApprovalLevels->newEmptyEntity();
+
         if ($this->request->is('post')) {
-            $approvalLevel = $this->fetchTable('ApprovalLevels')->patchEntity($approvalLevel, $this->request->getData());
-            if ($this->fetchTable('ApprovalLevels')->save($approvalLevel)) {
-                $this->Flash->success(__('The approval level has been saved.'));
+            $companyId = $this->request->getAttribute('company_id');
+            $data = $this->request->getData();
+            $data['company_id'] = $companyId;
+            $approvalLevel = $ApprovalLevels->patchEntity($approvalLevel, $data);
 
+            if ($this->request->getQuery('popup')) {
+                $this->set('popupResult', [
+                    'id' => $approvalLevel->id ?? 0,
+                    'name' => $approvalLevel->name ?? 'New Level',
+                ]);
+                $this->viewBuilder()->disableAutoLayout();
+                return $this->render('/Element/popup_success');
+            }
+
+            if ($ApprovalLevels->save($approvalLevel)) {
+                $this->Flash->success(__('The approval level has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The approval level could not be saved. Please, try again.'));
         }
-        $this->set(compact('approvalLevel'));
+
+        $companyId = $this->request->getAttribute('company_id');
+        $ApprovalFlows = TableRegistry::getTableLocator()->get('ApprovalFlows');
+        $approvalFlows = $ApprovalFlows->find('list', keyField: 'id', valueField: 'name')
+            ->where(['ApprovalFlows.company_id' => $companyId])
+            ->all();
+
+        $this->set(compact('approvalLevel', 'approvalFlows'));
     }
 
     /**
-     * Edit method
+     * Edit an approval level.
      *
-     * @param string|null $id Approval Level id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param int $id ApprovalLevel ID.
+     * @return \Cake\Http\Response|null
      */
-    public function edit($id = null)
+    public function edit(int $id)
     {
-        $approvalLevel = $this->fetchTable('ApprovalLevels')->get($id, contain: []);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $approvalLevel = $this->fetchTable('ApprovalLevels')->patchEntity($approvalLevel, $this->request->getData());
-            if ($this->fetchTable('ApprovalLevels')->save($approvalLevel)) {
-                $this->Flash->success(__('The approval level has been saved.'));
+        $ApprovalLevels = TableRegistry::getTableLocator()->get('ApprovalLevels');
+        $approvalLevel = $ApprovalLevels->get($id);
 
+        if ($this->request->is(['post', 'put'])) {
+            $approvalLevel = $ApprovalLevels->patchEntity($approvalLevel, $this->request->getData());
+            if ($ApprovalLevels->save($approvalLevel)) {
+                $this->Flash->success(__('The approval level has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The approval level could not be saved. Please, try again.'));
         }
-        $this->set(compact('approvalLevel'));
+
+        $companyId = $this->request->getAttribute('company_id');
+        $ApprovalFlows = TableRegistry::getTableLocator()->get('ApprovalFlows');
+        $approvalFlows = $ApprovalFlows->find('list', keyField: 'id', valueField: 'name')
+            ->where(['ApprovalFlows.company_id' => $companyId])
+            ->all();
+
+        $this->set(compact('approvalLevel', 'approvalFlows'));
     }
 
     /**
-     * Delete method
+     * Delete an approval level.
      *
-     * @param string|null $id Approval Level id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @param int $id ApprovalLevel ID.
+     * @return \Cake\Http\Response|null
      */
-    public function delete($id = null)
+    public function delete(int $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $approvalLevel = $this->fetchTable('ApprovalLevels')->get($id);
-        if ($this->fetchTable('ApprovalLevels')->delete($approvalLevel)) {
+        $ApprovalLevels = TableRegistry::getTableLocator()->get('ApprovalLevels');
+        $approvalLevel = $ApprovalLevels->get($id);
+        if ($ApprovalLevels->delete($approvalLevel)) {
             $this->Flash->success(__('The approval level has been deleted.'));
         } else {
             $this->Flash->error(__('The approval level could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Risks Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\ControlsTable&\Cake\ORM\Association\HasMany $Controls
  * @property \App\Model\Table\KrisTable&\Cake\ORM\Association\HasMany $Kris

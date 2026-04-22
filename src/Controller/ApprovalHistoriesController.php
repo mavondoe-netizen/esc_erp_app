@@ -17,7 +17,7 @@ class ApprovalHistoriesController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('ApprovalHistories')->find()
+        $query = $this->ApprovalHistories->find()
             ->contain(['Approvals']);
         $approvalHistories = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class ApprovalHistoriesController extends AppController
      */
     public function view($id = null)
     {
-        $approvalHistory = $this->fetchTable('ApprovalHistories')->get($id, contain: ['Approvals']);
+        $approvalHistory = $this->ApprovalHistories->get($id, contain: ['Approvals']);
         $this->set(compact('approvalHistory'));
     }
 
@@ -44,17 +44,17 @@ class ApprovalHistoriesController extends AppController
      */
     public function add()
     {
-        $approvalHistory = $this->fetchTable('ApprovalHistories')->newEmptyEntity();
+        $approvalHistory = $this->ApprovalHistories->newEmptyEntity();
         if ($this->request->is('post')) {
-            $approvalHistory = $this->fetchTable('ApprovalHistories')->patchEntity($approvalHistory, $this->request->getData());
-            if ($this->fetchTable('ApprovalHistories')->save($approvalHistory)) {
+            $approvalHistory = $this->ApprovalHistories->patchEntity($approvalHistory, $this->request->getData());
+            if ($this->ApprovalHistories->save($approvalHistory)) {
                 $this->Flash->success(__('The approval history has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The approval history could not be saved. Please, try again.'));
         }
-        $approvals = $this->fetchTable('ApprovalHistories')->Approvals->find('list', limit: 200)->all();
+        $approvals = $this->ApprovalHistories->Approvals->find('list', limit: 200)->all();
         $this->set(compact('approvalHistory', 'approvals'));
     }
 
@@ -67,17 +67,17 @@ class ApprovalHistoriesController extends AppController
      */
     public function edit($id = null)
     {
-        $approvalHistory = $this->fetchTable('ApprovalHistories')->get($id, contain: []);
+        $approvalHistory = $this->ApprovalHistories->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $approvalHistory = $this->fetchTable('ApprovalHistories')->patchEntity($approvalHistory, $this->request->getData());
-            if ($this->fetchTable('ApprovalHistories')->save($approvalHistory)) {
+            $approvalHistory = $this->ApprovalHistories->patchEntity($approvalHistory, $this->request->getData());
+            if ($this->ApprovalHistories->save($approvalHistory)) {
                 $this->Flash->success(__('The approval history has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The approval history could not be saved. Please, try again.'));
         }
-        $approvals = $this->fetchTable('ApprovalHistories')->Approvals->find('list', limit: 200)->all();
+        $approvals = $this->ApprovalHistories->Approvals->find('list', limit: 200)->all();
         $this->set(compact('approvalHistory', 'approvals'));
     }
 
@@ -91,8 +91,8 @@ class ApprovalHistoriesController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $approvalHistory = $this->fetchTable('ApprovalHistories')->get($id);
-        if ($this->fetchTable('ApprovalHistories')->delete($approvalHistory)) {
+        $approvalHistory = $this->ApprovalHistories->get($id);
+        if ($this->ApprovalHistories->delete($approvalHistory)) {
             $this->Flash->success(__('The approval history has been deleted.'));
         } else {
             $this->Flash->error(__('The approval history could not be deleted. Please, try again.'));

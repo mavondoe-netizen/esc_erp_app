@@ -3,140 +3,123 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Datasource\ConnectionManager;
-use Cake\Http\Exception\NotFoundException;
-use Cake\Event\EventInterface;
-
 /**
  * Backups Controller
  *
- * Handles database backup generation, listing, downloading, and deletion.
+ * Manages MySQL database backups via mysqldump.
  */
 class BackupsController extends AppController
 {
-    private $backupPath;
+    /** @var string Backup storage directory */
+    private string $backupDir;
 
     public function initialize(): void
     {
         parent::initialize();
-        $this->backupPath = TMP . 'backups' . DS;
+        $this->backupDir = ROOT . DS . 'backups' . DS;
+        if (!is_dir($this->backupDir)) {
+            mkdir($this->backupDir, 0755, true);
+        }
     }
 
     /**
-     * Index method: Lists all available SQL backups
+     * List existing backups.
+     *
+     * @return void
      */
     public function index()
     {
-        if (!is_dir($this->backupPath)) {
-            mkdir($this->backupPath, 0755, true);
-        }
-
-        $files = array_filter(scandir($this->backupPath), function($f) {
-            return $f !== '.' && $f !== '..' && str_ends_with(strtolower($f), '.sql');
-        });
-
+        $files = glob($this->backupDir . '*.sql') ?: [];
         $backups = [];
-        foreach ($files as $file) {
-            $filePath = $this->backupPath . $file;
+        foreach ($files as $f) {
             $backups[] = [
-                'name' => $file,
-                'size' => number_format(filesize($filePath) / 1024 / 1024, 2) . ' MB',
-                'created' => date("Y-m-d H:i:s", filemtime($filePath))
+                'name'     => basename($f),
+                'size'     => round(filesize($f) / (1024 * 1024), 2),
+                'created'  => date('Y-m-d H:i:s', filemtime($f)),
+                'modified' => filemtime($f),
             ];
         }
-
-        // Sort by date descending
-        usort($backups, function($a, $b) {
-            return $b['created'] <=> $a['created'];
-        });
-
+        usort($backups, fn($a, $b) => $b['modified'] <=> $a['modified']);
         $this->set(compact('backups'));
     }
 
     /**
-     * Create method: Triggers a mysqldump process
+     * Create a new database backup.
+     *
+     * @return \Cake\Http\Response|null
      */
     public function create()
     {
-        $conn = ConnectionManager::get('default');
-        $conf = $conn->config();
+        $this->request->allowMethod(['post']);
 
-        $database = $conf['database'];
-        $user = $conf['username'];
-        $pass = $conf['password'] ?? '';
-        $host = $conf['host'];
+        $config   = \Cake\Datasource\ConnectionManager::getConfig('default');
+        $dbHost   = $config['host'] ?? 'localhost';
+        $dbUser   = $config['username'] ?? 'root';
+        $dbPass   = $config['password'] ?? '';
+        $dbName   = $config['database'] ?? '';
+        $filename = 'backup_' . date('Y-m-d_His') . '.sql';
+        $filepath = $this->backupDir . $filename;
 
-        $filename = 'backup_' . $database . '_' . date('Y-m-d_His') . '.sql';
-        $outputPath = $this->backupPath . $filename;
+        // Path to windows XAMPP mysqldump
+        $mysqldump = 'c:\xampp\mysql\bin\mysqldump.exe';
+        if (!file_exists($mysqldump)) {
+            $mysqldump = 'mysqldump'; // Fallback to PATH if not XAMPP array
+        }
 
-        // Path to mysqldump in XAMPP
-        $mysqldumpPath = 'C:\\xampp\\mysql\\bin\\mysqldump.exe';
-        
-        // Build the command
-        // Note: Password must not have a space after -p
-        $passArg = $pass !== '' ? '-p' . escapeshellarg($pass) : '';
-        
-        $command = sprintf(
-            '"%s" -h %s -u %s %s %s > "%s" 2>&1',
-            $mysqldumpPath,
-            $host,
-            $user,
-            $passArg,
-            escapeshellarg($database),
-            $outputPath
+        $cmd = sprintf(
+            '%s --host=%s --user=%s --password=%s %s > %s 2>&1',
+            escapeshellarg($mysqldump),
+            escapeshellarg($dbHost),
+            escapeshellarg($dbUser),
+            escapeshellarg($dbPass),
+            escapeshellarg($dbName),
+            escapeshellarg($filepath)
         );
 
-        exec($command, $output, $returnVar);
+        exec($cmd, $output, $returnCode);
 
-        if ($returnVar === 0) {
-            $this->Flash->success(__("Backup '{0}' created successfully.", $filename));
+        if ($returnCode === 0 && file_exists($filepath)) {
+            $this->Flash->success("Backup created: $filename");
         } else {
-            // Log output for debugging
-            $errorMsg = implode(" ", $output);
-            $this->Flash->error(__("Error creating backup. Ensure mysqldump is accessible. {0}", $errorMsg));
-            // Cleanup failed file if it exists
-            if (file_exists($outputPath)) unlink($outputPath);
+            $this->Flash->error('Backup failed. Check server permissions and mysqldump availability.');
         }
 
         return $this->redirect(['action' => 'index']);
     }
 
     /**
-     * Download method: Securely serves the SQL file
+     * Download a backup file.
+     *
+     * @param string $filename Filename to download.
+     * @return \Cake\Http\Response|null
      */
-    public function download($filename)
+    public function download(string $filename)
     {
-        // Security check: ensure no directory traversal
-        $filename = basename($filename);
-        $filePath = $this->backupPath . $filename;
-
-        if (!file_exists($filePath)) {
-            throw new NotFoundException(__('Backup file not found.'));
+        $filepath = $this->backupDir . basename($filename);
+        if (!file_exists($filepath)) {
+            throw new \Cake\Http\Exception\NotFoundException('Backup file not found.');
         }
 
-        return $this->response->withFile($filePath, [
-            'download' => true,
-            'name' => $filename
-        ]);
+        return $this->response
+            ->withFile($filepath, ['download' => true, 'name' => basename($filename)]);
     }
 
     /**
-     * Delete method: Removes a backup file
+     * Delete a backup file.
+     *
+     * @param string $filename Filename to delete.
+     * @return \Cake\Http\Response|null
      */
-    public function delete($filename)
+    public function delete(string $filename)
     {
         $this->request->allowMethod(['post', 'delete']);
-        
-        $filename = basename($filename);
-        $filePath = $this->backupPath . $filename;
-
-        if (file_exists($filePath)) {
-            unlink($filePath);
-            $this->Flash->success(__("Backup '{0}' deleted.", $filename));
+        $filepath = $this->backupDir . basename($filename);
+        if (file_exists($filepath)) {
+            unlink($filepath);
+            $this->Flash->success('Backup deleted.');
         } else {
-            $this->Flash->error(__("Backup '{0}' not found.", $filename));
+            $this->Flash->error('Backup file not found.');
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

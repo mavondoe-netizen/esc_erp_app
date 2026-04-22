@@ -46,9 +46,7 @@ class DebitNotesController extends AppController
     {
         $debitNote = $this->DebitNotes->newEmptyEntity();
         if ($this->request->is('post')) {
-            $debitNote = $this->DebitNotes->patchEntity($debitNote, $this->request->getData(), [
-                'associated' => ['DebitNoteItems']
-            ]);
+            $debitNote = $this->DebitNotes->patchEntity($debitNote, $this->request->getData());
             if ($this->DebitNotes->save($debitNote)) {
                 $this->Flash->success(__('The debit note has been saved.'));
 
@@ -56,22 +54,9 @@ class DebitNotesController extends AppController
             }
             $this->Flash->error(__('The debit note could not be saved. Please, try again.'));
         }
+        $companies = $this->DebitNotes->Companies->find('list', limit: 200)->all();
         $suppliers = $this->DebitNotes->Suppliers->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('Accounts')->find('list', limit: 200)->all();
-        
-        $productsData = $this->fetchTable('Products')->find('all')->all();
-        $productsOptions = [];
-        $productsJson = [];
-        foreach ($productsData as $prod) {
-            $productsOptions[$prod->id] = $prod->name;
-            $productsJson[$prod->id] = [
-                'unit_price' => $prod->unit_price,
-                'vat_rate' => $prod->vat_rate,
-                'account_id' => $prod->account_id,
-            ];
-        }
-        
-        $this->set(compact('debitNote', 'suppliers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('debitNote', 'companies', 'suppliers'));
     }
 
     /**
@@ -83,11 +68,9 @@ class DebitNotesController extends AppController
      */
     public function edit($id = null)
     {
-        $debitNote = $this->DebitNotes->get($id, contain: ['DebitNoteItems']);
+        $debitNote = $this->DebitNotes->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $debitNote = $this->DebitNotes->patchEntity($debitNote, $this->request->getData(), [
-                'associated' => ['DebitNoteItems']
-            ]);
+            $debitNote = $this->DebitNotes->patchEntity($debitNote, $this->request->getData());
             if ($this->DebitNotes->save($debitNote)) {
                 $this->Flash->success(__('The debit note has been saved.'));
 
@@ -95,22 +78,9 @@ class DebitNotesController extends AppController
             }
             $this->Flash->error(__('The debit note could not be saved. Please, try again.'));
         }
+        $companies = $this->DebitNotes->Companies->find('list', limit: 200)->all();
         $suppliers = $this->DebitNotes->Suppliers->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('Accounts')->find('list', limit: 200)->all();
-        
-        $productsData = $this->fetchTable('Products')->find('all')->all();
-        $productsOptions = [];
-        $productsJson = [];
-        foreach ($productsData as $prod) {
-            $productsOptions[$prod->id] = $prod->name;
-            $productsJson[$prod->id] = [
-                'unit_price' => $prod->unit_price,
-                'vat_rate' => $prod->vat_rate,
-                'account_id' => $prod->account_id,
-            ];
-        }
-        
-        $this->set(compact('debitNote', 'suppliers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('debitNote', 'companies', 'suppliers'));
     }
 
     /**

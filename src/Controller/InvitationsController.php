@@ -3,10 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Utility\Text;
-use Cake\Mailer\Mailer;
-use Cake\Routing\Router;
-
 /**
  * Invitations Controller
  *
@@ -41,45 +37,26 @@ class InvitationsController extends AppController
         $this->set(compact('invitation'));
     }
 
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     */
     public function add()
     {
         $invitation = $this->Invitations->newEmptyEntity();
         if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            $data['token'] = Text::uuid();
-            $data['status'] = 'pending';
-            
-            // Assume the user inviting others wants them in their own company
-            try {
-                $data['company_id'] = $this->request->getAttribute('identity')->get('company_id');
-            } catch (\Exception $e) {
-                // Ignore if no company_id is available on the identity object
-            }
-
-            $invitation = $this->Invitations->patchEntity($invitation, $data, [
-                'accessibleFields' => ['email' => true, 'role_id' => true, 'token' => true, 'company_id' => true, 'status' => true]
-            ]);
-
+            $invitation = $this->Invitations->patchEntity($invitation, $this->request->getData());
             if ($this->Invitations->save($invitation)) {
-                $inviteLink = Router::url(['controller' => 'Users', 'action' => 'acceptInvite', $invitation->token], true);
-
-                try {
-                    $mailer = new Mailer('default');
-                    $mailer->setTo($invitation->email)
-                        ->setSubject('You have been invited to join the system')
-                        ->deliver("You have been invited to join. Click here to accept the invitation and set your password: {$inviteLink}");
-                    $this->Flash->success('Invitation sent successfully.');
-                } catch (\Exception $e) {
-                    $this->Flash->error('Invitation saved, but email failed to send.');
-                }
+                $this->Flash->success(__('The invitation has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The invitation could not be saved. Please, try again.'));
         }
+        $companies = $this->Invitations->Companies->find('list', limit: 200)->all();
         $roles = $this->Invitations->Roles->find('list', limit: 200)->all();
-         $companies = $this->Invitations->Companies->find('list', limit: 200)->all();
-        $this->set(compact('invitation', 'roles', 'companies'));
+        $this->set(compact('invitation', 'companies', 'roles'));
     }
 
     /**

@@ -70,4 +70,14 @@ class Employee extends Entity
         'termination_date' => true,
         'payslips' => true,
     ];
+
+    /**
+     * Get the full name of the employee.
+     *
+     * @return string
+     */
+    protected function _getName(): string
+    {
+        return $this->first_name . ' ' . $this->last_name . ' (' . $this->employee_code . ')';
+    }
 }

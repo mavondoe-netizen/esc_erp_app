@@ -11,8 +11,10 @@ use Cake\Validation\Validator;
 /**
  * InvoiceItems Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\InvoicesTable&\Cake\ORM\Association\BelongsTo $Invoices
  * @property \App\Model\Table\AccountsTable&\Cake\ORM\Association\BelongsTo $Accounts
+ * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  *
  * @method \App\Model\Entity\InvoiceItem newEmptyEntity()
  * @method \App\Model\Entity\InvoiceItem newEntity(array $data, array $options = [])
@@ -56,6 +58,9 @@ class InvoiceItemsTable extends Table
         ]);
         $this->belongsTo('Products', [
             'foreignKey' => 'product_id',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -127,6 +132,7 @@ class InvoiceItemsTable extends Table
         $rules->add($rules->existsIn(['invoice_id'], 'Invoices'), ['errorField' => 'invoice_id']);
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
         $rules->add($rules->existsIn(['product_id'], 'Products'), ['errorField' => 'product_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

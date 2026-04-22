@@ -16,6 +16,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\Date|null $hire_date
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\User $user
  */
@@ -38,6 +39,7 @@ class EmployeeProfile extends Entity
         'hire_date' => true,
         'created' => true,
         'modified' => true,
+        'company_id' => true,
         'user' => true,
     ];
 }

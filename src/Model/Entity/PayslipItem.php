@@ -13,6 +13,7 @@ use Cake\ORM\Entity;
  * @property string $item_type
  * @property string $name
  * @property string $amount
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Payslip $payslip
  */
@@ -34,6 +35,7 @@ class PayslipItem extends Entity
         'amount' => true,
         'currency' => true,
         'is_permanent' => true,
+        'company_id' => true,
         'payslip' => true,
     ];
 }

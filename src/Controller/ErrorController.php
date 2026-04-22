@@ -9,13 +9,14 @@ declare(strict_types=1);
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.3.4
- * @license       https://opensource.org/licenses/mit-license.php MIT License
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link      https://cakephp.org CakePHP(tm) Project
+ * @since     3.3.0
+ * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace App\Controller;
 
+use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 
 /**
@@ -23,7 +24,7 @@ use Cake\Event\EventInterface;
  *
  * Controller used by ExceptionRenderer to render error responses.
  */
-class ErrorController extends AppController
+class ErrorController extends Controller
 {
     /**
      * Initialization hook method.
@@ -32,39 +33,19 @@ class ErrorController extends AppController
      */
     public function initialize(): void
     {
-        // Only add parent::initialize() if you are confident your appcontroller is safe.
-    }
-
-    /**
-     * beforeFilter callback.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
-     * @return \Cake\Http\Response|null|void
-     */
-    public function beforeFilter(EventInterface $event)
-    {
+        parent::initialize();
+        $this->loadComponent('RequestHandler');
     }
 
     /**
      * beforeRender callback.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @param \Cake\Event\EventInterface $event Event.
      * @return \Cake\Http\Response|null|void
      */
     public function beforeRender(EventInterface $event)
     {
         parent::beforeRender($event);
-
-        $this->viewBuilder()->setTemplatePath('Error');
-    }
-
-    /**
-     * afterFilter callback.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
-     * @return \Cake\Http\Response|null|void
-     */
-    public function afterFilter(EventInterface $event)
-    {
+        $this->viewBuilder()->setTemplatePath('/Error');
     }
 }

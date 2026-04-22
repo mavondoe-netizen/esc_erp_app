@@ -14,6 +14,7 @@ use Cake\ORM\Entity;
  * @property string $description
  * @property string $currency
  * @property float $total
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Supplier $supplier
  * @property \App\Model\Entity\Transaction[] $transactions
@@ -35,6 +36,7 @@ class Bill extends Entity
         'description' => true,
         'currency' => true,
         'total' => true,
+        'company_id' => true,
         'supplier' => true,
         'transactions' => true,
         'account_id' => true,

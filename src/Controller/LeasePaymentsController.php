@@ -3,117 +3,111 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Utility\Text;
-
 /**
- * LeasePayments Controller — Records rental payments and auto-posts to the ledger.
+ * LeasePayments Controller
+ *
+ * @property \App\Model\Table\LeasePaymentsTable $LeasePayments
  */
 class LeasePaymentsController extends AppController
 {
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
+     */
     public function index()
     {
-        $query = $this->fetchTable('LeasePayments')->find()
-            ->contain(['Tenants', 'Units', 'Buildings', 'Accounts'])
-            ->order(['date' => 'DESC']);
+        $query = $this->LeasePayments->find()
+            ->contain(['Companies', 'Enrolments', 'Tenants', 'Units', 'Buildings', 'Accounts']);
         $leasePayments = $this->paginate($query);
+
         $this->set(compact('leasePayments'));
     }
 
+    /**
+     * View method
+     *
+     * @param string|null $id Lease Payment id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
     public function view($id = null)
     {
-        $leasePayment = $this->fetchTable('LeasePayments')->get($id, contain: ['Tenants', 'Units', 'Buildings', 'Accounts', 'Enrolments']);
+        $leasePayment = $this->LeasePayments->get($id, contain: ['Companies', 'Enrolments', 'Tenants', 'Units', 'Buildings', 'Accounts']);
         $this->set(compact('leasePayment'));
     }
 
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+     */
     public function add()
     {
-        $leasePayment = $this->fetchTable('LeasePayments')->newEmptyEntity();
-        $companyId = \Cake\Core\Configure::read('Tenant.company_id');
-        $leasePayment->company_id = $companyId;
-        $leasePayment->currency = 'USD';
-        $leasePayment->date = date('Y-m-d');
-        $leasePayment->period_covered = date('F Y');
-
+        $leasePayment = $this->LeasePayments->newEmptyEntity();
         if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            $data['company_id'] = $companyId;
-            $leasePayment = $this->fetchTable('LeasePayments')->patchEntity($leasePayment, $data);
+            $leasePayment = $this->LeasePayments->patchEntity($leasePayment, $this->request->getData());
+            if ($this->LeasePayments->save($leasePayment)) {
+                $this->Flash->success(__('The lease payment has been saved.'));
 
-            if ($this->fetchTable('LeasePayments')->save($leasePayment)) {
-                // --- DOUBLE-ENTRY LEDGER POST ---
-                $txTable = $this->fetchTable('Transactions');
-                $txGroup = Text::uuid();
-                $amount = (float)$leasePayment->amount;
-                $date   = $leasePayment->date;
-                $desc   = 'Rental ' . ($leasePayment->period_covered ?? '') . ' – ' . ($leasePayment->reference ?? 'Receipt');
-                $currency = $leasePayment->currency ?? 'USD';
-
-                // Find Rental Income account by name
-                $incomeAccount = $this->fetchTable('Accounts')->find()
-                    ->where(['name LIKE' => '%Rental Income%'])
-                    ->first();
-                $incomeAccountId = $incomeAccount ? $incomeAccount->id : null;
-
-                // Find cash/bank account selected
-                $bankAccountId = $leasePayment->account_id;
-
-                if ($bankAccountId && $incomeAccountId) {
-                    // Debit Cash/Bank (Asset increases)
-                    $txTable->save($txTable->newEntity([
-                        'date'              => $date,
-                        'description'       => $desc,
-                        'amount'            => $amount,
-                        'zwg'               => $amount,
-                        'currency'          => $currency,
-                        'account_id'        => $bankAccountId,
-                        'company_id'        => $companyId,
-                        'tenant_id'         => $leasePayment->tenant_id,
-                        'building_id'       => $leasePayment->building_id,
-                        'type'              => '2', // Debit
-                        'transaction_group' => $txGroup,
-                    ]));
-                    // Credit Rental Income (Revenue increases)
-                    $txTable->save($txTable->newEntity([
-                        'date'              => $date,
-                        'description'       => $desc,
-                        'amount'            => $amount,
-                        'zwg'               => $amount,
-                        'currency'          => $currency,
-                        'account_id'        => $incomeAccountId,
-                        'company_id'        => $companyId,
-                        'tenant_id'         => $leasePayment->tenant_id,
-                        'building_id'       => $leasePayment->building_id,
-                        'type'              => '1', // Credit
-                        'transaction_group' => $txGroup,
-                    ]));
-                }
-
-                $this->Flash->success(__('Rental payment recorded and posted to ledger.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The payment could not be saved. Please try again.'));
+            $this->Flash->error(__('The lease payment could not be saved. Please, try again.'));
         }
-
-        $tenants   = $this->fetchTable('Tenants')->find('list')->all();
-        $units     = $this->fetchTable('Units')->find('list')->all();
-        $buildings = $this->fetchTable('Buildings')->find('list')->all();
-        $accounts  = $this->fetchTable('Accounts')->find('list', ['conditions' => ['category IN' => ['Asset', 'Bank']]])->all();
-        $enrolments = $this->fetchTable('Enrolments')->find('list')->where(['status' => 'Active'])->all();
-        $paymentModes = ['Cash' => 'Cash', 'Bank Transfer' => 'Bank Transfer', 'EcoCash' => 'EcoCash', 'Mobile Money' => 'Mobile Money'];
-        $currencies = ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR'];
-
-        $this->set(compact('leasePayment', 'tenants', 'units', 'buildings', 'accounts', 'enrolments', 'paymentModes', 'currencies'));
+        $companies = $this->LeasePayments->Companies->find('list', limit: 200)->all();
+        $enrolments = $this->LeasePayments->Enrolments->find('list', limit: 200)->all();
+        $tenants = $this->LeasePayments->Tenants->find('list', limit: 200)->all();
+        $units = $this->LeasePayments->Units->find('list', limit: 200)->all();
+        $buildings = $this->LeasePayments->Buildings->find('list', limit: 200)->all();
+        $accounts = $this->LeasePayments->Accounts->find('list', limit: 200)->all();
+        $this->set(compact('leasePayment', 'companies', 'enrolments', 'tenants', 'units', 'buildings', 'accounts'));
     }
 
+    /**
+     * Edit method
+     *
+     * @param string|null $id Lease Payment id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $leasePayment = $this->LeasePayments->get($id, contain: []);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $leasePayment = $this->LeasePayments->patchEntity($leasePayment, $this->request->getData());
+            if ($this->LeasePayments->save($leasePayment)) {
+                $this->Flash->success(__('The lease payment has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The lease payment could not be saved. Please, try again.'));
+        }
+        $companies = $this->LeasePayments->Companies->find('list', limit: 200)->all();
+        $enrolments = $this->LeasePayments->Enrolments->find('list', limit: 200)->all();
+        $tenants = $this->LeasePayments->Tenants->find('list', limit: 200)->all();
+        $units = $this->LeasePayments->Units->find('list', limit: 200)->all();
+        $buildings = $this->LeasePayments->Buildings->find('list', limit: 200)->all();
+        $accounts = $this->LeasePayments->Accounts->find('list', limit: 200)->all();
+        $this->set(compact('leasePayment', 'companies', 'enrolments', 'tenants', 'units', 'buildings', 'accounts'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Lease Payment id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $leasePayment = $this->fetchTable('LeasePayments')->get($id);
-        if ($this->fetchTable('LeasePayments')->delete($leasePayment)) {
-            $this->Flash->success(__('The payment has been deleted.'));
+        $leasePayment = $this->LeasePayments->get($id);
+        if ($this->LeasePayments->delete($leasePayment)) {
+            $this->Flash->success(__('The lease payment has been deleted.'));
         } else {
-            $this->Flash->error(__('The payment could not be deleted.'));
+            $this->Flash->error(__('The lease payment could not be deleted. Please, try again.'));
         }
+
         return $this->redirect(['action' => 'index']);
     }
 }

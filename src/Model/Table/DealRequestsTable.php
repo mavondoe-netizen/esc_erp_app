@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * DealRequests Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\DealsTable&\Cake\ORM\Association\BelongsTo $Deals
  *
@@ -41,6 +42,8 @@ class DealRequestsTable extends Table
     public function initialize(array $config): void
     {
         parent::initialize($config);
+
+        $this->addBehavior('TenantAware');
 
         $this->setTable('deal_requests');
         $this->setDisplayField('first_name');
@@ -138,3 +141,4 @@ class DealRequestsTable extends Table
         return $rules;
     }
 }
+

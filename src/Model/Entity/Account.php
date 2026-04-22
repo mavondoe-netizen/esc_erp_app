@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property string $category
  * @property string $type
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Benefit[] $benefits
  * @property \App\Model\Entity\BillItem[] $bill_items
@@ -37,6 +38,7 @@ class Account extends Entity
         'type' => true,
         'subcategory' => true,
         'opening_balance' => true,
+        'company_id' => true,
         'benefits' => true,
         'bill_items' => true,
         'invoice_items' => true,

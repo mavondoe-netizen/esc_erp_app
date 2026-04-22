@@ -11,7 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Buildings Model
  *
- * @property \App\Model\Table\InvestorsTable&\Cake\ORM\Association\BelongsTo $Investors
+
  * @property \App\Model\Table\BillsTable&\Cake\ORM\Association\HasMany $Bills
  * @property \App\Model\Table\TransactionsTable&\Cake\ORM\Association\HasMany $Transactions
  * @property \App\Model\Table\UnitsTable&\Cake\ORM\Association\HasMany $Units
@@ -48,10 +48,7 @@ class BuildingsTable extends Table
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
-        $this->belongsTo('Investors', [
-            'foreignKey' => 'investor_id',
-            'joinType' => 'INNER',
-        ]);
+        
         $this->hasMany('Bills', [
             'foreignKey' => 'building_id',
         ]);
@@ -83,19 +80,13 @@ class BuildingsTable extends Table
             ->requirePresence('address', 'create')
             ->notEmptyString('address');
 
-        $validator
-            ->integer('investor_id')
-            ->notEmptyString('investor_id');
-
+        
         $validator
             ->dateTime('start_date')
             ->requirePresence('start_date', 'create')
             ->notEmptyDateTime('start_date');
 
-        $validator
-            ->boolean('isvacant')
-            ->requirePresence('isvacant', 'create')
-            ->notEmptyString('isvacant');
+
 
         return $validator;
     }
@@ -109,7 +100,7 @@ class BuildingsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['investor_id'], 'Investors'), ['errorField' => 'investor_id']);
+
 
         return $rules;
     }

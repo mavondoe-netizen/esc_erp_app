@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property string $name
  * @property int $building_id
  * @property string $area
+ * @property bool $isvacant
  *
  * @property \App\Model\Entity\Building $building
  * @property \App\Model\Entity\Enrolment[] $enrolments
@@ -31,6 +32,7 @@ class Unit extends Entity
         'name' => true,
         'building_id' => true,
         'area' => true,
+        'isvacant' => true,
         'building' => true,
         'enrolments' => true,
     ];

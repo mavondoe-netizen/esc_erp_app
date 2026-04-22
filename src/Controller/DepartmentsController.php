@@ -12,15 +12,35 @@ class DepartmentsController extends AppController
 {
     /**
      * Index method
+     *
+     * @return \Cake\Http\Response|null|void Renders view
      */
     public function index()
     {
-        $departments = $this->Departments->find()->all();
+        $query = $this->Departments->find()
+            ->contain(['Companies']);
+        $departments = $this->paginate($query);
+
         $this->set(compact('departments'));
     }
 
     /**
+     * View method
+     *
+     * @param string|null $id Department id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $department = $this->Departments->get($id, contain: ['Companies', 'Transactions', 'Users', 'Invoices', 'Bills']);
+        $this->set(compact('department'));
+    }
+
+    /**
      * Add method
+     *
+     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
     public function add()
     {
@@ -29,32 +49,44 @@ class DepartmentsController extends AppController
             $department = $this->Departments->patchEntity($department, $this->request->getData());
             if ($this->Departments->save($department)) {
                 $this->Flash->success(__('The department has been saved.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The department could not be saved. Please, try again.'));
         }
-        $this->set(compact('department'));
+        $companies = $this->Departments->Companies->find('list', limit: 200)->all();
+        $this->set(compact('department', 'companies'));
     }
 
     /**
      * Edit method
+     *
+     * @param string|null $id Department id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function edit($id = null)
     {
-        $department = $this->Departments->get($id);
+        $department = $this->Departments->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $department = $this->Departments->patchEntity($department, $this->request->getData());
             if ($this->Departments->save($department)) {
                 $this->Flash->success(__('The department has been saved.'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The department could not be saved. Please, try again.'));
         }
-        $this->set(compact('department'));
+        $companies = $this->Departments->Companies->find('list', limit: 200)->all();
+        $this->set(compact('department', 'companies'));
     }
 
     /**
      * Delete method
+     *
+     * @param string|null $id Department id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
     {
@@ -65,6 +97,7 @@ class DepartmentsController extends AppController
         } else {
             $this->Flash->error(__('The department could not be deleted. Please, try again.'));
         }
+
         return $this->redirect(['action' => 'index']);
     }
 }

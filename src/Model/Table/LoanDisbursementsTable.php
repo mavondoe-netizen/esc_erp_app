@@ -11,8 +11,10 @@ use Cake\Validation\Validator;
 /**
  * LoanDisbursements Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\LoansTable&\Cake\ORM\Association\BelongsTo $Loans
  * @property \App\Model\Table\AccountsTable&\Cake\ORM\Association\BelongsTo $Accounts
+ * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  *
  * @method \App\Model\Entity\LoanDisbursement newEmptyEntity()
  * @method \App\Model\Entity\LoanDisbursement newEntity(array $data, array $options = [])
@@ -55,6 +57,9 @@ class LoanDisbursementsTable extends Table
         ]);
         $this->belongsTo('Accounts', [
             'foreignKey' => 'account_id',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -118,6 +123,7 @@ class LoanDisbursementsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
         $rules->add($rules->existsIn(['loan_id'], 'Loans'), ['errorField' => 'loan_id']);
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
 

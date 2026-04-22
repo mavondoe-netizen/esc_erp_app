@@ -17,7 +17,7 @@ class MeetingsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Meetings')->find()
+        $query = $this->Meetings->find()
             ->contain(['Contacts', 'Users']);
         $meetings = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class MeetingsController extends AppController
      */
     public function view($id = null)
     {
-        $meeting = $this->fetchTable('Meetings')->get($id, contain: ['Contacts', 'Users']);
+        $meeting = $this->Meetings->get($id, contain: ['Contacts', 'Users']);
         $this->set(compact('meeting'));
     }
 
@@ -44,18 +44,18 @@ class MeetingsController extends AppController
      */
     public function add()
     {
-        $meeting = $this->fetchTable('Meetings')->newEmptyEntity();
+        $meeting = $this->Meetings->newEmptyEntity();
         if ($this->request->is('post')) {
-            $meeting = $this->fetchTable('Meetings')->patchEntity($meeting, $this->request->getData());
-            if ($this->fetchTable('Meetings')->save($meeting)) {
+            $meeting = $this->Meetings->patchEntity($meeting, $this->request->getData());
+            if ($this->Meetings->save($meeting)) {
                 $this->Flash->success(__('The meeting has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The meeting could not be saved. Please, try again.'));
         }
-        $contacts = $this->fetchTable('Meetings')->Contacts->find('list', limit: 200)->all();
-        $users = $this->fetchTable('Meetings')->Users->find('list', limit: 200)->all();
+        $contacts = $this->Meetings->Contacts->find('list', limit: 200)->all();
+        $users = $this->Meetings->Users->find('list', limit: 200)->all();
         $this->set(compact('meeting', 'contacts', 'users'));
     }
 
@@ -68,18 +68,18 @@ class MeetingsController extends AppController
      */
     public function edit($id = null)
     {
-        $meeting = $this->fetchTable('Meetings')->get($id, contain: []);
+        $meeting = $this->Meetings->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $meeting = $this->fetchTable('Meetings')->patchEntity($meeting, $this->request->getData());
-            if ($this->fetchTable('Meetings')->save($meeting)) {
+            $meeting = $this->Meetings->patchEntity($meeting, $this->request->getData());
+            if ($this->Meetings->save($meeting)) {
                 $this->Flash->success(__('The meeting has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The meeting could not be saved. Please, try again.'));
         }
-        $contacts = $this->fetchTable('Meetings')->Contacts->find('list', limit: 200)->all();
-        $users = $this->fetchTable('Meetings')->Users->find('list', limit: 200)->all();
+        $contacts = $this->Meetings->Contacts->find('list', limit: 200)->all();
+        $users = $this->Meetings->Users->find('list', limit: 200)->all();
         $this->set(compact('meeting', 'contacts', 'users'));
     }
 
@@ -93,8 +93,8 @@ class MeetingsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $meeting = $this->fetchTable('Meetings')->get($id);
-        if ($this->fetchTable('Meetings')->delete($meeting)) {
+        $meeting = $this->Meetings->get($id);
+        if ($this->Meetings->delete($meeting)) {
             $this->Flash->success(__('The meeting has been deleted.'));
         } else {
             $this->Flash->error(__('The meeting could not be deleted. Please, try again.'));

@@ -11,38 +11,13 @@ namespace App\Controller;
 class SettingsController extends AppController
 {
     /**
-     * Initialization hook method.
-     */
-    public function beforeFilter(\Cake\Event\EventInterface $event)
-    {
-        parent::beforeFilter($event);
-        
-        $identity = $this->request->getAttribute('identity');
-        $isAuthorized = false;
-        
-        if ($identity && isset($identity->role_id)) {
-            try {
-                $role = $this->fetchTable('Roles')->get($identity->role_id);
-                $roleName = strtolower($role->name);
-                $isAuthorized = in_array($roleName, ['manager', 'super admin', 'administrator', 'super administrator']);
-            } catch (\Exception $e) {
-                $isAuthorized = false;
-            }
-        }
-        
-        if (!$isAuthorized) {
-            $this->Flash->error(__('You are not authorized to access Settings.'));
-            return $this->redirect('/');
-        }
-    }
-
-    /**
-     * Index method used for updating settings
+     * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function index()
     {
+        // Settings are global parameters, just fetch the first record or create
         $setting = $this->Settings->find()->first();
         if (!$setting) {
             $setting = $this->Settings->newEmptyEntity();
@@ -51,11 +26,12 @@ class SettingsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $setting = $this->Settings->patchEntity($setting, $this->request->getData());
             if ($this->Settings->save($setting)) {
-                $this->Flash->success(__('The settings have been successfully updated.'));
+                $this->Flash->success(__('The statutory settings have been updated.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The settings could not be saved. Please, try again.'));
+            $this->Flash->error(__('The statutory settings could not be saved. Please check for errors.'));
         }
+
         $this->set(compact('setting'));
     }
 }

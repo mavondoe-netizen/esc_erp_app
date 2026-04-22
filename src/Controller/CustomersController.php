@@ -17,7 +17,7 @@ class CustomersController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('Customers')->find()
+        $query = $this->Customers->find()
             ->contain(['Contacts']);
         $customers = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class CustomersController extends AppController
      */
     public function view($id = null)
     {
-        $customer = $this->fetchTable('Customers')->get($id, contain: ['Contacts', 'Inspections', 'Invoices', 'Payments', 'Transactions']);
+        $customer = $this->Customers->get($id, contain: ['Contacts', 'Inspections', 'Invoices', 'Payments', 'Transactions']);
         $this->set(compact('customer'));
     }
 
@@ -44,17 +44,26 @@ class CustomersController extends AppController
      */
     public function add()
     {
-        $customer = $this->fetchTable('Customers')->newEmptyEntity();
+        $customer = $this->Customers->newEmptyEntity();
         if ($this->request->is('post')) {
-            $customer = $this->fetchTable('Customers')->patchEntity($customer, $this->request->getData());
-            if ($this->fetchTable('Customers')->save($customer)) {
+            $customer = $this->Customers->patchEntity($customer, $this->request->getData());
+            
+            if ($this->request->getQuery('popup')) {
+                if ($this->Customers->save($customer)) {
+                    $this->set('popupResult', ['id' => $customer->id, 'name' => $customer->name]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
+            }
+
+            if ($this->Customers->save($customer)) {
                 $this->Flash->success(__('The customer has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The customer could not be saved. Please, try again.'));
         }
-        $contacts = $this->fetchTable('Customers')->Contacts->find('list', limit: 200)->all();
+        $contacts = $this->Customers->Contacts->find('list', limit: 200)->all();
         $this->set(compact('customer', 'contacts'));
     }
 
@@ -67,17 +76,17 @@ class CustomersController extends AppController
      */
     public function edit($id = null)
     {
-        $customer = $this->fetchTable('Customers')->get($id, contain: []);
+        $customer = $this->Customers->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $customer = $this->fetchTable('Customers')->patchEntity($customer, $this->request->getData());
-            if ($this->fetchTable('Customers')->save($customer)) {
+            $customer = $this->Customers->patchEntity($customer, $this->request->getData());
+            if ($this->Customers->save($customer)) {
                 $this->Flash->success(__('The customer has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The customer could not be saved. Please, try again.'));
         }
-        $contacts = $this->fetchTable('Customers')->Contacts->find('list', limit: 200)->all();
+        $contacts = $this->Customers->Contacts->find('list', limit: 200)->all();
         $this->set(compact('customer', 'contacts'));
     }
 
@@ -91,8 +100,8 @@ class CustomersController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $customer = $this->fetchTable('Customers')->get($id);
-        if ($this->fetchTable('Customers')->delete($customer)) {
+        $customer = $this->Customers->get($id);
+        if ($this->Customers->delete($customer)) {
             $this->Flash->success(__('The customer has been deleted.'));
         } else {
             $this->Flash->error(__('The customer could not be deleted. Please, try again.'));

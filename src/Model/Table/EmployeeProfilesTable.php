@@ -28,6 +28,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\EmployeeProfile>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\EmployeeProfile> deleteManyOrFail(iterable $entities, array $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class EmployeeProfilesTable extends Table
 {
@@ -52,6 +53,9 @@ class EmployeeProfilesTable extends Table
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -87,6 +91,10 @@ class EmployeeProfilesTable extends Table
             ->date('hire_date')
             ->allowEmptyDate('hire_date');
 
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
+
         return $validator;
     }
 
@@ -101,6 +109,7 @@ class EmployeeProfilesTable extends Table
     {
         $rules->add($rules->isUnique(['user_id']), ['errorField' => 'user_id']);
         $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

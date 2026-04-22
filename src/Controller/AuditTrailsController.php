@@ -17,7 +17,7 @@ class AuditTrailsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('AuditTrails')->find()
+        $query = $this->AuditTrails->find()
             ->contain(['Users']);
         $auditTrails = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class AuditTrailsController extends AppController
      */
     public function view($id = null)
     {
-        $auditTrail = $this->fetchTable('AuditTrails')->get($id, contain: ['Users']);
+        $auditTrail = $this->AuditTrails->get($id, contain: ['Users']);
         $this->set(compact('auditTrail'));
     }
 
@@ -44,17 +44,17 @@ class AuditTrailsController extends AppController
      */
     public function add()
     {
-        $auditTrail = $this->fetchTable('AuditTrails')->newEmptyEntity();
+        $auditTrail = $this->AuditTrails->newEmptyEntity();
         if ($this->request->is('post')) {
-            $auditTrail = $this->fetchTable('AuditTrails')->patchEntity($auditTrail, $this->request->getData());
-            if ($this->fetchTable('AuditTrails')->save($auditTrail)) {
+            $auditTrail = $this->AuditTrails->patchEntity($auditTrail, $this->request->getData());
+            if ($this->AuditTrails->save($auditTrail)) {
                 $this->Flash->success(__('The audit trail has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The audit trail could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('AuditTrails')->Users->find('list', limit: 200)->all();
+        $users = $this->AuditTrails->Users->find('list', limit: 200)->all();
         $this->set(compact('auditTrail', 'users'));
     }
 
@@ -67,17 +67,17 @@ class AuditTrailsController extends AppController
      */
     public function edit($id = null)
     {
-        $auditTrail = $this->fetchTable('AuditTrails')->get($id, contain: []);
+        $auditTrail = $this->AuditTrails->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $auditTrail = $this->fetchTable('AuditTrails')->patchEntity($auditTrail, $this->request->getData());
-            if ($this->fetchTable('AuditTrails')->save($auditTrail)) {
+            $auditTrail = $this->AuditTrails->patchEntity($auditTrail, $this->request->getData());
+            if ($this->AuditTrails->save($auditTrail)) {
                 $this->Flash->success(__('The audit trail has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The audit trail could not be saved. Please, try again.'));
         }
-        $users = $this->fetchTable('AuditTrails')->Users->find('list', limit: 200)->all();
+        $users = $this->AuditTrails->Users->find('list', limit: 200)->all();
         $this->set(compact('auditTrail', 'users'));
     }
 
@@ -91,8 +91,8 @@ class AuditTrailsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $auditTrail = $this->fetchTable('AuditTrails')->get($id);
-        if ($this->fetchTable('AuditTrails')->delete($auditTrail)) {
+        $auditTrail = $this->AuditTrails->get($id);
+        if ($this->AuditTrails->delete($auditTrail)) {
             $this->Flash->success(__('The audit trail has been deleted.'));
         } else {
             $this->Flash->error(__('The audit trail could not be deleted. Please, try again.'));

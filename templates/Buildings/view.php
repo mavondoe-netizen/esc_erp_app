@@ -26,10 +26,7 @@
                     <th><?= __('Address') ?></th>
                     <td><?= h($building->address) ?></td>
                 </tr>
-                <tr>
-                    <th><?= __('Investor') ?></th>
-                    <td><?= $building->hasValue('investor') ? $this->Html->link($building->investor->name, ['controller' => 'Investors', 'action' => 'view', $building->investor->id]) : '' ?></td>
-                </tr>
+
                 <tr>
                     <th><?= __('Id') ?></th>
                     <td><?= $this->Number->format($building->id) ?></td>
@@ -39,9 +36,10 @@
                     <td><?= h($building->start_date) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Isvacant') ?></th>
-                    <td><?= $building->isvacant ? __('Yes') : __('No'); ?></td>
+                    <th><?= __('Occupancy Rate') ?></th>
+                    <td><?= $this->Number->format($building->occupancy_rate, ['precision' => 1]) ?>%</td>
                 </tr>
+
             </table>
             <div class="related">
                 <h4><?= __('Related Bills') ?></h4>

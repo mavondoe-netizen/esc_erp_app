@@ -1056,3 +1056,30 @@ Stack Trace:
 2026-04-07 16:04:43 warning: The connection is going to be closed but there is an active transaction.
 2026-04-08 16:22:49 warning: The connection is going to be closed but there is an active transaction.
 2026-04-08 16:28:45 warning: The connection is going to be closed but there is an active transaction.
+2026-04-18 17:36:49 error: [Cake\Error\FatalErrorException] Fatal Error: Class Migrations\Db\Adapter\PhinxAdapter contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (Phinx\Db\Adapter\AdapterInterface::preExecuteActions, Phinx\Db\Adapter\AdapterInterface::postExecuteActions) in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\migrations\src\Db\Adapter\PhinxAdapter.php on line 69
+Stack Trace:
+- CORE\src\Error\ExceptionTrap.php:278
+- [internal]:??
+- [main]:
+
+2026-04-18 17:37:43 error: [Error] Call to undefined method Cake\Database\Driver\Mysql::getConnection() in C:\xampp\htdocs\esc_erp_app3\check_settings.php on line 7
+Stack Trace:
+- [main]:
+
+2026-04-18 19:57:17 error: [Error] Class "App\Controller\AppController" not found in C:\xampp\htdocs\esc_erp_app3\src\Controller\AccountsController.php on line 11
+Stack Trace:
+- ROOT\vendor\composer\ClassLoader.php:576
+- ROOT\vendor\composer\ClassLoader.php:427
+- [internal]:??
+- ROOT\vendor\cakephp\bake\src\Command\TestCommand.php:305
+- ROOT\vendor\cakephp\bake\src\Command\TestCommand.php:128
+- ROOT\vendor\cakephp\bake\src\Command\ControllerCommand.php:217
+- ROOT\vendor\cakephp\bake\src\Command\ControllerCommand.php:164
+- ROOT\vendor\cakephp\bake\src\Command\ControllerCommand.php:65
+- ROOT\vendor\cakephp\bake\src\Command\ControllerAllCommand.php:74
+- CORE\src\Console\BaseCommand.php:202
+- CORE\src\Console\CommandRunner.php:330
+- CORE\src\Console\CommandRunner.php:168
+- ROOT\bin\cake.php:10
+- [main]:
+

@@ -2,7 +2,6 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Building $building
- * @var \Cake\Collection\CollectionInterface|string[] $investors
  */
 ?>
 <div class="row">
@@ -20,9 +19,9 @@
                 <?php
                     echo $this->Form->control('name');
                     echo $this->Form->control('address');
-                    echo $this->Form->control('investor_id', ['options' => $investors]);
+                    
                     echo $this->Form->control('start_date');
-                    echo $this->Form->control('isvacant');
+
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

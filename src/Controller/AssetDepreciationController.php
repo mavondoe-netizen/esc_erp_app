@@ -33,8 +33,8 @@ class AssetDepreciationController extends AppController
      */
     public function view($id = null)
     {
-        $assetDepreciation = $this->AssetDepreciation->get($id, contain: ['Companies', 'Assets']);
-        $this->set(compact('assetDepreciation'));
+        $assetDepreciationEntity = $this->AssetDepreciation->get($id, contain: ['Companies', 'Assets']);
+        $this->set(compact('assetDepreciationEntity'));
     }
 
     /**
@@ -44,10 +44,10 @@ class AssetDepreciationController extends AppController
      */
     public function add()
     {
-        $assetDepreciation = $this->AssetDepreciation->newEmptyEntity();
+        $assetDepreciationEntity = $this->AssetDepreciation->newEmptyEntity();
         if ($this->request->is('post')) {
-            $assetDepreciation = $this->AssetDepreciation->patchEntity($assetDepreciation, $this->request->getData());
-            if ($this->AssetDepreciation->save($assetDepreciation)) {
+            $assetDepreciationEntity = $this->AssetDepreciation->patchEntity($assetDepreciationEntity, $this->request->getData());
+            if ($this->AssetDepreciation->save($assetDepreciationEntity)) {
                 $this->Flash->success(__('The asset depreciation has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -56,7 +56,7 @@ class AssetDepreciationController extends AppController
         }
         $companies = $this->AssetDepreciation->Companies->find('list', limit: 200)->all();
         $assets = $this->AssetDepreciation->Assets->find('list', limit: 200)->all();
-        $this->set(compact('assetDepreciation', 'companies', 'assets'));
+        $this->set(compact('assetDepreciationEntity', 'companies', 'assets'));
     }
 
     /**
@@ -68,10 +68,10 @@ class AssetDepreciationController extends AppController
      */
     public function edit($id = null)
     {
-        $assetDepreciation = $this->AssetDepreciation->get($id, contain: []);
+        $assetDepreciationEntity = $this->AssetDepreciation->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $assetDepreciation = $this->AssetDepreciation->patchEntity($assetDepreciation, $this->request->getData());
-            if ($this->AssetDepreciation->save($assetDepreciation)) {
+            $assetDepreciationEntity = $this->AssetDepreciation->patchEntity($assetDepreciationEntity, $this->request->getData());
+            if ($this->AssetDepreciation->save($assetDepreciationEntity)) {
                 $this->Flash->success(__('The asset depreciation has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
@@ -80,7 +80,7 @@ class AssetDepreciationController extends AppController
         }
         $companies = $this->AssetDepreciation->Companies->find('list', limit: 200)->all();
         $assets = $this->AssetDepreciation->Assets->find('list', limit: 200)->all();
-        $this->set(compact('assetDepreciation', 'companies', 'assets'));
+        $this->set(compact('assetDepreciationEntity', 'companies', 'assets'));
     }
 
     /**
@@ -93,8 +93,8 @@ class AssetDepreciationController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $assetDepreciation = $this->AssetDepreciation->get($id);
-        if ($this->AssetDepreciation->delete($assetDepreciation)) {
+        $assetDepreciationEntity = $this->AssetDepreciation->get($id);
+        if ($this->AssetDepreciation->delete($assetDepreciationEntity)) {
             $this->Flash->success(__('The asset depreciation has been deleted.'));
         } else {
             $this->Flash->error(__('The asset depreciation could not be deleted. Please, try again.'));

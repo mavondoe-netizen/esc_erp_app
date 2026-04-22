@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
  * @property string $status
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Loan $loan
  */
@@ -48,6 +49,7 @@ class LoanSchedule extends Entity
         'balance' => true,
         'currency' => true,
         'status' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'loan' => true,

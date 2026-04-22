@@ -100,3 +100,4 @@ class RegulationsTable extends Table
         return $rules;
     }
 }
+

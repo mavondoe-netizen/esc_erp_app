@@ -32,7 +32,7 @@ class CompaniesController extends AppController
      */
     public function view($id = null)
     {
-        $company = $this->Companies->get($id, contain: ['Accounts', 'Customers', 'Employees', 'Invoices', 'PayslipItems', 'Payslips', 'Products', 'Transactions', 'Users']);
+        $company = $this->Companies->get($id, contain: ['Accounts', 'Customers', 'Employees', 'Invoices', 'PayslipItems', 'Payslips', 'Products', 'Transactions', 'Users', 'Permissions']);
         $this->set(compact('company'));
     }
 
@@ -67,18 +67,7 @@ class CompaniesController extends AppController
     {
         $company = $this->Companies->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $data = $this->request->getData();
-            
-            // Handle logo upload
-            $logoFile = $this->request->getData('logo_upload');
-            if ($logoFile && $logoFile->getError() === UPLOAD_ERR_OK) {
-                $type = $logoFile->getClientMediaType();
-                $tempPath = $logoFile->getStream()->getMetadata('uri');
-                $base64 = base64_encode(file_get_contents($tempPath));
-                $data['logo'] = 'data:' . $type . ';base64,' . $base64;
-            }
-
-            $company = $this->Companies->patchEntity($company, $data);
+            $company = $this->Companies->patchEntity($company, $this->request->getData());
             if ($this->Companies->save($company)) {
                 $this->Flash->success(__('The company has been saved.'));
 

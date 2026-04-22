@@ -107,6 +107,18 @@ class EarningsTable extends Table
             ->maxLength('zimra_mapping', 255)
             ->allowEmptyString('zimra_mapping');
 
+        $validator
+            ->boolean('gross_up')
+            ->allowEmptyString('gross_up');
+
+        $validator
+            ->decimal('taxable_percentage')
+            ->allowEmptyString('taxable_percentage');
+
+        $validator
+            ->decimal('tax_free_amount')
+            ->allowEmptyString('tax_free_amount');
+
         return $validator;
     }
 

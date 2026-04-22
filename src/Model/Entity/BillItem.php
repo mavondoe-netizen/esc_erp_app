@@ -10,12 +10,19 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property int $bill_id
+ * @property int|null $product_id
  * @property int $account_id
+ * @property string|null $description
  * @property int $quantity
  * @property float $unit_price
  * @property float $line_total
+ * @property float|null $vat_rate
+ * @property string|null $vat_type
+ * @property string|null $hs_code
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Bill $bill
+ * @property \App\Model\Entity\Product|null $product
  * @property \App\Model\Entity\Account $account
  */
 class BillItem extends Entity
@@ -31,11 +38,18 @@ class BillItem extends Entity
      */
     protected array $_accessible = [
         'bill_id' => true,
+        'product_id' => true,
         'account_id' => true,
+        'description' => true,
         'quantity' => true,
         'unit_price' => true,
         'line_total' => true,
+        'vat_rate' => true,
+        'vat_type' => true,
+        'hs_code' => true,
+        'company_id' => true,
         'bill' => true,
+        'product' => true,
         'account' => true,
     ];
 }

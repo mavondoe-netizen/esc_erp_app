@@ -46,12 +46,7 @@ class BudgetsController extends AppController
     {
         $budget = $this->Budgets->newEmptyEntity();
         if ($this->request->is('post')) {
-            $data = $this->request->getData();
-            if (!empty($data['year'])) {
-                $data['start_date'] = $data['year'] . '-01-01';
-                $data['end_date'] = $data['year'] . '-12-31';
-            }
-            $budget = $this->Budgets->patchEntity($budget, $data);
+            $budget = $this->Budgets->patchEntity($budget, $this->request->getData());
             if ($this->Budgets->save($budget)) {
                 $this->Flash->success(__('The budget has been saved.'));
 
@@ -75,12 +70,7 @@ class BudgetsController extends AppController
     {
         $budget = $this->Budgets->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $data = $this->request->getData();
-            if (!empty($data['year'])) {
-                $data['start_date'] = $data['year'] . '-01-01';
-                $data['end_date'] = $data['year'] . '-12-31';
-            }
-            $budget = $this->Budgets->patchEntity($budget, $data);
+            $budget = $this->Budgets->patchEntity($budget, $this->request->getData());
             if ($this->Budgets->save($budget)) {
                 $this->Flash->success(__('The budget has been saved.'));
 
@@ -89,7 +79,7 @@ class BudgetsController extends AppController
             $this->Flash->error(__('The budget could not be saved. Please, try again.'));
         }
         $accounts = $this->Budgets->Accounts->find('list', limit: 200)->all();
-         $companies = $this->Budgets->Companies->find('list', limit: 200)->all();
+        $companies = $this->Budgets->Companies->find('list', limit: 200)->all();
         $this->set(compact('budget', 'accounts', 'companies'));
     }
 

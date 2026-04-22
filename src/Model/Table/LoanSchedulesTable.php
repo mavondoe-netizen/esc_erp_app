@@ -11,7 +11,9 @@ use Cake\Validation\Validator;
 /**
  * LoanSchedules Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\LoansTable&\Cake\ORM\Association\BelongsTo $Loans
+ * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  *
  * @method \App\Model\Entity\LoanSchedule newEmptyEntity()
  * @method \App\Model\Entity\LoanSchedule newEntity(array $data, array $options = [])
@@ -46,10 +48,14 @@ class LoanSchedulesTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('TenantAware');
 
         $this->belongsTo('Loans', [
             'foreignKey' => 'loan_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -121,6 +127,7 @@ class LoanSchedulesTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
         $rules->add($rules->existsIn(['loan_id'], 'Loans'), ['errorField' => 'loan_id']);
 
         return $rules;

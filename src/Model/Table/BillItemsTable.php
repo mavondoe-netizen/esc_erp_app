@@ -11,8 +11,10 @@ use Cake\Validation\Validator;
 /**
  * BillItems Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\BillsTable&\Cake\ORM\Association\BelongsTo $Bills
  * @property \App\Model\Table\AccountsTable&\Cake\ORM\Association\BelongsTo $Accounts
+ * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  *
  * @method \App\Model\Entity\BillItem newEmptyEntity()
  * @method \App\Model\Entity\BillItem newEntity(array $data, array $options = [])
@@ -50,9 +52,15 @@ class BillItemsTable extends Table
             'foreignKey' => 'bill_id',
             'joinType' => 'INNER',
         ]);
+        $this->belongsTo('Products', [
+            'foreignKey' => 'product_id',
+        ]);
         $this->belongsTo('Accounts', [
             'foreignKey' => 'account_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -69,8 +77,16 @@ class BillItemsTable extends Table
             ->notEmptyString('bill_id');
 
         $validator
+            ->integer('product_id')
+            ->allowEmptyString('product_id');
+
+        $validator
             ->integer('account_id')
             ->notEmptyString('account_id');
+
+        $validator
+            ->scalar('description')
+            ->allowEmptyString('description');
 
         $validator
             ->integer('quantity')
@@ -87,6 +103,18 @@ class BillItemsTable extends Table
             ->requirePresence('line_total', 'create')
             ->notEmptyString('line_total');
 
+        $validator
+            ->numeric('vat_rate')
+            ->allowEmptyString('vat_rate');
+
+        $validator
+            ->scalar('vat_type')
+            ->allowEmptyString('vat_type');
+
+        $validator
+            ->scalar('hs_code')
+            ->allowEmptyString('hs_code');
+
         return $validator;
     }
 
@@ -99,6 +127,7 @@ class BillItemsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
         $rules->add($rules->existsIn(['bill_id'], 'Bills'), ['errorField' => 'bill_id']);
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
 

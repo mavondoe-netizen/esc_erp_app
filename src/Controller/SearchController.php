@@ -5,99 +5,91 @@ namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
 
+/**
+ * Search Controller
+ *
+ * Global search across the application.
+ */
 class SearchController extends AppController
 {
+    /**
+     * Global search index.
+     *
+     * @return void
+     */
     public function index()
     {
-        $q = $this->request->getQuery('q');
+        $query = $this->request->getQuery('q', '');
+        $companyId = $this->request->getAttribute('company_id');
+
         $results = [];
 
-        if (!empty($q)) {
-            $q = trim((string)$q);
+        if (!empty(trim($query))) {
+            $likeQ = '%' . $query . '%';
 
-            // 1. Employees
-            $results['Employees'] = $this->fetchTable('Employees')->find()
-                ->where(['OR' => [
-                    'first_name LIKE' => "%$q%",
-                    'last_name LIKE' => "%$q%",
-                    'email LIKE' => "%$q%",
-                    'employee_code LIKE' => "%$q%"
-                ]])
-                ->limit(10)
+            // Search Customers
+            $Customers = TableRegistry::getTableLocator()->get('Customers');
+            $customers = $Customers->find()
+                ->where([
+                    'Customers.company_id' => $companyId,
+                    'OR' => [
+                        'Customers.name LIKE' => $likeQ,
+                        'Customers.email LIKE' => $likeQ,
+                    ],
+                ])
+                ->limit(5)
                 ->all();
 
-            // 2. Users
-            $results['Users'] = $this->fetchTable('Users')->find()
-                ->where(['email LIKE' => "%$q%"])
-                ->limit(10)
+            foreach ($customers as $c) {
+                $results[] = ['type' => 'Customer', 'label' => $c->name, 'url' => '/customers/view/' . $c->id];
+            }
+
+            // Search Suppliers
+            $Suppliers = TableRegistry::getTableLocator()->get('Suppliers');
+            $suppliers = $Suppliers->find()
+                ->where([
+                    'Suppliers.company_id' => $companyId,
+                    'OR' => [
+                        'Suppliers.name LIKE' => $likeQ,
+                        'Suppliers.email LIKE' => $likeQ,
+                    ],
+                ])
+                ->limit(5)
                 ->all();
 
-            // 3. Customers
-            $results['Customers'] = $this->fetchTable('Customers')->find()
-                ->where(['name LIKE' => "%$q%"])
-                ->limit(10)
+            foreach ($suppliers as $s) {
+                $results[] = ['type' => 'Supplier', 'label' => $s->name, 'url' => '/suppliers/view/' . $s->id];
+            }
+
+            // Search Invoices
+            $Invoices = TableRegistry::getTableLocator()->get('Invoices');
+            $invoices = $Invoices->find()
+                ->where([
+                    'Invoices.company_id' => $companyId,
+                    'Invoices.reference LIKE' => $likeQ,
+                ])
+                ->limit(5)
                 ->all();
 
-            // 4. Deals
-            $results['Deals'] = $this->fetchTable('Deals')->find()
-                ->where(['OR' => [
-                    'name LIKE' => "%$q%",
-                    'description LIKE' => "%$q%"
-                ]])
-                ->limit(10)
+            foreach ($invoices as $inv) {
+                $results[] = ['type' => 'Invoice', 'label' => $inv->reference, 'url' => '/invoices/view/' . $inv->id];
+            }
+
+            // Search Products
+            $Products = TableRegistry::getTableLocator()->get('Products');
+            $products = $Products->find()
+                ->where([
+                    'Products.company_id' => $companyId,
+                    'Products.name LIKE' => $likeQ,
+                ])
+                ->limit(5)
                 ->all();
 
-            // 5. Invoices
-            $results['Invoices'] = $this->fetchTable('Invoices')->find()
-                ->where(['description LIKE' => "%$q%"])
-                ->limit(10)
-                ->all();
-
-            // 6. Bills
-            $results['Bills'] = $this->fetchTable('Bills')->find()
-                ->where(['description LIKE' => "%$q%"])
-                ->limit(10)
-                ->all();
-
-            // 7. Estimates
-            $results['Estimates'] = $this->fetchTable('Estimates')->find()
-                ->where(['description LIKE' => "%$q%"])
-                ->limit(10)
-                ->all();
-
-            // 8. Debit Notes
-            $results['DebitNotes'] = $this->fetchTable('DebitNotes')->find()
-                ->where(['description LIKE' => "%$q%"])
-                ->limit(10)
-                ->all();
-
-            // 9. Credit Notes
-            $results['CreditNotes'] = $this->fetchTable('CreditNotes')->find()
-                ->where(['description LIKE' => "%$q%"])
-                ->limit(10)
-                ->all();
-
-            // 10. Tasks
-             $results['Tasks'] = $this->fetchTable('Tasks')->find()
-             ->where(['OR' => [
-                 'name LIKE' => "%$q%",
-                 'description LIKE' => "%$q%"
-             ]])
-             ->limit(10)
-             ->all();
-
-            // 8. Products
-            $results['Products'] = $this->fetchTable('Products')->find()
-                ->where(['name LIKE' => "%$q%"])
-                ->limit(10)
-                ->all();
+            foreach ($products as $p) {
+                $results[] = ['type' => 'Product', 'label' => $p->name, 'url' => '/products/view/' . $p->id];
+            }
         }
 
-        // Filter out empty result sets
-        $results = array_filter($results, function($resultSet) {
-            return count($resultSet) > 0;
-        });
-
-        $this->set(compact('results', 'q'));
+        $this->set(compact('query', 'results'));
     }
 }

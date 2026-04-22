@@ -119,3 +119,4 @@ class AuditFindingsTable extends Table
         return $rules;
     }
 }
+

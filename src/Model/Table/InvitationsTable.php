@@ -109,3 +109,4 @@ class InvitationsTable extends Table
         return $rules;
     }
 }
+

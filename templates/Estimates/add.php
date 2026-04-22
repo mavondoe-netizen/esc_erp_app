@@ -19,8 +19,20 @@
             <fieldset>
                 <legend><?= __('Add Estimate') ?></legend>
                 <?php
-                    echo $this->Form->control('customer_id', ['options' => $customers, 'class' => 'form-select']);
                     echo $this->Form->control('date', ['class' => 'form-control']);
+                ?>
+                <div style="display: flex; align-items: flex-end; gap: 8px; margin-bottom: 1.5rem;">
+                    <div style="flex-grow: 1;">
+                        <?= $this->Form->control('customer_id', ['options' => $customers, 'id' => 'customer-id', 'class' => 'form-control', 'margin-bottom' => '0']) ?>
+                    </div>
+                    <button type="button" class="global-quick-add-btn button button-outline" data-url="/customers/index?popup=1" data-target-dropdown="customer-id" style="padding: 0.65rem 0.8rem;" title="Search/Pick Customer">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <button type="button" class="global-quick-add-btn button button-outline" data-url="/customers/add?popup=1" data-target-dropdown="customer-id" style="padding: 0.65rem 0.8rem;" title="Add New Customer">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <?php
                     echo $this->Form->control('expiry_date', ['empty' => true, 'class' => 'form-control']);
                     echo $this->Form->control('description', ['class' => 'form-control']);
                     echo $this->Form->control('status', ['class' => 'form-control']);
@@ -76,7 +88,7 @@
         const tr = document.createElement('tr');
         tr.id = `row-${rowIndex}`;
 
-        let productHtml = `<select name="estimate_items[${rowIndex}][product_id]" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
+        let productHtml = `<select name="estimate_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
         for (let id in productsOptions) {
             productHtml += `<option value="${id}">${productsOptions[id]}</option>`;
         }
@@ -89,7 +101,17 @@
         accountHtml += `</select>`;
 
         tr.innerHTML = `
-            <td>${productHtml}</td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    ${productHtml}
+                    <button type="button" class="global-quick-add-btn" data-url="/products/index?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Search/Pick Product">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <button type="button" class="global-quick-add-btn" data-url="/products/add?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Add New Product">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </td>
             <td>${accountHtml}</td>
             <td><input type="number" name="estimate_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="1" onchange="calculateLine(${rowIndex})" class="form-control"></td>
             <td><input type="number" name="estimate_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>

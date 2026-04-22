@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
  * @property int|null $account_id
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
+ * @property int|null $company_id
  *
  * @property \App\Model\Entity\Loan $loan
  * @property \App\Model\Entity\Account $account
@@ -45,6 +46,7 @@ class LoanWriteoff extends Entity
         'approved_by' => true,
         'approved_at' => true,
         'account_id' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
         'loan' => true,

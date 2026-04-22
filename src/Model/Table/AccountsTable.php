@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Accounts Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\BenefitsTable&\Cake\ORM\Association\HasMany $Benefits
  * @property \App\Model\Table\BillItemsTable&\Cake\ORM\Association\HasMany $BillItems
  * @property \App\Model\Table\InvoiceItemsTable&\Cake\ORM\Association\HasMany $InvoiceItems
@@ -70,6 +71,9 @@ class AccountsTable extends Table
             'foreignKey' => 'account_id',
             'targetForeignKey' => 'invoice_id',
             'joinTable' => 'accounts_invoices',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -150,6 +154,8 @@ class AccountsTable extends Table
             'errorField' => 'opening_balance',
             'message' => 'The sum of all opening balances must be zero.'
         ]);
+
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

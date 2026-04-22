@@ -105,3 +105,4 @@ class ComplianceObligationsTable extends Table
         return $rules;
     }
 }
+

@@ -3,138 +3,194 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Utility\Text;
+
 /**
  * Payments Controller
  *
- * @property \App\Model\Table\PaymentsTable $Payments
+ * Supplier bill payments — records cash paid against a bill
+ * and posts the corresponding ledger entries (Debit AP, Credit Bank).
  */
 class PaymentsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
     public function index()
     {
-        $query = $this->Payments->find()
-            ->contain(['Companies', 'Customers', 'Accounts']);
-        $payments = $this->paginate($query);
+        $companyId = $this->request->getAttribute('company_id');
 
+        $Payments = $this->fetchTable('Payments');
+        $query    = $Payments->find()
+            ->where(['Payments.company_id' => $companyId])
+            ->contain(['Suppliers', 'Accounts'])
+            ->order(['Payments.date' => 'DESC']);
+
+        $payments = $this->paginate($query, ['limit' => 50]);
         $this->set(compact('payments'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Payment id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
+    public function view(int $id)
     {
-        $payment = $this->Payments->get($id, contain: ['Companies', 'Customers', 'Accounts']);
+        $payment = $this->fetchTable('Payments')
+            ->get($id, contain: ['Suppliers', 'Accounts', 'Transactions']);
         $this->set(compact('payment'));
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {
-        $payment = $this->Payments->newEmptyEntity();
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Payments = $this->fetchTable('Payments');
+        $payment  = $Payments->newEmptyEntity();
+
         if ($this->request->is('post')) {
-            $payment = $this->Payments->patchEntity($payment, $this->request->getData());
-            $payment->company_id = \Cake\Core\Configure::read('Tenant.company_id');
+            $data               = $this->request->getData();
+            $data['company_id'] = $companyId;
+            $payment = $Payments->patchEntity($payment, $data);
 
-            if ($this->Payments->save($payment)) {
-                
-                $transactionsTable = $this->fetchTable('Transactions');
-                $txGroup = \Cake\Utility\Text::uuid();
-                
-                // 1. Debit the Bank/Cash Account (Increase Asset)
-                $txDebit = $transactionsTable->newEntity([
-                    'date'        => $payment->date,
-                    'description' => trim('Payment Recv ' . $payment->reference . ' ' . $payment->description),
-                    'amount'      => $payment->amount,
-                    'zwg'         => $payment->amount,
-                    'currency'    => $payment->currency,
-                    'customer_id' => $payment->customer_id,
-                    'account_id'  => $payment->account_id,
-                    'company_id'  => $payment->company_id,
-                    'type'        => '2', // Debit
-                    'transaction_group' => $txGroup
-                ]);
-                
-                // 2. Credit Accounts Receivable (Decrease Asset)
-                $txCredit = $transactionsTable->newEntity([
-                    'date'        => $payment->date,
-                    'description' => trim('Payment App ' . $payment->reference . ' ' . $payment->description),
-                    'amount'      => $payment->amount,
-                    'zwg'         => $payment->amount,
-                    'currency'    => $payment->currency,
-                    'customer_id' => $payment->customer_id,
-                    'account_id'  => 1, // Standard AR Account
-                    'company_id'  => $payment->company_id,
-                    'type'        => '1', // Credit
-                    'transaction_group' => $txGroup
-                ]);
-
-                $transactionsTable->save($txDebit);
-                $transactionsTable->save($txCredit);
-
-                $this->Flash->success(__('The payment has been saved and posted to ledger.'));
-                return $this->redirect(['action' => 'index']);
+            if ($this->request->getQuery('popup')) {
+                if ($Payments->save($payment)) {
+                    $this->set('popupResult', ['id' => $payment->id, 'name' => "PMT-{$payment->id}"]);
+                    $this->viewBuilder()->disableAutoLayout();
+                    return $this->render('/Element/popup_success');
+                }
             }
-            $this->Flash->error(__('The payment could not be saved. Please, try again.'));
+
+            if ($Payments->save($payment)) {
+                $this->_postPaymentToLedger($payment, $companyId);
+                $this->Flash->success(__('Payment saved.'));
+                return $this->redirect(['action' => 'view', $payment->id]);
+            }
+            $this->Flash->error(__('Could not save payment.'));
         }
-        $customers = $this->Payments->Customers->find('list', limit: 200)->all();
-        $accounts = $this->Payments->Accounts->find('list', ['conditions' => ['category IN' => ['Asset', 'Bank']]])->all();
-        $this->set(compact('payment', 'customers', 'accounts'));
+
+        [$suppliers, $accounts] = $this->_dropdowns($companyId);
+        $this->set(compact('payment', 'suppliers', 'accounts'));
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Payment id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
+    public function edit(int $id)
     {
-        $payment = $this->Payments->get($id, contain: []);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $payment = $this->Payments->patchEntity($payment, $this->request->getData());
-            if ($this->Payments->save($payment)) {
-                $this->Flash->success(__('The payment has been updated.'));
-                return $this->redirect(['action' => 'index']);
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Payments = $this->fetchTable('Payments');
+        $payment  = $Payments->get($id);
+
+        if ($this->request->is(['post', 'put'])) {
+            $payment = $Payments->patchEntity($payment, $this->request->getData());
+            if ($Payments->save($payment)) {
+                $this->Flash->success(__('Payment updated.'));
+                return $this->redirect(['action' => 'view', $payment->id]);
             }
-            $this->Flash->error(__('The payment could not be updated. Please try again.'));
+            $this->Flash->error(__('Could not update payment.'));
         }
-        $customers = $this->Payments->Customers->find('list', limit: 200)->all();
-        $accounts = $this->Payments->Accounts->find('list', ['conditions' => ['category IN' => ['Asset', 'Bank']]])->all();
-        $this->set(compact('payment', 'customers', 'accounts'));
+
+        [$suppliers, $accounts] = $this->_dropdowns($companyId);
+        $this->set(compact('payment', 'suppliers', 'accounts'));
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Payment id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
+    public function delete(int $id)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $payment = $this->Payments->get($id);
-        if ($this->Payments->delete($payment)) {
-            $this->Flash->success(__('The payment has been deleted.'));
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Payments = $this->fetchTable('Payments');
+        $payment  = $Payments->find()->where(['Payments.id' => $id, 'Payments.company_id' => $companyId])->first();
+
+        if (!$payment) {
+            $this->Flash->error('Payment not found.');
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $this->_reversePaymentLedger($id, $companyId);
+
+        if ($Payments->delete($payment)) {
+            $this->Flash->success(__('Payment deleted.'));
         } else {
-            $this->Flash->error(__('The payment could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Could not delete payment.'));
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    private function _postPaymentToLedger($payment, int $companyId): void
+    {
+        $Transactions = $this->fetchTable('Transactions');
+        $Accounts     = $this->fetchTable('Accounts');
+
+        $apAccount = $Accounts->find()
+            ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Payable%'])
+            ->first();
+
+        if (!$apAccount) return;
+
+        $bankAccountId = $payment->account_id ?? null;
+        if (!$bankAccountId) return;
+
+        $date     = $payment->date ? $payment->date->format('Y-m-d') : date('Y-m-d');
+        $amount   = (float)($payment->amount ?? 0);
+        $currency = $payment->currency ?? 'USD';
+        $groupId  = Text::uuid();
+        $ref      = "PMT-{$payment->id}";
+
+        $Transactions->getConnection()->transactional(function () use (
+            $Transactions, $payment, $apAccount, $bankAccountId,
+            $date, $amount, $currency, $groupId, $ref, $companyId
+        ) {
+            // Debit: AP (reduces liability)
+            $dr = $Transactions->newEntity([
+                'company_id'        => $companyId,
+                'date'              => $date,
+                'description'       => "Payment $ref",
+                'currency'          => $currency,
+                'amount'            => $amount,
+                'zwg'               => $amount,
+                'type'              => 'Debit',
+                'account_id'        => $apAccount->id,
+                'supplier_id'       => $payment->supplier_id ?? null,
+                'transaction_group' => $groupId,
+            ], ['validate' => false]);
+            $Transactions->save($dr, ['check_balance' => false]);
+
+            // Credit: Bank/cash account
+            $cr = $Transactions->newEntity([
+                'company_id'        => $companyId,
+                'date'              => $date,
+                'description'       => "Payment $ref",
+                'currency'          => $currency,
+                'amount'            => $amount,
+                'zwg'               => $amount,
+                'type'              => 'Credit',
+                'account_id'        => $bankAccountId,
+                'supplier_id'       => $payment->supplier_id ?? null,
+                'transaction_group' => $groupId,
+            ], ['validate' => false]);
+            $Transactions->save($cr, ['check_balance' => false]);
+        });
+    }
+
+    private function _reversePaymentLedger(int $paymentId, int $companyId): void
+    {
+        $Transactions = $this->fetchTable('Transactions');
+        $conn = $Transactions->getConnection();
+        $stmt = $conn->execute(
+            "SELECT DISTINCT transaction_group FROM transactions WHERE payment_id = :pid AND company_id = :cid",
+            [':pid' => $paymentId, ':cid' => $companyId]
+        );
+        $groups = array_filter(array_column($stmt->fetchAll('assoc'), 'transaction_group'));
+        if (!empty($groups)) {
+            $Transactions->deleteAll(['transaction_group IN' => $groups, 'company_id' => $companyId]);
+        }
+    }
+
+    private function _dropdowns(int $companyId): array
+    {
+        $suppliers = $this->fetchTable('Suppliers')
+            ->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Suppliers.company_id' => $companyId])->all();
+
+        $accounts = $this->fetchTable('Accounts')
+            ->find('list', keyField: 'id', valueField: 'name')
+            ->where(['Accounts.company_id' => $companyId])
+            ->order(['Accounts.type', 'Accounts.name'])->all();
+
+        return [$suppliers, $accounts];
     }
 }

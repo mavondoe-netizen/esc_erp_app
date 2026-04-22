@@ -93,3 +93,4 @@ class ModulesTable extends Table
         return $rules;
     }
 }
+

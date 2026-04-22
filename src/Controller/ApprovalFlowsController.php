@@ -17,7 +17,7 @@ class ApprovalFlowsController extends AppController
      */
     public function index()
     {
-        $query = $this->fetchTable('ApprovalFlows')->find()
+        $query = $this->ApprovalFlows->find()
             ->contain(['Roles']);
         $approvalFlows = $this->paginate($query);
 
@@ -33,7 +33,7 @@ class ApprovalFlowsController extends AppController
      */
     public function view($id = null)
     {
-        $approvalFlow = $this->fetchTable('ApprovalFlows')->get($id, contain: ['Roles']);
+        $approvalFlow = $this->ApprovalFlows->get($id, contain: ['Roles']);
         $this->set(compact('approvalFlow'));
     }
 
@@ -44,17 +44,17 @@ class ApprovalFlowsController extends AppController
      */
     public function add()
     {
-        $approvalFlow = $this->fetchTable('ApprovalFlows')->newEmptyEntity();
+        $approvalFlow = $this->ApprovalFlows->newEmptyEntity();
         if ($this->request->is('post')) {
-            $approvalFlow = $this->fetchTable('ApprovalFlows')->patchEntity($approvalFlow, $this->request->getData());
-            if ($this->fetchTable('ApprovalFlows')->save($approvalFlow)) {
+            $approvalFlow = $this->ApprovalFlows->patchEntity($approvalFlow, $this->request->getData());
+            if ($this->ApprovalFlows->save($approvalFlow)) {
                 $this->Flash->success(__('The approval flow has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The approval flow could not be saved. Please, try again.'));
         }
-        $roles = $this->fetchTable('ApprovalFlows')->Roles->find('list', limit: 200)->all();
+        $roles = $this->ApprovalFlows->Roles->find('list', limit: 200)->all();
         $this->set(compact('approvalFlow', 'roles'));
     }
 
@@ -67,17 +67,17 @@ class ApprovalFlowsController extends AppController
      */
     public function edit($id = null)
     {
-        $approvalFlow = $this->fetchTable('ApprovalFlows')->get($id, contain: []);
+        $approvalFlow = $this->ApprovalFlows->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $approvalFlow = $this->fetchTable('ApprovalFlows')->patchEntity($approvalFlow, $this->request->getData());
-            if ($this->fetchTable('ApprovalFlows')->save($approvalFlow)) {
+            $approvalFlow = $this->ApprovalFlows->patchEntity($approvalFlow, $this->request->getData());
+            if ($this->ApprovalFlows->save($approvalFlow)) {
                 $this->Flash->success(__('The approval flow has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The approval flow could not be saved. Please, try again.'));
         }
-        $roles = $this->fetchTable('ApprovalFlows')->Roles->find('list', limit: 200)->all();
+        $roles = $this->ApprovalFlows->Roles->find('list', limit: 200)->all();
         $this->set(compact('approvalFlow', 'roles'));
     }
 
@@ -91,8 +91,8 @@ class ApprovalFlowsController extends AppController
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $approvalFlow = $this->fetchTable('ApprovalFlows')->get($id);
-        if ($this->fetchTable('ApprovalFlows')->delete($approvalFlow)) {
+        $approvalFlow = $this->ApprovalFlows->get($id);
+        if ($this->ApprovalFlows->delete($approvalFlow)) {
             $this->Flash->success(__('The approval flow has been deleted.'));
         } else {
             $this->Flash->error(__('The approval flow could not be deleted. Please, try again.'));

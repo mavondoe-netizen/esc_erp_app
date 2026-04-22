@@ -12,7 +12,19 @@
                 <legend><?= __('Add Invoice') ?></legend>
                 <div class="row">
                     <div class="column"><?= $this->Form->control('date') ?></div>
-                    <div class="column"><?= $this->Form->control('customer_id', ['options' => $customers]) ?></div>
+                    <div class="column">
+                        <div class="quick-add-group">
+                            <div class="form-control-wrapper">
+                                <?= $this->Form->control('customer_id', ['options' => $customers, 'id' => 'customer-id', 'class' => 'form-control', 'label' => 'Client (Contact)']) ?>
+                            </div>
+                            <button type="button" class="global-quick-add-btn button button-outline" data-url="/customers/index?popup=1" data-target-dropdown="customer-id" title="Search/Pick Customer">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <button type="button" class="global-quick-add-btn button button-outline" data-url="/customers/add?popup=1" data-target-dropdown="customer-id" title="Add New Customer">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="column"><?= $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZAR' => 'ZAR']]) ?></div>
@@ -69,7 +81,7 @@
         const tr = document.createElement('tr');
         tr.id = `row-${rowIndex}`;
 
-        let productHtml = `<select name="invoice_items[${rowIndex}][product_id]" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
+        let productHtml = `<select name="invoice_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
         for (let id in productsOptions) {
             productHtml += `<option value="${id}">${productsOptions[id]}</option>`;
         }
@@ -79,7 +91,17 @@
         let accountHtml = `<input type="hidden" name="invoice_items[${rowIndex}][account_id]" id="account-${rowIndex}" value="${defaultAccountId}">`;
 
         tr.innerHTML = `
-            <td>${productHtml}${accountHtml}</td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    ${productHtml}${accountHtml}
+                    <button type="button" class="global-quick-add-btn" data-url="/products/index?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Search/Pick Product">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <button type="button" class="global-quick-add-btn" data-url="/products/add?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Add New Product">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+            </td>
             <td><input type="number" name="invoice_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="1" onchange="calculateLine(${rowIndex})" class="form-control"></td>
             <td><input type="number" name="invoice_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
             <td><input type="text" name="invoice_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" placeholder="HS Code" onchange="handleHsCode(${rowIndex})"></td>

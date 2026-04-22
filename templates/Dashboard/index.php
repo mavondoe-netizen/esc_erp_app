@@ -12,25 +12,25 @@ $this->Html->script('https://cdn.jsdelivr.net/npm/chart.js', ['block' => true]);
                 <div class="column">
                     <div class="card" style="padding: 20px; background: #f4f6f9; border-left: 5px solid #2e6c80; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
                         <h5 style="color: #666; margin-bottom: 10px; font-size: 0.95rem;">Total Base Gross (USD eq)</h5>
-                        <h2 style="margin: 0; color: #333;"><?= $this->Number->currency($totalGross, 'USD') ?></h2>
+                        <h2 style="margin: 0; color: #333;"><?= $this->Number->currency((float)($totalGross ?? 0), 'USD') ?></h2>
                     </div>
                 </div>
                 <div class="column">
                     <div class="card" style="padding: 20px; background: #fffcfcfc; border-left: 5px solid #d9534f; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
                         <h5 style="color: #666; margin-bottom: 10px; font-size: 0.95rem;">Total Deductions (USD eq)</h5>
-                        <h2 style="margin: 0; color: #333;"><?= $this->Number->currency($totalDeductions, 'USD') ?></h2>
+                        <h2 style="margin: 0; color: #333;"><?= $this->Number->currency((float)($totalDeductions ?? 0), 'USD') ?></h2>
                     </div>
                 </div>
                 <div class="column">
                     <div class="card" style="padding: 20px; background: #fcfffcfc; border-left: 5px solid #5cb85c; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
                         <h5 style="color: #666; margin-bottom: 10px; font-size: 0.95rem;">Total Net Pay (USD eq)</h5>
-                        <h2 style="margin: 0; color: #333;"><?= $this->Number->currency($totalNet, 'USD') ?></h2>
+                        <h2 style="margin: 0; color: #333;"><?= $this->Number->currency((float)($totalNet ?? 0), 'USD') ?></h2>
                     </div>
                 </div>
                 <div class="column">
                     <div class="card" style="padding: 20px; background: #fdfafa; border-left: 5px solid #f0ad4e; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px;">
                         <h5 style="color: #666; margin-bottom: 10px; font-size: 0.95rem;">Outstanding Leave Total</h5>
-                        <h2 style="margin: 0; color: #333;"><?= $this->Number->format($outstandingLeaves) ?> Days</h2>
+                        <h2 style="margin: 0; color: #333;"><?= $this->Number->format((float)($outstandingLeaves ?? 0)) ?> Days</h2>
                     </div>
                 </div>
             </div>

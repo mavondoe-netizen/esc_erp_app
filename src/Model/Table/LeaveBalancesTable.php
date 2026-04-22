@@ -29,6 +29,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\LeaveBalance>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\LeaveBalance> deleteManyOrFail(iterable $entities, array $options = [])
  *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  */
 class LeaveBalancesTable extends Table
 {
@@ -57,6 +58,9 @@ class LeaveBalancesTable extends Table
         $this->belongsTo('LeaveTypes', [
             'foreignKey' => 'leave_type_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
     }
 
@@ -89,6 +93,10 @@ class LeaveBalancesTable extends Table
             ->decimal('days_taken')
             ->notEmptyString('days_taken');
 
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
+
         return $validator;
     }
 
@@ -104,6 +112,7 @@ class LeaveBalancesTable extends Table
         $rules->add($rules->isUnique(['employee_id', 'leave_type_id', 'year']), ['errorField' => 'employee_id']);
         $rules->add($rules->existsIn(['employee_id'], 'Employees'), ['errorField' => 'employee_id']);
         $rules->add($rules->existsIn(['leave_type_id'], 'LeaveTypes'), ['errorField' => 'leave_type_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

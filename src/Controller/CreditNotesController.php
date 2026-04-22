@@ -46,9 +46,7 @@ class CreditNotesController extends AppController
     {
         $creditNote = $this->CreditNotes->newEmptyEntity();
         if ($this->request->is('post')) {
-            $creditNote = $this->CreditNotes->patchEntity($creditNote, $this->request->getData(), [
-                'associated' => ['CreditNoteItems']
-            ]);
+            $creditNote = $this->CreditNotes->patchEntity($creditNote, $this->request->getData());
             if ($this->CreditNotes->save($creditNote)) {
                 $this->Flash->success(__('The credit note has been saved.'));
 
@@ -56,22 +54,9 @@ class CreditNotesController extends AppController
             }
             $this->Flash->error(__('The credit note could not be saved. Please, try again.'));
         }
+        $companies = $this->CreditNotes->Companies->find('list', limit: 200)->all();
         $customers = $this->CreditNotes->Customers->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('Accounts')->find('list', limit: 200)->all();
-        
-        $productsData = $this->fetchTable('Products')->find('all')->all();
-        $productsOptions = [];
-        $productsJson = [];
-        foreach ($productsData as $prod) {
-            $productsOptions[$prod->id] = $prod->name;
-            $productsJson[$prod->id] = [
-                'unit_price' => $prod->unit_price,
-                'vat_rate' => $prod->vat_rate,
-                'account_id' => $prod->account_id,
-            ];
-        }
-        
-        $this->set(compact('creditNote', 'customers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('creditNote', 'companies', 'customers'));
     }
 
     /**
@@ -83,11 +68,9 @@ class CreditNotesController extends AppController
      */
     public function edit($id = null)
     {
-        $creditNote = $this->CreditNotes->get($id, contain: ['CreditNoteItems']);
+        $creditNote = $this->CreditNotes->get($id, contain: []);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $creditNote = $this->CreditNotes->patchEntity($creditNote, $this->request->getData(), [
-                'associated' => ['CreditNoteItems']
-            ]);
+            $creditNote = $this->CreditNotes->patchEntity($creditNote, $this->request->getData());
             if ($this->CreditNotes->save($creditNote)) {
                 $this->Flash->success(__('The credit note has been saved.'));
 
@@ -95,22 +78,9 @@ class CreditNotesController extends AppController
             }
             $this->Flash->error(__('The credit note could not be saved. Please, try again.'));
         }
+        $companies = $this->CreditNotes->Companies->find('list', limit: 200)->all();
         $customers = $this->CreditNotes->Customers->find('list', limit: 200)->all();
-        $accounts = $this->fetchTable('Accounts')->find('list', limit: 200)->all();
-        
-        $productsData = $this->fetchTable('Products')->find('all')->all();
-        $productsOptions = [];
-        $productsJson = [];
-        foreach ($productsData as $prod) {
-            $productsOptions[$prod->id] = $prod->name;
-            $productsJson[$prod->id] = [
-                'unit_price' => $prod->unit_price,
-                'vat_rate' => $prod->vat_rate,
-                'account_id' => $prod->account_id,
-            ];
-        }
-        
-        $this->set(compact('creditNote', 'customers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('creditNote', 'companies', 'customers'));
     }
 
     /**

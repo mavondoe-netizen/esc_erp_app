@@ -21,8 +21,8 @@ $this->assign('title', 'Entity Agnostic Report Builder');
     .loading-overlay { display: none; opacity: 0.7; pointer-events: none; }
 </style>
 
-<!-- Load SortableJS from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<!-- Load SortableJS locally with explicit hardcoded base path -->
+<script src="/esc_erp_app3/js/Sortable.min.js"></script>
 
 <div class="reports index content">
     <h3><?= __('Drag and Drop Report Generator') ?></h3>
@@ -65,7 +65,7 @@ $this->assign('title', 'Entity Agnostic Report Builder');
             <div class="col-box" id="availableColumnsBox">
                 <h4>Available Variables</h4>
                 <div id="availableColumnsList" style="min-height: 150px;">
-                    <p class="text-muted" style="text-align:center; margin-top:30px;">Select an entity first...</p>
+                    <p class="text-muted" style="text-align:center; margin-top:30px;" id="schemaPlaceholder">Select an entity first (v2)...</p>
                 </div>
             </div>
         </div>
@@ -107,56 +107,53 @@ $this->assign('title', 'Entity Agnostic Report Builder');
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const csrfToken = <?= json_encode($this->request->getAttribute('csrfToken')) ?>;
-    const fetchUrl = `<?= $this->Url->build(['action' => 'apiFetchColumns']) ?>`;
-    
-    // Initialize SortableJS
-    new Sortable(document.getElementById('availableColumnsList'), {
-        group: {
-            name: 'shared',
-            pull: 'clone'
-        }, 
-        animation: 150,
-        sort: false,
-        ghostClass: 'sortable-ghost'
-    });
+    const csrfToken    = <?= json_encode($this->request->getAttribute('csrfToken')) ?>;
+    const fetchUrl     = `<?= $this->Url->build(['action' => 'apiFetchColumns']) ?>`;
 
-    new Sortable(document.getElementById('selectedColumnsList'), {
-        group: 'shared',
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        onAdd: function(evt) {
-            checkGenerateReady();
-        },
-        onRemove: function(evt) {
-            checkGenerateReady();
-            if (evt.from.id === 'selectedColumnsList') {
-                evt.item.remove(); // Remove items dragged back out
-            }
-        }
-    });
-
+    // All DOM references — declared ONCE
     const targetSelect = document.getElementById('targetTableSelect');
-    const assocBox = document.getElementById('associationsBox');
-    const assocList = document.getElementById('associationsList');
-    const availList = document.getElementById('availableColumnsList');
-    const selList = document.getElementById('selectedColumnsList');
-    const genBtn = document.getElementById('generateBtn');
-    const zones = document.getElementById('builderZones');
-    const thead = document.getElementById('dynamicTableHeader');
-    const tbody = document.getElementById('dynamicTableBody');
+    const assocBox     = document.getElementById('associationsBox');
+    const assocList    = document.getElementById('associationsList');
+    const availList    = document.getElementById('availableColumnsList');
+    const selList      = document.getElementById('selectedColumnsList');
+    const genBtn       = document.getElementById('generateBtn');
+    const zones        = document.getElementById('builderZones');
+    const thead        = document.getElementById('dynamicTableHeader');
+    const tbody        = document.getElementById('dynamicTableBody');
     const outContainer = document.getElementById('reportOutputContainer');
 
+    // Initialize SortableJS (show visible error if library not loaded)
+    if (typeof Sortable === 'undefined') {
+        availList.innerHTML = '<div style="color:white;background:red;padding:15px;font-weight:bold;">SortableJS failed to load. Check /esc_erp_app3/js/Sortable.min.js</div>';
+    } else {
+        new Sortable(availList, {
+            group: { name: 'shared', pull: 'clone' },
+            animation: 150, sort: false,
+            ghostClass: 'sortable-ghost'
+        });
+        new Sortable(selList, {
+            group: 'shared',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onAdd:    function() { checkGenerateReady(); },
+            onRemove: function(evt) {
+                checkGenerateReady();
+                if (evt.from.id === 'selectedColumnsList') evt.item.remove();
+            }
+        });
+    }
+
     function checkGenerateReady() {
-        if (targetSelect.value && selList.children.length > 0) {
+        if ($('#targetTableSelect').val() && selList.children.length > 0) {
             genBtn.removeAttribute('disabled');
         } else {
             genBtn.setAttribute('disabled', 'true');
         }
     }
 
-    targetSelect.addEventListener('change', function() {
-        const table = this.value;
+    // Use jQuery .on('change') to ensure Select2 change events are captured properly
+    $('#targetTableSelect').on('change', function() {
+        const table = $(this).val();
         availList.innerHTML = '';
         selList.innerHTML = '';
         assocList.innerHTML = '';
@@ -175,52 +172,85 @@ document.addEventListener("DOMContentLoaded", function() {
         availList.innerHTML = '<p>Loading schema...</p>';
 
         fetch(`${fetchUrl}?table=${encodeURIComponent(table)}`, {
-            headers: { 'Accept': 'application/json' }
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin'
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            return res.text();
+        })
+        .then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error("Invalid JSON from server. First 100 chars: " + text.substring(0, 100));
+            }
+        })
         .then(data => {
             availList.innerHTML = '';
             if(data.success) {
-                // Render columns
-                data.columns.forEach(col => addDraggableItem(col, col, availList));
+                // Add a forced visual indicator that columns loaded
+                const countBadge = document.createElement('div');
+                countBadge.style.padding = '5px';
+                countBadge.style.backgroundColor = '#eef';
+                countBadge.style.marginBottom = '10px';
+                countBadge.style.fontSize = '0.85em';
+                countBadge.innerText = `Retrieved ${data.columns ? data.columns.length : 0} columns for ${table}`;
+                availList.appendChild(countBadge);
+
+                // Render primary columns immediately
+                if (data.columns && data.columns.length > 0) {
+                    data.columns.forEach(col => addDraggableItem(col, col, availList));
+                } else {
+                    const emptyMsg = document.createElement('p');
+                    emptyMsg.style.color = 'orange';
+                    emptyMsg.innerText = 'No columns returned by API.';
+                    availList.appendChild(emptyMsg);
+                }
                 
-                // Render associations
+                // Auto-load related model columns directly into the list
                 if (data.associations && data.associations.length > 0) {
-                    assocBox.style.display = 'block';
+                    assocBox.style.display = 'none'; // Hide the sidebar box since we auto-load
                     data.associations.forEach(assoc => {
-                        const btn = document.createElement('button');
-                        btn.className = 'btn btn-sm btn-outline-secondary mb-1 w-100 text-start';
-                        btn.style.fontSize = '0.8rem';
-                        btn.innerHTML = `<i class="fas fa-plus-circle"></i> Join ${assoc.name}`;
-                        btn.onclick = () => loadAssociationColumns(table, assoc.name);
-                        assocList.appendChild(btn);
+                        loadAssociationColumns(table, assoc.name);
                     });
+                } else {
+                    assocBox.style.display = 'none';
                 }
             } else {
                 availList.innerHTML = `<p style="color:red;">Error: ${data.message}</p>`;
             }
+        })
+        .catch(err => {
+            availList.innerHTML = `<div style="color:red; background:#fee; padding:10px; border:1px solid red; font-family:monospace;"><strong>Fetch Error:</strong><br/>${err.message}</div>`;
         });
     });
 
     function loadAssociationColumns(primaryTable, associationName) {
         const loadingItem = document.createElement('div');
         loadingItem.className = 'text-muted sm';
+        loadingItem.style.padding = '8px';
         loadingItem.innerText = `Loading ${associationName}...`;
         availList.appendChild(loadingItem);
 
         fetch(`${fetchUrl}?table=${encodeURIComponent(primaryTable)}&association=${encodeURIComponent(associationName)}`, {
-            headers: { 'Accept': 'application/json' }
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin'
         })
-        .then(res => res.json())
+        .then(res => res.json().catch(() => null))
         .then(data => {
             loadingItem.remove();
-            if (data.success) {
+            if (data && data.success) {
                 data.columns.forEach(col => {
                     const fullId = `${data.prefix}.${col}`;
                     addDraggableItem(fullId, fullId, availList);
                 });
-            } else {
-                alert('Error loading association: ' + data.message);
+            }
+            // Silently ignore loading errors for associations to not clutter the UI
+        })
+        .catch(() => {
+            if (loadingItem && loadingItem.parentNode) {
+                loadingItem.remove();
             }
         });
     }
@@ -355,6 +385,4 @@ function exportToCSV() {
     link.click();
     document.body.removeChild(link);
 }
-</script>
-});
 </script>

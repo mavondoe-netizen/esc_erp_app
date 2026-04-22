@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Loans Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\LoanApplicationsTable&\Cake\ORM\Association\BelongsTo $LoanApplications
  * @property \App\Model\Table\LoanProductsTable&\Cake\ORM\Association\BelongsTo $LoanProducts
@@ -186,7 +187,11 @@ class LoansTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        // FK rules relaxed — company_id/loan_application_id/loan_product_id are nullable
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+        $rules->add($rules->existsIn(['client_id'], 'LoanClients'), ['errorField' => 'client_id']);
+        $rules->add($rules->existsIn(['loan_application_id'], 'LoanApplications'), ['errorField' => 'loan_application_id']);
+        $rules->add($rules->existsIn(['loan_product_id'], 'LoanProducts'), ['errorField' => 'loan_product_id']);
+
         return $rules;
     }
 }

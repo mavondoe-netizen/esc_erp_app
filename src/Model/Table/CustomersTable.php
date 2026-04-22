@@ -11,6 +11,7 @@ use Cake\Validation\Validator;
 /**
  * Customers Model
  *
+ * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\ContactsTable&\Cake\ORM\Association\BelongsTo $Contacts
  * @property \App\Model\Table\InspectionsTable&\Cake\ORM\Association\HasMany $Inspections
  * @property \App\Model\Table\InvoicesTable&\Cake\ORM\Association\HasMany $Invoices
@@ -50,6 +51,9 @@ class CustomersTable extends Table
         $this->belongsTo('Contacts', [
             'foreignKey' => 'contact_id',
             'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
         $this->hasMany('Inspections', [
             'foreignKey' => 'customer_id',
@@ -102,6 +106,7 @@ class CustomersTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['contact_id'], 'Contacts'), ['errorField' => 'contact_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;
     }

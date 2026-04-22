@@ -1,32 +1,25 @@
 <div class="row">
     <div class="column column-75">
         <div class="payslips form content">
-            <h3>Generate Payslip</h3>
+            <h3>Bulk Generate Payslips</h3>
+            <p>Select a pay period to generate draft payslips for all active employees. Existing payslips for the selected period will be skipped.</p>
             
-            <?= $this->Form->create($payslip) ?>
-            
-            <?php echo $this->Form->control('pay_period_id', ['options' => $payPeriods]); ?>
-            
+            <?= $this->Form->create(null, ['type' => 'post']) ?>
             <fieldset>
-                <legend>Earnings</legend>
-                <?php
-                echo $this->Form->control('basic_salary', ['default' => $employee->basic_salary, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('allowances', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('bonuses', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('overtime', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('benefits', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                ?>
-            
-                <legend style="margin-top: 2rem;">Deductions & Statutory</legend>
-                <?php
-                echo $this->Form->control('pension', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('nssa', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('medical_aid', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
-                echo $this->Form->control('medical_expenses', ['default' => 0, 'type' => 'number', 'step' => '0.01']);
+                <legend><?= __('General Selection') ?></legend>
+                <?php 
+                echo $this->Form->control('pay_period_id', [
+                    'options' => $payPeriods, 
+                    'default' => $this->request->getQuery('pay_period_id'),
+                    'label' => 'Select Pay Period'
+                ]); 
                 ?>
             </fieldset>
             
-            <?= $this->Form->button('Generate & Save Payslip') ?>
+            <div style="margin-top: 20px;">
+                <?= $this->Form->button(__('🚀 Start Bulk Generation'), ['class' => 'button']) ?>
+                <?= $this->Html->link(__('Cancel'), ['action' => 'index'], ['class' => 'button button-outline', 'style' => 'margin-left: 10px;']) ?>
+            </div>
             <?= $this->Form->end() ?>
         </div>
     </div>
@@ -34,10 +27,10 @@
     <!-- Hints Sidebar -->
     <div class="column column-25">
         <div class="content" style="background-color: #f4f6f9; padding: 1.5rem; border-radius: 4px;">
-            <h4 style="font-size: 1.2rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">System Earnings</h4>
-            <ul style="font-size: 0.9em; padding-left: 20px; list-style-type: square;">
+            <h4 style="font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">System Earnings</h4>
+            <ul style="font-size: 0.85em; padding-left: 15px; list-style-type: square; color: #444;">
                 <?php foreach ($earnings as $earning): ?>
-                    <li><strong><?= h($earning->name) ?></strong> 
+                    <li style="margin-bottom: 4px;"><strong><?= h($earning->name) ?></strong> 
                         <br><small style="color: #666;"><?= $earning->taxable ? 'Taxable' : 'Non-Taxable' ?></small>
                     </li>
                 <?php endforeach; ?>
@@ -46,10 +39,10 @@
                 <?php endif; ?>
             </ul>
 
-            <h4 style="font-size: 1.2rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; margin-top: 2rem;">System Deductions</h4>
-            <ul style="font-size: 0.9em; padding-left: 20px; list-style-type: square;">
+            <h4 style="font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; margin-top: 2rem;">System Deductions</h4>
+            <ul style="font-size: 0.85em; padding-left: 15px; list-style-type: square; color: #444;">
                 <?php foreach ($deductions as $deduction): ?>
-                    <li><strong><?= h($deduction->name) ?></strong> 
+                    <li style="margin-bottom: 4px;"><strong><?= h($deduction->name) ?></strong> 
                         <br><small style="color: #666;"><?= $deduction->tax_deductible ? 'Tax Deductible' : 'Not Deductible' ?></small>
                     </li>
                 <?php endforeach; ?>
@@ -59,4 +52,4 @@
             </ul>
         </div>
     </div>
-</div>
+</div>
