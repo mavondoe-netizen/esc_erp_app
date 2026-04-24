@@ -32257,3 +32257,1383 @@ Referer URL: http://localhost/esc_erp_app3/bills/add
 2026-04-24 04:21:15 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
 2026-04-24 04:26:52 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
 2026-04-24 04:30:17 error: AuditLog save failed: {"user_id":{"_existsIn":"This value does not exist"}}
+2026-04-24 05:01:03 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:01:04 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:01:08 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:01:16 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:01:17 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:10:14 error: [Cake\Database\Exception\QueryException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'company_id' in 'where clause'
+Query: SELECT Earnings.id AS Earnings__id, Earnings.name AS Earnings__name, Earnings.account_id AS Earnings__account_id, Earnings.taxable AS Earnings__taxable, Earnings.pensionable AS Earnings__pensionable, Earnings.nssa_applicable AS Earnings__nssa_applicable, Earnings.calculation_type AS Earnings__calculation_type, Earnings.zimra_mapping AS Earnings__zimra_mapping, Earnings.gross_up AS Earnings__gross_up, Earnings.taxable_percentage AS Earnings__taxable_percentage, Earnings.tax_free_amount AS Earnings__tax_free_amount FROM earnings Earnings WHERE company_id = '2' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:358
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- CORE\src\ORM\Query\SelectQuery.php:234
+- APP/Controller\PayPeriodsController.php:184
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'company_id' in 'where clause' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:340
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- CORE\src\ORM\Query\SelectQuery.php:234
+- APP/Controller\PayPeriodsController.php:184
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/rollover
+Referer URL: http://localhost/esc_erp_app3/pay-periods
+2026-04-24 05:32:07 error: [Cake\Database\Exception\QueryException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'company_id' in 'where clause'
+Query: SELECT Earnings.id AS Earnings__id, Earnings.name AS Earnings__name, Earnings.account_id AS Earnings__account_id, Earnings.taxable AS Earnings__taxable, Earnings.pensionable AS Earnings__pensionable, Earnings.nssa_applicable AS Earnings__nssa_applicable, Earnings.calculation_type AS Earnings__calculation_type, Earnings.zimra_mapping AS Earnings__zimra_mapping, Earnings.gross_up AS Earnings__gross_up, Earnings.taxable_percentage AS Earnings__taxable_percentage, Earnings.tax_free_amount AS Earnings__tax_free_amount FROM earnings Earnings WHERE company_id = '2' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:358
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- CORE\src\ORM\Query\SelectQuery.php:234
+- APP/Controller\PayPeriodsController.php:184
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'company_id' in 'where clause' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:340
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- CORE\src\ORM\Query\SelectQuery.php:234
+- APP/Controller\PayPeriodsController.php:184
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/rollover
+Referer URL: http://localhost/esc_erp_app3/pay-periods
+2026-04-24 05:49:27 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:33 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:35 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:39 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:48 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:49 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:57 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 05:49:57 error: [Cake\Database\Exception\QueryException] SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'company_id' in where clause is ambiguous
+Query: SELECT Payslips.id AS Payslips__id, Payslips.employee_id AS Payslips__employee_id, Payslips.pay_period_id AS Payslips__pay_period_id, Payslips.gross_pay AS Payslips__gross_pay, Payslips.deductions AS Payslips__deductions, Payslips.net_pay AS Payslips__net_pay, Payslips.exchange_rate AS Payslips__exchange_rate, Payslips.generated_date AS Payslips__generated_date, Payslips.basic_salary AS Payslips__basic_salary, Payslips.allowances AS Payslips__allowances, Payslips.bonuses AS Payslips__bonuses, Payslips.overtime AS Payslips__overtime, Payslips.benefits AS Payslips__benefits, Payslips.pension AS Payslips__pension, Payslips.nssa AS Payslips__nssa, Payslips.medical_aid AS Payslips__medical_aid, Payslips.medical_expenses AS Payslips__medical_expenses, Payslips.taxable_income AS Payslips__taxable_income, Payslips.paye AS Payslips__paye, Payslips.tax_credits AS Payslips__tax_credits, Payslips.aids_levy AS Payslips__aids_levy, Payslips.total_tax AS Payslips__total_tax, Payslips.usd_gross AS Payslips__usd_gross, Payslips.usd_deductions AS Payslips__usd_deductions, Payslips.usd_net AS Payslips__usd_net, Payslips.zwg_gross AS Payslips__zwg_gross, Payslips.zwg_deductions AS Payslips__zwg_deductions, Payslips.zwg_net AS Payslips__zwg_net, Payslips.company_id AS Payslips__company_id, Employees.id AS Employees__id, Employees.employee_code AS Employees__employee_code, Employees.first_name AS Employees__first_name, Employees.last_name AS Employees__last_name, Employees.nssa_number AS Employees__nssa_number, Employees.tax_number AS Employees__tax_number, Employees.date_of_birth AS Employees__date_of_birth, Employees.disabled AS Employees__disabled, Employees.designation AS Employees__designation, Employees.basic_salary AS Employees__basic_salary, Employees.created AS Employees__created, Employees.modified AS Employees__modified, Employees.national_identity AS Employees__national_identity, Employees.company_id AS Employees__company_id, Employees.is_blind AS Employees__is_blind, Employees.usd_bank AS Employees__usd_bank, Employees.usd_branch AS Employees__usd_branch, Employees.usd_account AS Employees__usd_account, Employees.zwg_bank AS Employees__zwg_bank, Employees.zwg_branch AS Employees__zwg_branch, Employees.zwg_account AS Employees__zwg_account, Employees.start_date AS Employees__start_date, Employees.termination_date AS Employees__termination_date FROM payslips Payslips INNER JOIN employees Employees ON (Employees.id = Payslips.employee_id AND Employees.company_id = 2) WHERE (pay_period_id = 40 AND company_id = 2 AND Payslips.company_id = 2) in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:329
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- APP/Controller\PayPeriodsController.php:196
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'company_id' in where clause is ambiguous in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:327
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- APP/Controller\PayPeriodsController.php:196
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/rollover
+Referer URL: https://dell-dellsmall.taild02db3.ts.net/esc_erp_app3/pay-periods
+2026-04-24 05:54:53 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/186
+2026-04-24 05:55:37 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/186
+2026-04-24 05:55:40 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/186
+2026-04-24 05:55:49 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/186
+2026-04-24 05:55:53 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/186
+2026-04-24 05:58:12 error: [Cake\Controller\Exception\MissingActionException] Action `PayslipsController::bulkAction()` could not be found, or is not accessible. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php on line 487
+Exception Attributes: array (
+  0 => 'PayslipsController',
+  1 => 'bulkAction',
+)
+Stack Trace:
+- CORE\src\Controller\ControllerFactory.php:161
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/bulk-action
+Referer URL: http://localhost/esc_erp_app3/payslips
+2026-04-24 06:00:49 error: [Cake\Controller\Exception\MissingActionException] Action `PayPeriodsController::bulkAction()` could not be found, or is not accessible. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php on line 487
+Exception Attributes: array (
+  0 => 'PayPeriodsController',
+  1 => 'bulkAction',
+)
+Stack Trace:
+- CORE\src\Controller\ControllerFactory.php:161
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/bulk-action
+Referer URL: http://localhost/esc_erp_app3/pay-periods
+2026-04-24 06:01:26 error: [Cake\Datasource\Exception\RecordNotFoundException] Record not found in table `pay_periods`. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Query\SelectQuery.php on line 600
+Stack Trace:
+- CORE\src\ORM\Table.php:1569
+- APP/Controller\PayPeriodsController.php:88
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/delete/35
+Referer URL: http://localhost/esc_erp_app3/pay-periods
+2026-04-24 06:12:12 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:12:14 error: [Cake\Database\Exception\QueryException] SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'company_id' in where clause is ambiguous
+Query: SELECT Payslips.id AS Payslips__id, Payslips.employee_id AS Payslips__employee_id, Payslips.pay_period_id AS Payslips__pay_period_id, Payslips.gross_pay AS Payslips__gross_pay, Payslips.deductions AS Payslips__deductions, Payslips.net_pay AS Payslips__net_pay, Payslips.exchange_rate AS Payslips__exchange_rate, Payslips.generated_date AS Payslips__generated_date, Payslips.basic_salary AS Payslips__basic_salary, Payslips.allowances AS Payslips__allowances, Payslips.bonuses AS Payslips__bonuses, Payslips.overtime AS Payslips__overtime, Payslips.benefits AS Payslips__benefits, Payslips.pension AS Payslips__pension, Payslips.nssa AS Payslips__nssa, Payslips.medical_aid AS Payslips__medical_aid, Payslips.medical_expenses AS Payslips__medical_expenses, Payslips.taxable_income AS Payslips__taxable_income, Payslips.paye AS Payslips__paye, Payslips.tax_credits AS Payslips__tax_credits, Payslips.aids_levy AS Payslips__aids_levy, Payslips.total_tax AS Payslips__total_tax, Payslips.usd_gross AS Payslips__usd_gross, Payslips.usd_deductions AS Payslips__usd_deductions, Payslips.usd_net AS Payslips__usd_net, Payslips.zwg_gross AS Payslips__zwg_gross, Payslips.zwg_deductions AS Payslips__zwg_deductions, Payslips.zwg_net AS Payslips__zwg_net, Payslips.company_id AS Payslips__company_id, Employees.id AS Employees__id, Employees.employee_code AS Employees__employee_code, Employees.first_name AS Employees__first_name, Employees.last_name AS Employees__last_name, Employees.nssa_number AS Employees__nssa_number, Employees.tax_number AS Employees__tax_number, Employees.date_of_birth AS Employees__date_of_birth, Employees.disabled AS Employees__disabled, Employees.designation AS Employees__designation, Employees.basic_salary AS Employees__basic_salary, Employees.created AS Employees__created, Employees.modified AS Employees__modified, Employees.national_identity AS Employees__national_identity, Employees.company_id AS Employees__company_id, Employees.is_blind AS Employees__is_blind, Employees.usd_bank AS Employees__usd_bank, Employees.usd_branch AS Employees__usd_branch, Employees.usd_account AS Employees__usd_account, Employees.zwg_bank AS Employees__zwg_bank, Employees.zwg_branch AS Employees__zwg_branch, Employees.zwg_account AS Employees__zwg_account, Employees.start_date AS Employees__start_date, Employees.termination_date AS Employees__termination_date FROM payslips Payslips INNER JOIN employees Employees ON (Employees.id = Payslips.employee_id AND Employees.company_id = 2) WHERE (pay_period_id = 40 AND company_id = 2 AND Payslips.company_id = 2) in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:329
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- APP/Controller\PayPeriodsController.php:197
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'company_id' in where clause is ambiguous in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:327
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- APP/Controller\PayPeriodsController.php:197
+- APP/Controller\PayPeriodsController.php:124
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/rollover
+Referer URL: https://dell-dellsmall.taild02db3.ts.net/esc_erp_app3/pay-periods
+2026-04-24 06:12:17 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:12:31 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:12:31 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:12:51 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:13:04 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:13:36 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:13:39 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:14:27 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:14:27 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:14:37 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:19:24 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:19:24 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:19:29 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:19:32 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:20:10 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:20:13 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:20:26 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 06:33:29 error: PayPeriod add failed: {"name":{"_required":"This field is required"},"start_date":{"_required":"This field is required"},"end_date":{"_required":"This field is required"}}
+2026-04-24 06:33:29 error: PayPeriod add failed: {"name":{"_required":"This field is required"},"start_date":{"_required":"This field is required"},"end_date":{"_required":"This field is required"}}
+2026-04-24 07:09:10 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/193
+2026-04-24 07:09:18 error: [Cake\Http\Exception\MethodNotAllowedException] Method Not Allowed in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\ServerRequest.php on line 1442
+Stack Trace:
+- APP/Controller\PayslipsController.php:174
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/calculate-taxes
+Referer URL: http://localhost/esc_erp_app3/payslips/edit/193
+2026-04-24 07:17:26 error: [Cake\Database\Exception\QueryException] SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'company_id' in where clause is ambiguous
+Query: SELECT Payslips.id AS Payslips__id, Payslips.employee_id AS Payslips__employee_id, Payslips.pay_period_id AS Payslips__pay_period_id, Payslips.gross_pay AS Payslips__gross_pay, Payslips.deductions AS Payslips__deductions, Payslips.net_pay AS Payslips__net_pay, Payslips.exchange_rate AS Payslips__exchange_rate, Payslips.generated_date AS Payslips__generated_date, Payslips.basic_salary AS Payslips__basic_salary, Payslips.allowances AS Payslips__allowances, Payslips.bonuses AS Payslips__bonuses, Payslips.overtime AS Payslips__overtime, Payslips.benefits AS Payslips__benefits, Payslips.pension AS Payslips__pension, Payslips.nssa AS Payslips__nssa, Payslips.medical_aid AS Payslips__medical_aid, Payslips.medical_expenses AS Payslips__medical_expenses, Payslips.taxable_income AS Payslips__taxable_income, Payslips.paye AS Payslips__paye, Payslips.tax_credits AS Payslips__tax_credits, Payslips.aids_levy AS Payslips__aids_levy, Payslips.total_tax AS Payslips__total_tax, Payslips.usd_gross AS Payslips__usd_gross, Payslips.usd_deductions AS Payslips__usd_deductions, Payslips.usd_net AS Payslips__usd_net, Payslips.zwg_gross AS Payslips__zwg_gross, Payslips.zwg_deductions AS Payslips__zwg_deductions, Payslips.zwg_net AS Payslips__zwg_net, Payslips.company_id AS Payslips__company_id, Employees.id AS Employees__id, Employees.employee_code AS Employees__employee_code, Employees.first_name AS Employees__first_name, Employees.last_name AS Employees__last_name, Employees.nssa_number AS Employees__nssa_number, Employees.tax_number AS Employees__tax_number, Employees.date_of_birth AS Employees__date_of_birth, Employees.disabled AS Employees__disabled, Employees.designation AS Employees__designation, Employees.basic_salary AS Employees__basic_salary, Employees.created AS Employees__created, Employees.modified AS Employees__modified, Employees.national_identity AS Employees__national_identity, Employees.company_id AS Employees__company_id, Employees.is_blind AS Employees__is_blind, Employees.usd_bank AS Employees__usd_bank, Employees.usd_branch AS Employees__usd_branch, Employees.usd_account AS Employees__usd_account, Employees.zwg_bank AS Employees__zwg_bank, Employees.zwg_branch AS Employees__zwg_branch, Employees.zwg_account AS Employees__zwg_account, Employees.start_date AS Employees__start_date, Employees.termination_date AS Employees__termination_date FROM payslips Payslips INNER JOIN employees Employees ON (Employees.id = Payslips.employee_id AND Employees.company_id = 1) WHERE (pay_period_id = 41 AND company_id = 1 AND Payslips.company_id = 1) in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:358
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- APP/Controller\PayPeriodsController.php:215
+- APP/Controller\PayPeriodsController.php:142
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[23000]: Integrity constraint violation: 1052 Column 'company_id' in where clause is ambiguous in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:340
+- CORE\src\Database\Driver\Mysql.php:178
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\Database\Query\SelectQuery.php:122
+- CORE\src\ORM\Query\SelectQuery.php:1570
+- CORE\src\ORM\Query\SelectQuery.php:382
+- APP/Controller\PayPeriodsController.php:215
+- APP/Controller\PayPeriodsController.php:142
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /pay-periods/rollover
+Referer URL: http://localhost/esc_erp_app3/pay-periods
+2026-04-24 07:33:09 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:33:19 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:34:02 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:34:05 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:34:05 error: [Cake\Database\Exception\QueryException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'b.account_name' in 'field list'
+Query: SELECT b.account_name, b.currency,
+                          SUM(CASE WHEN b.reconciled=1 THEN b.amount ELSE 0 END) as reconciled_total,
+                          SUM(CASE WHEN b.reconciled=0 THEN b.amount ELSE 0 END) as unreconciled_total,
+                          COUNT(*) as total_count,
+                          SUM(CASE WHEN b.reconciled=1 THEN 1 ELSE 0 END) as reconciled_count
+                   FROM bank_transactions b
+                   WHERE b.company_id = :cid
+                     AND b.date BETWEEN :start AND :end
+                   GROUP BY b.account_name, b.currency
+                   ORDER BY b.account_name in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:329
+- CORE\src\Database\Driver.php:295
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- APP/Controller\ReportsController.php:530
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'b.account_name' in 'field list' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:327
+- CORE\src\Database\Driver.php:295
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- APP/Controller\ReportsController.php:530
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /reports/bank-schedule
+Referer URL: https://dell-dellsmall.taild02db3.ts.net/esc_erp_app3/reports
+2026-04-24 07:51:33 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:51:34 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:51:40 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:51:41 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:51:42 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:51:43 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:51:50 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:52:04 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:52:05 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:52:14 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:52:36 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:54:25 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:54:26 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 07:54:50 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:34:36 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:34:44 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:42:18 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:42:19 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:42:27 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:42:28 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 08:47:00 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:03:37 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:03:39 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:03:54 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:03:55 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:03:56 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:03:56 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:04:52 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:04:53 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:05:49 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:05:53 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:05:53 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:06:08 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:07:04 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:19:02 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:48:29 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:48:29 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:48:43 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 11:48:52 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 12:45:38 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-04-24 12:52:43 warning: Undefined variable $account
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 36
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Attempt to read property "name" on null
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 36
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $account
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 38
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Attempt to read property "name" on null
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 38
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $account
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 44
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Attempt to read property "name" on null
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 44
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $account
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 44
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Attempt to read property "category" on null
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 44
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $targetCurrency
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 45
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $targetCurrency
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 64
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $ledgerData
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 66
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: foreach() argument must be of type array|object, null given
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 66
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 12:52:43 warning: Undefined variable $targetCurrency
+Request URL: /reports/ledger?account_id=114&start_date=2026-01-01&end_date=2026-12-31&currency=USD
+Referer URL: http://localhost/esc_erp_app3/reports/trial-balance
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\Reports\ledger.php, line 86
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 785
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-04-24 13:56:36 error: [Cake\Controller\Exception\MissingActionException] Action `PayslipsController::bulkAction()` could not be found, or is not accessible. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php on line 487
+Exception Attributes: array (
+  0 => 'PayslipsController',
+  1 => 'bulkAction',
+)
+Stack Trace:
+- CORE\src\Controller\ControllerFactory.php:161
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/bulk-action
+Referer URL: http://localhost/esc_erp_app3/payslips
+2026-04-24 13:57:17 error: [Cake\Datasource\Exception\RecordNotFoundException] Record not found in table `payslips`. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Query\SelectQuery.php on line 600
+Stack Trace:
+- CORE\src\ORM\Table.php:1569
+- APP/Controller\PayslipsController.php:140
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/delete/199
+Referer URL: http://localhost/esc_erp_app3/payslips
+2026-04-24 13:57:44 error: [Cake\Datasource\Exception\RecordNotFoundException] Record not found in table `payslips`. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Query\SelectQuery.php on line 600
+Stack Trace:
+- CORE\src\ORM\Table.php:1569
+- APP/Controller\PayslipsController.php:140
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/delete/202
+Referer URL: http://localhost/esc_erp_app3/payslips
+2026-04-24 13:57:57 error: [Cake\Datasource\Exception\RecordNotFoundException] Record not found in table `payslips`. in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\ORM\Query\SelectQuery.php on line 600
+Stack Trace:
+- CORE\src\ORM\Table.php:1569
+- APP/Controller\PayslipsController.php:140
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /payslips/delete/194
+Referer URL: http://localhost/esc_erp_app3/payslips

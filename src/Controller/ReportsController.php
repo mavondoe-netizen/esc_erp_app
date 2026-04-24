@@ -295,18 +295,18 @@ class ReportsController extends AppController
             ->order(['Accounts.type', 'Accounts.name'])
             ->all();
 
-        $transactions = [];
+        $ledgerData = [];
         $openingBalance = 0.0;
         $closingBalance = 0.0;
-        $selectedAccount = null;
+        $account = null;
 
         if ($accountId) {
-            $selectedAccount = $Accounts->find()
+            $account = $Accounts->find()
                 ->where(['Accounts.id' => $accountId, 'Accounts.company_id' => $companyId])
                 ->first();
 
-            if ($selectedAccount) {
-                $openingBalance = (float)($selectedAccount->opening_balance ?? 0);
+            if ($account) {
+                $openingBalance = (float)($account->opening_balance ?? 0);
 
                 $Transactions = TableRegistry::getTableLocator()->get('Transactions');
                 $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
@@ -321,23 +321,33 @@ class ReportsController extends AppController
                     ->order(['Transactions.date' => 'ASC', 'Transactions.id' => 'ASC'])
                     ->all();
 
-                // Calculate running balance
+                // Calculate running balance and populate ledgerData for template
                 $runningBalance = $openingBalance;
-                $ledgerRows = [];
                 foreach ($transactions as $tx) {
                     $isDebit = in_array(strtolower(trim((string)$tx->type)), ['debit', '1']);
                     $amount  = (float)($currency === 'ZWG' ? $tx->zwg : $tx->amount);
+                    
+                    $debit = $isDebit ? $amount : 0;
+                    $credit = $isDebit ? 0 : $amount;
+                    
                     $runningBalance += $isDebit ? $amount : -$amount;
-                    $ledgerRows[] = ['tx' => $tx, 'running_balance' => $runningBalance];
+                    
+                    $ledgerData[] = [
+                        'txn' => $tx,
+                        'debit' => $debit,
+                        'credit' => $credit,
+                        'balance' => $runningBalance
+                    ];
                 }
-                $transactions = $ledgerRows;
                 $closingBalance = $runningBalance;
             }
         }
 
+        $targetCurrency = $currency;
+
         $this->set(compact(
-            'accounts', 'transactions', 'openingBalance', 'closingBalance',
-            'selectedAccount', 'accountId', 'startDate', 'endDate', 'currency'
+            'accounts', 'ledgerData', 'openingBalance', 'closingBalance',
+            'account', 'accountId', 'startDate', 'endDate', 'targetCurrency'
         ));
     }
 
@@ -547,26 +557,46 @@ class ReportsController extends AppController
         $companyId = \Cake\Core\Configure::read('Tenant.company_id');
 
         $PayPeriods = TableRegistry::getTableLocator()->get('PayPeriods');
-        $periods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
+        $payPeriods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
             ->where(['PayPeriods.company_id' => $companyId])
             ->order(['PayPeriods.start_date' => 'DESC'])
             ->all();
 
-        $selectedPeriodId = $this->request->getQuery('pay_period_id');
+        $payPeriodId = $this->request->getQuery('pay_period_id');
         $payslips = [];
+        $totals = [
+            'basic_salary' => 0.0, 'allowances' => 0.0, 'gross_pay' => 0.0,
+            'nssa' => 0.0, 'pension' => 0.0, 'medical_aid' => 0.0,
+            'taxable_income' => 0.0, 'paye' => 0.0, 'aids_levy' => 0.0,
+            'total_tax' => 0.0, 'net_pay' => 0.0
+        ];
 
-        if ($selectedPeriodId) {
+        if ($payPeriodId) {
             $Payslips = TableRegistry::getTableLocator()->get('Payslips');
             $payslips = $Payslips->find()
                 ->where([
                     'Payslips.company_id'   => $companyId,
-                    'Payslips.pay_period_id' => $selectedPeriodId,
+                    'Payslips.pay_period_id' => $payPeriodId,
                 ])
                 ->contain(['Employees'])
                 ->all();
+
+            foreach ($payslips as $slip) {
+                $totals['basic_salary'] += (float)$slip->basic_salary;
+                $totals['allowances']   += (float)$slip->allowances;
+                $totals['gross_pay']    += (float)$slip->gross_pay;
+                $totals['nssa']         += (float)$slip->nssa;
+                $totals['pension']      += (float)$slip->pension;
+                $totals['medical_aid']  += (float)$slip->medical_aid;
+                $totals['taxable_income'] += (float)$slip->taxable_income;
+                $totals['paye']         += (float)$slip->paye;
+                $totals['aids_levy']    += (float)$slip->aids_levy;
+                $totals['total_tax']    += ((float)$slip->paye + (float)$slip->aids_levy);
+                $totals['net_pay']      += (float)$slip->net_pay;
+            }
         }
 
-        $this->set(compact('periods', 'payslips', 'selectedPeriodId'));
+        $this->set(compact('payPeriods', 'payslips', 'payPeriodId', 'totals'));
     }
 
     // -----------------------------------------------------------------------

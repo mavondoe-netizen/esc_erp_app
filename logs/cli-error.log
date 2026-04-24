@@ -1083,3 +1083,25 @@ Stack Trace:
 - ROOT\bin\cake.php:10
 - [main]:
 
+2026-04-24 08:33:25 error: [Cake\Database\Exception\QueryException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'company_id' in 'where clause'
+Query: SELECT * FROM deductions WHERE company_id = 199 in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:329
+- CORE\src\Database\Driver.php:295
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- ROOT\scratch\check_accounts.php:10
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[42S22]: Column not found: 1054 Unknown column 'company_id' in 'where clause' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:327
+- CORE\src\Database\Driver.php:295
+- CORE\src\Database\Connection.php:268
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:268
+- ROOT\scratch\check_accounts.php:10
+- [main]:
+

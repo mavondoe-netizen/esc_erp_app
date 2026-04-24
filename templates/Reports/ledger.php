@@ -31,6 +31,7 @@ $this->assign('title', 'Ledger Drilldown');
 </style>
 
 <div class="reports index content">
+    <?php if ($account): ?>
     <div class="no-print" style="margin-bottom: 20px;">
         <button onclick="window.close()" class="button button-outline float-right" style="margin-left: 10px;">Close Window</button>
         <button onclick="exportTableToCSV('ledger_<?= h(str_replace(' ', '_', $account->name)) ?>_<?= date('Ymd_His') ?>.csv')" class="button button-outline float-right" style="margin-left: 10px;">Export CSV</button>
@@ -89,6 +90,13 @@ $this->assign('title', 'Ledger Drilldown');
             </tbody>
         </table>
     </div>
+    <?php else: ?>
+        <div class="no-print">
+            <h3><?= __('General Ledger') ?></h3>
+            <p><?= __('Please select an account from another report (like the Balance Sheet) to view its ledger drilldown.') ?></p>
+            <button onclick="window.history.back()" class="button button-outline"><?= __('Go Back') ?></button>
+        </div>
+    <?php endif; ?>
 </div>
 
 <?= $this->element('export_csv') ?>

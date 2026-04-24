@@ -29,3 +29,5 @@ Cake\ORM\Table->get() C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent
 TestSavePermanent->run() C:\xampp\htdocs\ESC_payroll_app\tmp_test_payslip_permanent.php, line 61
 [main]
 
+2026-04-24 08:37:43 debug: Posting payroll for period 42, found 12 payslips
+2026-04-24 08:55:59 debug: Posting payroll for period 42, found 12 payslips
