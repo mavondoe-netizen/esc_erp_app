@@ -52,8 +52,10 @@ $cakeDescription = 'Eras App - Login';
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h2>Eras App</h2>
-                <p style="color: var(--color-text-muted); font-size: 0.875rem;">Sign in to your account</p>
+                <h2>ESCerp</h2>
+                <p style="color: var(--color-text-muted); font-size: 0.875rem;">
+                    <?= ($this->request->getParam('action') === 'register') ? 'Create your account' : 'Sign in to your account' ?>
+                </p>
             </div>
             
             <?= $this->Flash->render() ?>

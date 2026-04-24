@@ -178,7 +178,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                     </div>
 
                     <!-- INVOICING / SALES -->
-                    <?php $ga = $groupActive(['Invoices', 'Customers', 'Payments', 'Receipts', 'Estimates', 'DebitNotes', 'CreditNotes']); ?>
+                    <?php $ga = $groupActive(['Invoices', 'Bills', 'Customers', 'Payments', 'Receipts', 'Estimates', 'DebitNotes', 'CreditNotes']); ?>
                     <div class="nav-group <?= $ga ?>">
                         <div class="nav-group-header" onclick="toggleGroup(this)">
                             <span><i class="fas fa-file-invoice-dollar"></i> Invoicing</span>
@@ -187,6 +187,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                         <div class="nav-group-body">
                             <?= $this->Html->link('<i class="fas fa-user-tie"></i> Customers', ['controller' => 'Customers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Customers' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-file-invoice"></i> Invoices', ['controller' => 'Invoices', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Invoices' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-invoice"></i> Bills', ['controller' => 'Bills', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Bills' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-money-bill-wave"></i> Payments', ['controller' => 'Payments', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Payments' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-receipt"></i> Receipts', ['controller' => 'Receipts', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Receipts' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-file-alt"></i> Estimates/Quotes', ['controller' => 'Estimates', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Estimates' ? ' active' : '')]) ?>
@@ -262,7 +263,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                         </div>
                         <div class="nav-group-body">
                             <?= $this->Html->link('<i class="fas fa-box-open"></i> Products', ['controller' => 'Products', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Products' ? ' active' : '')]) ?>
-                            <?= $this->Html->link('<i class="fas fa-file-purchase"></i> Bills', ['controller' => 'Bills', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Bills' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-invoice"></i> Bills', ['controller' => 'Bills', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Bills' ? ' active' : '')]) ?>
                         </div>
                     </div>
 

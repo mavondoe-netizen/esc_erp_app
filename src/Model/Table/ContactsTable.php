@@ -116,4 +116,34 @@ class ContactsTable extends Table
 
         return $rules;
     }
+    /**
+     * afterSave hook to ensure every contact has a corresponding supplier record.
+     *
+     * @param \Cake\Event\EventInterface $event The event
+     * @param \App\Model\Entity\Contact $entity The entity
+     * @param \ArrayObject $options Options
+     * @return void
+     */
+    public function afterSave(\Cake\Event\EventInterface $event, \App\Model\Entity\Contact $entity, \ArrayObject $options): void
+    {
+        $Suppliers = \Cake\ORM\TableRegistry::getTableLocator()->get('Suppliers');
+        
+        // Find existing or create new
+        $supplier = $Suppliers->find()
+            ->where([
+                'contact_id' => $entity->id,
+                'company_id' => $entity->company_id
+            ])
+            ->first();
+
+        if (!$supplier) {
+            $supplier = $Suppliers->newEmptyEntity();
+            $supplier->contact_id = $entity->id;
+            $supplier->company_id = $entity->company_id;
+            $supplier->industry   = 'General';
+        }
+
+        $supplier->name = $entity->name;
+        $Suppliers->save($supplier);
+    }
 }

@@ -108,7 +108,6 @@ class AuditLogsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;

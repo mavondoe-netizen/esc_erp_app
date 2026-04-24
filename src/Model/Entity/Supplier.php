@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property int|null $company_id
  *
  * @property \App\Model\Entity\Contact $contact
+ * @property \App\Model\Entity\Company|null $company
  * @property \App\Model\Entity\Bill[] $bills
  * @property \App\Model\Entity\Transaction[] $transactions
  */
@@ -30,11 +31,12 @@ class Supplier extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
-        'name' => true,
-        'contact_id' => true,
-        'industry' => true,
-        'contact' => true,
-        'bills' => true,
+        'name'         => true,
+        'contact_id'   => true,
+        'industry'     => true,
+        'company_id'   => true,
+        'contact'      => true,
+        'bills'        => true,
         'transactions' => true,
     ];
 }

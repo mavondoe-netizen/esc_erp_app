@@ -31,6 +31,7 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\Unit $unit
  * @property \App\Model\Entity\Building $building
  * @property \App\Model\Entity\Account $account
+ * @property \App\Model\Entity\LevyItem[] $levy_items
  */
 class Levy extends Entity
 {
@@ -65,5 +66,6 @@ class Levy extends Entity
         'unit' => true,
         'building' => true,
         'account' => true,
+        'levy_items' => true,
     ];
 }

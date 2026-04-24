@@ -44,6 +44,7 @@
                 <div class="row">
                     <div class="column"><?= $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR']]) ?></div>
                     <div class="column"><?= $this->Form->control('description') ?></div>
+                    <div class="column"><?= $this->Form->control('tenant_id', ['options' => $tenants ?? [], 'empty' => true, 'label' => 'Tenant (Optional)']) ?></div>
                     <div class="column"><?= $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Pending' => 'Pending', 'Paid' => 'Paid']]) ?></div>
                 </div>
 

@@ -13,6 +13,7 @@ use Cake\Validation\Validator;
  *
  * @mixin \App\Model\Behavior\TenantAwareBehavior
  * @property \App\Model\Table\ContactsTable&\Cake\ORM\Association\BelongsTo $Contacts
+ * @property \App\Model\Table\CompaniesTable&\Cake\ORM\Association\BelongsTo $Companies
  * @property \App\Model\Table\BillsTable&\Cake\ORM\Association\HasMany $Bills
  * @property \App\Model\Table\TransactionsTable&\Cake\ORM\Association\HasMany $Transactions
  *
@@ -58,6 +59,9 @@ class SuppliersTable extends Table
         $this->hasMany('Transactions', [
             'foreignKey' => 'supplier_id',
         ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
+        ]);
     }
 
     /**
@@ -81,8 +85,11 @@ class SuppliersTable extends Table
         $validator
             ->scalar('industry')
             ->maxLength('industry', 151)
-            ->requirePresence('industry', 'create')
-            ->notEmptyString('industry');
+            ->allowEmptyString('industry');
+
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
 
         return $validator;
     }

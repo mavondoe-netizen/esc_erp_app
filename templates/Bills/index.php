@@ -13,6 +13,7 @@
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('supplier_id') ?></th>
+                    <th><?= $this->Paginator->sort('tenant_id') ?></th>
                     <th><?= $this->Paginator->sort('date') ?></th>
                     <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort('currency') ?></th>
@@ -25,6 +26,7 @@
                 <tr>
                     <td><?= $this->Number->format($bill->id) ?></td>
                     <td><?= $bill->hasValue('supplier') ? $this->Html->link($bill->supplier->name, ['controller' => 'Suppliers', 'action' => 'view', $bill->supplier->id]) : '' ?></td>
+                    <td><?= $bill->hasValue('tenant') ? $this->Html->link($bill->tenant->name, ['controller' => 'Tenants', 'action' => 'view', $bill->tenant->id]) : '' ?></td>
                     <td><?= h($bill->date) ?></td>
                     <td><?= h($bill->description) ?></td>
                     <td><?= h($bill->currency) ?></td>

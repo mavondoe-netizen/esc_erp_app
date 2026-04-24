@@ -17,6 +17,7 @@ use Cake\Validation\Validator;
  * @property \App\Model\Table\UnitsTable&\Cake\ORM\Association\BelongsTo $Units
  * @property \App\Model\Table\BuildingsTable&\Cake\ORM\Association\BelongsTo $Buildings
  * @property \App\Model\Table\AccountsTable&\Cake\ORM\Association\BelongsTo $Accounts
+ * @property \App\Model\Table\LevyItemsTable&\Cake\ORM\Association\HasMany $LevyItems
  *
  * @method \App\Model\Entity\Levy newEmptyEntity()
  * @method \App\Model\Entity\Levy newEntity(array $data, array $options = [])
@@ -70,6 +71,10 @@ class LeviesTable extends Table
         ]);
         $this->belongsTo('Accounts', [
             'foreignKey' => 'account_id',
+        ]);
+        $this->hasMany('LevyItems', [
+            'foreignKey' => 'levy_id',
+            'dependent'  => true,
         ]);
     }
 

@@ -32,7 +32,7 @@ class BillsController extends AppController
 
         $query = $Bills->find()
             ->where($conditions)
-            ->contain(['Suppliers'])
+            ->contain(['Suppliers', 'Tenants'])
             ->order(['Bills.date' => 'DESC', 'Bills.id' => 'DESC']);
 
         $bills = $this->paginate($query, ['limit' => 50]);
@@ -50,7 +50,7 @@ class BillsController extends AppController
         $companyId = $this->request->getAttribute('company_id');
 
         $bill = $this->fetchTable('Bills')
-            ->get($id, contain: ['Suppliers', 'BillItems' => ['Accounts'], 'Transactions' => ['Accounts']]);
+            ->get($id, contain: ['Suppliers', 'Tenants', 'BillItems' => ['Accounts'], 'Transactions' => ['Accounts']]);
 
         $company = $this->fetchTable('Companies')->get($companyId);
 
@@ -90,6 +90,7 @@ class BillsController extends AppController
         }
 
         $suppliers = $this->fetchTable('Suppliers')->find('list', keyField: 'id', valueField: 'name')->where(['Suppliers.company_id' => $companyId])->all();
+        $tenants   = $this->fetchTable('Tenants')->find('list', keyField: 'id', valueField: 'name')->where(['Tenants.company_id' => $companyId])->all();
         $accounts  = $this->fetchTable('Accounts')->find('list', keyField: 'id', valueField: 'name')->where(['Accounts.company_id' => $companyId])->order(['Accounts.type', 'Accounts.name'])->all();
         
         $products = $this->fetchTable('Products')->find()
@@ -109,7 +110,7 @@ class BillsController extends AppController
             ];
         }
 
-        $this->set(compact('bill', 'suppliers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('bill', 'suppliers', 'tenants', 'accounts', 'productsOptions', 'productsJson'));
     }
 
     public function edit(int $id)
@@ -128,10 +129,14 @@ class BillsController extends AppController
             $bill      = $Bills->patchEntity($bill, $data, ['associated' => ['BillItems']]);
 
             if ($Bills->save($bill)) {
-                // Only post to ledger if moving out of Draft for the first time
-                if (!$wasPosted && !in_array($newStatus, ['Draft', 'Pending'])) {
+                // Always reverse previous transactions to ensure the ledger is in sync
+                $this->_reverseBillLedger($bill->id, $companyId);
+
+                // Re-post to ledger if status is not Draft or Pending
+                if (!in_array($newStatus, ['Draft', 'Pending'])) {
                     $this->_postBillToLedger($bill, $companyId);
                 }
+
                 $this->Flash->success(__('Bill updated.'));
                 return $this->redirect(['action' => 'view', $bill->id]);
             }
@@ -139,6 +144,7 @@ class BillsController extends AppController
         }
 
         $suppliers = $this->fetchTable('Suppliers')->find('list', keyField: 'id', valueField: 'name')->where(['Suppliers.company_id' => $companyId])->all();
+        $tenants   = $this->fetchTable('Tenants')->find('list', keyField: 'id', valueField: 'name')->where(['Tenants.company_id' => $companyId])->all();
         $accounts  = $this->fetchTable('Accounts')->find('list', keyField: 'id', valueField: 'name')->where(['Accounts.company_id' => $companyId])->order(['Accounts.type', 'Accounts.name'])->all();
 
         $products = $this->fetchTable('Products')->find()
@@ -158,7 +164,7 @@ class BillsController extends AppController
             ];
         }
         
-        $this->set(compact('bill', 'suppliers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('bill', 'suppliers', 'tenants', 'accounts', 'productsOptions', 'productsJson'));
     }
 
     public function delete(int $id)
@@ -221,6 +227,7 @@ class BillsController extends AppController
                 'type'              => 'Credit',
                 'account_id'        => $apAccount->id,
                 'supplier_id'       => $bill->supplier_id,
+                'tenant_id'         => !empty($bill->tenant_id) ? $bill->tenant_id : null,
                 'bill_id'           => $bill->id,
                 'transaction_group' => $groupId,
             ], ['validate' => false]);
@@ -242,6 +249,7 @@ class BillsController extends AppController
                         'type'              => 'Debit',
                         'account_id'        => $item->account_id,
                         'supplier_id'       => $bill->supplier_id,
+                        'tenant_id'         => !empty($bill->tenant_id) ? $bill->tenant_id : null,
                         'bill_id'           => $bill->id,
                         'transaction_group' => $groupId,
                     ], ['validate' => false]);

@@ -51,6 +51,9 @@ class BillsTable extends Table
             'foreignKey' => 'supplier_id',
             'joinType' => 'INNER',
         ]);
+        $this->belongsTo('Tenants', [
+            'foreignKey' => 'tenant_id',
+        ]);
         $this->hasMany('BillItems', [
             'foreignKey' => 'bill_id',
         ]);
@@ -78,6 +81,10 @@ class BillsTable extends Table
         $validator
             ->integer('supplier_id')
             ->notEmptyString('supplier_id');
+
+        $validator
+            ->integer('tenant_id')
+            ->allowEmptyString('tenant_id');
 
         $validator
             ->date('date')
@@ -114,6 +121,7 @@ class BillsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['supplier_id'], 'Suppliers'), ['errorField' => 'supplier_id']);
+        $rules->add($rules->existsIn(['tenant_id'], 'Tenants'), ['errorField' => 'tenant_id']);
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 
         return $rules;

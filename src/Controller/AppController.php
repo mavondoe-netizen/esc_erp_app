@@ -124,8 +124,13 @@ class AppController extends Controller
     {
         parent::beforeRender($event);
 
+        $controller = $this->request->getParam('controller');
+        $action     = $this->request->getParam('action');
+
         if ($this->request->getQuery('popup')) {
             $this->viewBuilder()->setLayout('popup');
+        } elseif ($controller === 'Users' && in_array($action, ['login', 'register'])) {
+            $this->viewBuilder()->setLayout('login');
         }
     }
 }

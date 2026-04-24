@@ -167,11 +167,14 @@ class InvoicesController extends AppController
             ]);
 
             if ($Invoices->save($invoice)) {
-                // Post-once guard: only create ledger if moving out of Draft for the first time
-                $isNowPosted = !in_array($newStatus, ['Draft']);
-                if (!$wasPosted && $isNowPosted) {
+                // Always reverse previous transactions to ensure the ledger is in sync
+                $this->_reverseInvoiceLedger($invoice->id, $companyId);
+
+                // Re-post to ledger if status is not Draft
+                if ($newStatus !== 'Draft') {
                     $this->_postInvoiceToLedger($invoice, $companyId);
                 }
+
                 $this->Flash->success(__('Invoice updated.'));
                 return $this->redirect(['action' => 'view', $invoice->id]);
             }

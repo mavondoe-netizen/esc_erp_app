@@ -33,7 +33,7 @@ class EmployeesController extends AppController
      */
     public function view($id = null)
     {
-        $employee = $this->Employees->get($id, contain: ['Companies', 'Claims', 'LeaveApplications', 'LeaveBalances', 'Payslips', 'Users']);
+        $employee = $this->Employees->get($id, contain: ['Companies', 'LeaveApplications', 'LeaveBalances', 'Payslips', 'Users']);
         $this->set(compact('employee'));
     }
 

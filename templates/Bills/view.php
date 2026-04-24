@@ -1,3 +1,4 @@
+<?php
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Bill $bill
@@ -40,6 +41,10 @@
                 <tr>
                     <th><?= __('Supplier') ?></th>
                     <td><?= $bill->hasValue('supplier') ? $this->Html->link($bill->supplier->name, ['controller' => 'Suppliers', 'action' => 'view', $bill->supplier->id]) : '' ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Tenant') ?></th>
+                    <td><?= $bill->hasValue('tenant') ? $this->Html->link($bill->tenant->name, ['controller' => 'Tenants', 'action' => 'view', $bill->tenant->id]) : '' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Description') ?></th>
