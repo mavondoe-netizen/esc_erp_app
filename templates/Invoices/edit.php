@@ -17,6 +17,7 @@
                 <legend><?= __('Edit Invoice') ?></legend>
                 <div class="row">
                     <div class="column"><?= $this->Form->control('date') ?></div>
+                    <div class="column"><?= $this->Form->control('manual_reference', ['label' => 'Manual Ref / Serial No.']) ?></div>
                     <div class="column">
                         <div class="quick-add-group">
                             <div class="form-control-wrapper">
@@ -34,7 +35,7 @@
                 <div class="row">
                     <div class="column"><?= $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZAR' => 'ZAR']]) ?></div>
                     <div class="column"><?= $this->Form->control('description') ?></div>
-                    <div class="column"><?= $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Sent' => 'Sent', 'Paid' => 'Paid']]) ?></div>
+                    <div class="column"><?= $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Pending Approval' => 'Pending Approval', 'Approved' => 'Approved', 'Sent' => 'Sent', 'Paid' => 'Paid']]) ?></div>
                 </div>
 
                 <h3 style="margin-top: 2rem;">Invoice Items</h3>

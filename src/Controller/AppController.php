@@ -133,4 +133,65 @@ class AppController extends Controller
             $this->viewBuilder()->setLayout('login');
         }
     }
+
+    /**
+     * Get ZIMRA options for earnings and deductions mappings.
+     *
+     * @return array
+     */
+    protected function getZimraOptions(): array
+    {
+        $options = [
+            'Current Salary, wages, fees, Commissions etc (regular earnings) USD',
+            'Current Salary, wages, fees, Commissions etc (regular earnings) ZWG',
+            'Other Exemptions on Current Salary, Wages, Fees, Commissions Etc (Regular Earnings) USD',
+            'Other Exemptions on Current Salary, Wages, Fees, Commissions Etc (Regular Earnings) ZWG',
+            'Current Overtime USD',
+            'Current Overtime ZWG',
+            'Current Bonus USD',
+            'Current Bonus ZWG',
+            'Current Irregular Commission USD',
+            'Current Irregular Commission ZWG',
+            'Current Other Irregular earnings USD',
+            'Current Other Irregular earnings ZWG',
+            'Current Severance pay, gratuity or similar benefit, on retrenchment (with exemption) USD',
+            'Current Severance pay, gratuity or similar benefit, on retrenchment (with exemption) ZWG',
+            'Current Gratuity without exemption USD',
+            'Current Gratuity without exemption ZWG',
+            'Current Housing Benefit USD',
+            'Current Housing Benefit ZWG',
+            'Current Vehicle Benefit USD',
+            'Current Vehicle Benefit ZWG',
+            'Current Education Benefit USD',
+            'Current Education Benefit ZWG',
+            'Current Other Benefits USD',
+            'Current Other Benefits ZWG',
+            'Current Non-Taxable Earnings USD',
+            'Current Non-taxable earnings ZWG',
+            'Current Pension Contributions USD',
+            'Current Pension Contributions ZWG',
+            'Current NSSA Contributions USD',
+            'Current NSSA Contributions ZWG',
+            'Current Retirement Annuity Fund Contributions USD',
+            'Current Retirement Annuity Fund Contributions ZWG',
+            'Current NEC/Subscriptions USD',
+            'Current NEC/Subscriptions ZWG',
+            'Current Other Deductions USD',
+            'Current Other Deductions ZWG',
+            'Current Medical Aid Contributions USD',
+            'Current Medical Aid Contributions ZWG',
+            'Current Medical Expenses USD',
+            'Current Medical Expenses ZWG',
+            'Current Blind persons credit USD',
+            'Current Blind persons credit ZWG',
+            'Current Disabled persons credit USD',
+            'Current Disabled persons credit ZWG',
+            'Current Elderly person credit USD',
+            'Current Elderly person credit ZWG',
+            'Cumulative Bonus (from last tax period) USD',
+            'Cumulative Bonus (from last tax period) ZWG'
+        ];
+
+        return array_combine($options, $options);
+    }
 }

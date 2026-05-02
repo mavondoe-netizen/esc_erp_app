@@ -83,6 +83,9 @@ class TransactionsTable extends Table
         $this->belongsTo('Payperiods', [
             'foreignKey' => 'payperiod_id',
         ]);
+        $this->belongsTo('Payments', [
+            'foreignKey' => 'payment_id',
+        ]);
        
         
         $this->hasMany('BankTransactions', [
@@ -190,6 +193,11 @@ class TransactionsTable extends Table
         $validator
             ->integer('invoice_id')
             ->allowEmptyString('invoice_id');
+
+        $validator
+            ->scalar('manual_reference')
+            ->maxLength('manual_reference', 100)
+            ->allowEmptyString('manual_reference');
 
         return $validator;
     }

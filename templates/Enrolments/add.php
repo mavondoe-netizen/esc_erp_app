@@ -24,7 +24,7 @@
                     echo $this->Form->control('start_date');
                     echo $this->Form->control('end_date', ['empty' => true]);
                     echo $this->Form->control('rate');
-                    echo $this->Form->control('status');
+                    echo $this->Form->control('status',['options'=>['Pending'=> 'Pending', 'Terminated'=> 'Terminated']]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

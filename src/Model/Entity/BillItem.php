@@ -17,6 +17,7 @@ use Cake\ORM\Entity;
  * @property float $unit_price
  * @property float $line_total
  * @property float|null $vat_rate
+ * @property float|null $vat_amount
  * @property string|null $vat_type
  * @property string|null $hs_code
  * @property int|null $company_id
@@ -45,6 +46,7 @@ class BillItem extends Entity
         'unit_price' => true,
         'line_total' => true,
         'vat_rate' => true,
+        'vat_amount' => true,
         'vat_type' => true,
         'hs_code' => true,
         'company_id' => true,

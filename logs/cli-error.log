@@ -1105,3 +1105,8 @@ Stack Trace:
 - ROOT\scratch\check_accounts.php:10
 - [main]:
 
+2026-04-26 04:09:01 error: [ArgumentCountError] Too few arguments to function Cake\Controller\Controller::__construct(), 0 passed in C:\xampp\htdocs\esc_erp_app3\debug_invoice.php on line 31 and at least 1 expected in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php on line 201
+Stack Trace:
+- ROOT\debug_invoice.php:31
+- [main]:
+

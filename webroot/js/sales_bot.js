@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         email: '',
         message: '',
         source: 'SalesBot',
-        company_id: 1 // Default to 1, can be passed from the template
+        company_id: window.BotConfig ? window.BotConfig.company_id : 1
     };
 
     const questions = [
@@ -114,7 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // The secure token and base URL
         const token = 'SECURE_WEBHOOK_KEY_123';
-        const url = `/ESC_payroll_app/deal-requests/webhook?token=${token}`;
+        const baseUrl = window.BotConfig ? window.BotConfig.baseUrl : '';
+        const url = `${baseUrl}/deal-requests/webhook?token=${token}`;
 
         fetch(url, {
             method: 'POST',

@@ -85,7 +85,7 @@ return [
             'password' => '',
             'database' => 'sandbox',
             'encoding' => 'utf8mb4',
-            'timezone' => 'UTC',
+            'timezone' => '+02:00',
             'cacheMetadata' => true,
             'quoteIdentifiers' => false,
             'url' => env('DATABASE_SANDBOX_URL', null),

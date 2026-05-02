@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Utility\Text;
+use Cake\Mailer\MailerAwareTrait;
 
 /**
  * Bills Controller
@@ -13,6 +14,7 @@ use Cake\Utility\Text;
  */
 class BillsController extends AppController
 {
+    use MailerAwareTrait;
     public function index()
     {
         $companyId = $this->request->getAttribute('company_id');
@@ -47,6 +49,7 @@ class BillsController extends AppController
 
     public function view(int $id)
     {
+        $this->viewBuilder()->setLayout('document');
         $companyId = $this->request->getAttribute('company_id');
 
         $bill = $this->fetchTable('Bills')
@@ -83,6 +86,11 @@ class BillsController extends AppController
                 if (!in_array($bill->status, ['Draft', 'Pending'])) {
                     $this->_postBillToLedger($bill, $companyId);
                 }
+                
+                if ($bill->status === 'Sent') {
+                    $this->_sendBillEmail($bill->id);
+                }
+
                 $this->Flash->success(__('Bill saved.'));
                 return $this->redirect(['action' => 'view', $bill->id]);
             }
@@ -135,6 +143,10 @@ class BillsController extends AppController
                 // Re-post to ledger if status is not Draft or Pending
                 if (!in_array($newStatus, ['Draft', 'Pending'])) {
                     $this->_postBillToLedger($bill, $companyId);
+                }
+
+                if ($bill->status === 'Sent') {
+                    $this->_sendBillEmail($bill->id);
                 }
 
                 $this->Flash->success(__('Bill updated.'));
@@ -200,12 +212,46 @@ class BillsController extends AppController
 
         $Transactions = $this->fetchTable('Transactions');
         $Accounts     = $this->fetchTable('Accounts');
+        $Rates        = $this->fetchTable('ExchangeRates');
 
+        // Fetch current exchange rate for ZWG conversion
+        $rate = $Rates->find()
+            ->where(['company_id' => $companyId, 'currency' => $bill->currency])
+            ->where(['date <=' => $bill->date ?: date('Y-m-d')])
+            ->orderBy(['date' => 'DESC'])
+            ->first();
+        $rateVal = $rate ? (float)$rate->rate_to_base : 1.0;
+
+        // Accounts Payable Account
         $apAccount = $Accounts->find()
             ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Payable%'])
             ->first();
 
-        if (!$apAccount) return;
+        if (!$apAccount) {
+            $apAccount = $Accounts->newEntity([
+                'name' => 'Accounts Payable',
+                'category' => 'Accounts Payable',
+                'type' => 'Liability',
+                'company_id' => $companyId
+            ]);
+            $Accounts->save($apAccount);
+        }
+
+        // Ensure "VAT Input" asset account exists
+        $vatInputAccount = $Accounts->find()
+            ->where(['Accounts.company_id' => $companyId, 'Accounts.name LIKE' => '%VAT Input%'])
+            ->first();
+
+        if (!$vatInputAccount) {
+            $vatInputAccount = $Accounts->newEntity([
+                'name' => 'VAT Input',
+                'category' => 'Taxes Receivable',
+                'type' => 'Asset',
+                'company_id' => $companyId
+            ]);
+            $Accounts->save($vatInputAccount);
+        }
+        $vatInputAccountId = $vatInputAccount->id;
 
         $date     = $bill->date ? $bill->date->format('Y-m-d') : date('Y-m-d');
         $ref      = $bill->reference ?? "BILL-{$bill->id}";
@@ -214,16 +260,16 @@ class BillsController extends AppController
         $groupId  = Text::uuid();
 
         $Transactions->getConnection()->transactional(function () use (
-            $Transactions, $bill, $apAccount, $date, $ref, $currency, $total, $groupId, $companyId
+            $Transactions, $bill, $apAccount, $vatInputAccountId, $date, $ref, $currency, $total, $groupId, $companyId, $rateVal
         ) {
-            // Credit: AP
+            // Credit: Accounts Payable (Full Amount)
             $cr = $Transactions->newEntity([
                 'company_id'        => $companyId,
                 'date'              => $date,
                 'description'       => "Bill $ref",
                 'currency'          => $currency,
                 'amount'            => $total,
-                'zwg'               => $total,
+                'zwg'               => $total * $rateVal,
                 'type'              => 'Credit',
                 'account_id'        => $apAccount->id,
                 'supplier_id'       => $bill->supplier_id,
@@ -233,19 +279,32 @@ class BillsController extends AppController
             ], ['validate' => false]);
             $Transactions->save($cr, ['check_balance' => false]);
 
-            // Debit: Expense per line
             if (!empty($bill->bill_items)) {
+                $totalVat = 0.0;
                 foreach ($bill->bill_items as $item) {
-                    $itemTotal = (float)($item->total ?? ($item->quantity ?? 1) * ($item->unit_price ?? 0));
-                    if (!$item->account_id || $itemTotal == 0) continue;
+                    $qty        = (float)($item->quantity ?? 1);
+                    $price      = (float)($item->unit_price ?? 0);
+                    $vatRate    = (float)($item->vat_rate ?? 0);
+                    
+                    // Priority: 1. Stored vat_amount, 2. Calculation from vat_rate
+                    $itemVat    = (float)($item->vat_amount ?? ($qty * $price * ($vatRate / 100)));
+                    
+                    // Priority: 1. Stored line_total (Gross), 2. Calculation (Qty * Price) + VAT
+                    $itemGross  = (float)($item->line_total ?: ($qty * $price) + $itemVat);
+                    
+                    $netAmount  = $itemGross - $itemVat;
+                    $totalVat  += $itemVat;
 
+                    if (!$item->account_id || $netAmount == 0) continue;
+
+                    // Debit: Expense Account (Net)
                     $dr = $Transactions->newEntity([
                         'company_id'        => $companyId,
                         'date'              => $date,
                         'description'       => "Bill $ref — " . ($item->description ?? ''),
                         'currency'          => $currency,
-                        'amount'            => $itemTotal,
-                        'zwg'               => $itemTotal,
+                        'amount'            => $netAmount,
+                        'zwg'               => $netAmount * $rateVal,
                         'type'              => 'Debit',
                         'account_id'        => $item->account_id,
                         'supplier_id'       => $bill->supplier_id,
@@ -254,6 +313,25 @@ class BillsController extends AppController
                         'transaction_group' => $groupId,
                     ], ['validate' => false]);
                     $Transactions->save($dr, ['check_balance' => false]);
+                }
+
+                // Debit: VAT Input Account (Total VAT)
+                if ($totalVat > 0) {
+                    $drVat = $Transactions->newEntity([
+                        'company_id'        => $companyId,
+                        'date'              => $date,
+                        'description'       => "VAT Input — Bill $ref",
+                        'currency'          => $currency,
+                        'amount'            => $totalVat,
+                        'zwg'               => $totalVat * $rateVal,
+                        'type'              => 'Debit',
+                        'account_id'        => $vatInputAccountId,
+                        'supplier_id'       => $bill->supplier_id,
+                        'tenant_id'         => !empty($bill->tenant_id) ? $bill->tenant_id : null,
+                        'bill_id'           => $bill->id,
+                        'transaction_group' => $groupId,
+                    ], ['validate' => false]);
+                    $Transactions->save($drVat, ['check_balance' => false]);
                 }
             }
         });
@@ -270,6 +348,23 @@ class BillsController extends AppController
 
         if (!empty($groups)) {
             $Transactions->deleteAll(['transaction_group IN' => $groups, 'company_id' => $companyId]);
+        }
+    }
+
+    /**
+     * Helper to send bill email
+     */
+    private function _sendBillEmail(int $id): void
+    {
+        try {
+            $bill = $this->fetchTable('Bills')->get($id, contain: ['Suppliers' => ['Contacts']]);
+            $email = $bill->supplier->contact->email ?? null;
+
+            if ($email) {
+                $this->getMailer('Notification')->send('bill', [$bill->toArray(), $email]);
+            }
+        } catch (\Exception $e) {
+            $this->Flash->warning(__('Bill saved, but email could not be sent: ' . $e->getMessage()));
         }
     }
 }

@@ -59,14 +59,7 @@ class EarningsController extends AppController
             'Fixed Amount' => 'Fixed Amount',
             'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $zimraOptions = [
-            'Salary' => 'Basic Salary',
-            'Bonus' => 'Bonus',
-            'Allowance' => 'Allowances',
-            'Benefit' => 'Benefits',
-            'Commission' => 'Commissions',
-            'Arrears' => 'Arrears',
-        ];
+        $zimraOptions = $this->getZimraOptions();
         $this->set(compact('earning', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 
@@ -94,14 +87,7 @@ class EarningsController extends AppController
             'Fixed Amount' => 'Fixed Amount',
             'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $zimraOptions = [
-            'Salary' => 'Basic Salary',
-            'Bonus' => 'Bonus',
-            'Allowance' => 'Allowances',
-            'Benefit' => 'Benefits',
-            'Commission' => 'Commissions',
-            'Arrears' => 'Arrears',
-        ];
+        $zimraOptions = $this->getZimraOptions();
         $this->set(compact('earning', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 

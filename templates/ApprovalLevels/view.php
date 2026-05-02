@@ -24,7 +24,11 @@
                 </tr>
                 <tr>
                     <th><?= __('Role') ?></th>
-                    <td><?= h($approvalLevel->role) ?></td>
+                    <td><?= $approvalLevel->hasValue('role') ? $this->Html->link($approvalLevel->role->name, ['controller' => 'Roles', 'action' => 'view', $approvalLevel->role->id]) : '' ?></td>
+                </tr>
+                <tr>
+                    <th><?= __('Company') ?></th>
+                    <td><?= $approvalLevel->hasValue('company') ? $this->Html->link($approvalLevel->company->name, ['controller' => 'Companies', 'action' => 'view', $approvalLevel->company->id]) : '' ?></td>
                 </tr>
                 <tr>
                     <th><?= __('Id') ?></th>

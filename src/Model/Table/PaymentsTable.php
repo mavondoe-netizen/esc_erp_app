@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -60,6 +61,12 @@ class PaymentsTable extends Table
         $this->belongsTo('Accounts', [
             'foreignKey' => 'account_id',
         ]);
+        $this->belongsTo('Suppliers', [
+            'foreignKey' => 'supplier_id',
+        ]);
+        $this->hasMany('Transactions', [
+            'foreignKey' => 'payment_id',
+        ]);
     }
 
     /**
@@ -109,6 +116,14 @@ class PaymentsTable extends Table
         $validator
             ->scalar('description')
             ->allowEmptyString('description');
+        $validator
+            ->integer('supplier_id')
+            ->allowEmptyString('supplier_id');
+
+        $validator
+            ->scalar('manual_reference')
+            ->maxLength('manual_reference', 100)
+            ->allowEmptyString('manual_reference');
 
         return $validator;
     }
@@ -125,6 +140,7 @@ class PaymentsTable extends Table
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
         $rules->add($rules->existsIn(['customer_id'], 'Customers'), ['errorField' => 'customer_id']);
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
+        $rules->add($rules->existsIn(['supplier_id'], 'Suppliers'), ['errorField' => 'supplier_id']);
 
         return $rules;
     }

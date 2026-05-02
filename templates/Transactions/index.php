@@ -48,7 +48,7 @@
                     <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort('currency') ?></th>
                     <th><?= $this->Paginator->sort('amount') ?></th>
-                    <th><?= $this->Paginator->sort('zwg') ?></th>
+                    <th><?= $this->Paginator->sort('usd') ?></th>
                     <th><?= $this->Paginator->sort('type') ?></th>
                     <th><?= $this->Paginator->sort('account_id') ?></th>
                     <th><?= $this->Paginator->sort('building_id') ?></th>

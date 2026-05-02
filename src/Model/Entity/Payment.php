@@ -51,5 +51,6 @@ class Payment extends Entity
         'company' => true,
         'customer' => true,
         'account' => true,
+        'manual_reference' => true,
     ];
 }

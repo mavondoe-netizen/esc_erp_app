@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -49,10 +50,15 @@ class ReceiptsTable extends Table
 
         $this->belongsTo('Suppliers', [
             'foreignKey' => 'supplier_id',
-            'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Customers', [
+            'foreignKey' => 'customer_id',
         ]);
         $this->belongsTo('Accounts', [
             'foreignKey' => 'account_id',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
         ]);
         $this->belongsToMany('Transactions', [
             'foreignKey' => 'receipt_id',
@@ -71,7 +77,29 @@ class ReceiptsTable extends Table
     {
         $validator
             ->integer('supplier_id')
-            ->notEmptyString('supplier_id');
+            ->allowEmptyString('supplier_id');
+
+        $validator
+            ->integer('customer_id')
+            ->allowEmptyString('customer_id');
+
+        $validator
+            ->date('date')
+            ->allowEmptyDate('date');
+
+        $validator
+            ->scalar('reference')
+            ->maxLength('reference', 255)
+            ->allowEmptyString('reference');
+
+        $validator
+            ->scalar('description')
+            ->allowEmptyString('description');
+
+        $validator
+            ->scalar('status')
+            ->maxLength('status', 50)
+            ->notEmptyString('status');
 
         $validator
             ->scalar('currency')
@@ -88,6 +116,11 @@ class ReceiptsTable extends Table
             ->integer('account_id')
             ->allowEmptyString('account_id');
 
+        $validator
+            ->scalar('manual_reference')
+            ->maxLength('manual_reference', 100)
+            ->allowEmptyString('manual_reference');
+
         return $validator;
     }
 
@@ -100,7 +133,6 @@ class ReceiptsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['supplier_id'], 'Suppliers'), ['errorField' => 'supplier_id']);
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
 

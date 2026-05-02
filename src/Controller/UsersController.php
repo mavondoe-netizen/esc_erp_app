@@ -110,8 +110,8 @@ class UsersController extends AppController
     public function view(int $id)
     {
         $Users = $this->fetchTable('Users');
-        $viewUser = $Users->get($id, contain: ['Roles', 'Companies', 'Employees']);
-        $this->set('viewUser', $viewUser);
+        $user = $Users->get($id, contain: ['Roles', 'Companies', 'Employees']);
+        $this->set(compact('user'));
     }
 
     // -----------------------------------------------------------------------
@@ -161,7 +161,7 @@ class UsersController extends AppController
             ->all();
 
         $companies = null;
-        if ($this->viewVars['isSuperAdmin'] ?? false) {
+        if ($this->viewBuilder()->getVar('isSuperAdmin') ?? false) {
             $companies = $this->fetchTable('Companies')->find('list')->all();
         }
 
@@ -208,7 +208,7 @@ class UsersController extends AppController
             ->all();
 
         $companies = null;
-        if ($this->viewVars['isSuperAdmin'] ?? false) {
+        if ($this->viewBuilder()->getVar('isSuperAdmin') ?? false) {
             $companies = $this->fetchTable('Companies')->find('list')->all();
         }
 

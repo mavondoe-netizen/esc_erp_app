@@ -30,6 +30,7 @@
                     <th><?= $this->Paginator->sort('currency') ?></th>
                     <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort('status') ?></th>
+                    <th><?= $this->Paginator->sort('manual_reference', 'Manual Ref') ?></th>
                     <th><?= $this->Paginator->sort('total') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
@@ -43,6 +44,7 @@
                     <td><?= h($invoice->currency) ?></td>
                     <td><?= h($invoice->description) ?></td>
                     <td><?= h($invoice->status) ?></td>
+                    <td><?= h($invoice->manual_reference) ?></td>
                     <td><?= $this->Number->currency($invoice->total, $invoice->currency) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $invoice->id]) ?>

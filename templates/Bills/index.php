@@ -18,6 +18,7 @@
                     <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort('currency') ?></th>
                     <th><?= $this->Paginator->sort('total') ?></th>
+                    <th><?= $this->Paginator->sort('manual_reference', 'Manual Ref') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
             </thead>
@@ -31,6 +32,7 @@
                     <td><?= h($bill->description) ?></td>
                     <td><?= h($bill->currency) ?></td>
                     <td><?= $this->Number->format($bill->total) ?></td>
+                    <td><?= h($bill->manual_reference) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('View'), ['action' => 'view', $bill->id]) ?>
                         <?= $this->Html->link(__('Edit'), ['action' => 'edit', $bill->id]) ?>

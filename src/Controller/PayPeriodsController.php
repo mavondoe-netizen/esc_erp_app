@@ -31,7 +31,8 @@ class PayPeriodsController extends AppController
     public function view($id = null)
     {
         $payPeriod = $this->PayPeriods->get($id, contain: [
-            'Payslips' => ['Employees']
+            'Payslips' => ['Employees'],
+            'Transactions' => ['Accounts']
         ]);
         $this->set(compact('payPeriod'));
     }

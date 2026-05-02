@@ -79,5 +79,6 @@ class Transaction extends Entity
         'bills' => true,
         'invoices' => true,
         'receipts' => true,
+        'manual_reference' => true,
     ];
 }

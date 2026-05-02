@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
 
 use Cake\Utility\Text;
+use Cake\Mailer\MailerAwareTrait;
 
 /**
  * Payments Controller
@@ -13,6 +15,7 @@ use Cake\Utility\Text;
  */
 class PaymentsController extends AppController
 {
+    use MailerAwareTrait;
     public function index()
     {
         $companyId = $this->request->getAttribute('company_id');
@@ -24,14 +27,20 @@ class PaymentsController extends AppController
             ->order(['Payments.date' => 'DESC']);
 
         $payments = $this->paginate($query, ['limit' => 50]);
-        $this->set(compact('payments'));
+        $suppliers = $this->fetchTable('Suppliers');
+        $this->set(compact('payments', 'suppliers'));
     }
 
     public function view(int $id)
     {
+        $this->viewBuilder()->setLayout('document');
+        $companyId = $this->request->getAttribute('company_id');
         $payment = $this->fetchTable('Payments')
-            ->get($id, contain: ['Suppliers', 'Accounts', 'Transactions']);
-        $this->set(compact('payment'));
+            ->get($id, contain: ['Suppliers', 'Accounts', 'Transactions' => ['Accounts']]);
+        
+        $company = $this->fetchTable('Companies')->get($companyId);
+        
+        $this->set(compact('payment', 'company'));
     }
 
     public function add()
@@ -44,6 +53,7 @@ class PaymentsController extends AppController
         if ($this->request->is('post')) {
             $data               = $this->request->getData();
             $data['company_id'] = $companyId;
+            $data['status']     = $data['status'] ?? 'Approved'; // Default to approved for payments
             $payment = $Payments->patchEntity($payment, $data);
 
             if ($this->request->getQuery('popup')) {
@@ -55,7 +65,10 @@ class PaymentsController extends AppController
             }
 
             if ($Payments->save($payment)) {
-                $this->_postPaymentToLedger($payment, $companyId);
+                if ($payment->status === 'Approved') {
+                    $this->_postPaymentToLedger($payment, $companyId);
+                }
+                $this->_sendPaymentEmail($payment->id);
                 $this->Flash->success(__('Payment saved.'));
                 return $this->redirect(['action' => 'view', $payment->id]);
             }
@@ -76,6 +89,12 @@ class PaymentsController extends AppController
         if ($this->request->is(['post', 'put'])) {
             $payment = $Payments->patchEntity($payment, $this->request->getData());
             if ($Payments->save($payment)) {
+                // Reverse and re-post
+                $this->_reversePaymentLedger($payment->id, $companyId);
+                if ($payment->status === 'Approved') {
+                    $this->_postPaymentToLedger($payment, $companyId);
+                }
+                
                 $this->Flash->success(__('Payment updated.'));
                 return $this->redirect(['action' => 'view', $payment->id]);
             }
@@ -86,40 +105,33 @@ class PaymentsController extends AppController
         $this->set(compact('payment', 'suppliers', 'accounts'));
     }
 
-    public function delete(int $id)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $companyId = $this->request->getAttribute('company_id');
-
-        $Payments = $this->fetchTable('Payments');
-        $payment  = $Payments->find()->where(['Payments.id' => $id, 'Payments.company_id' => $companyId])->first();
-
-        if (!$payment) {
-            $this->Flash->error('Payment not found.');
-            return $this->redirect(['action' => 'index']);
-        }
-
-        $this->_reversePaymentLedger($id, $companyId);
-
-        if ($Payments->delete($payment)) {
-            $this->Flash->success(__('Payment deleted.'));
-        } else {
-            $this->Flash->error(__('Could not delete payment.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
-    }
-
     private function _postPaymentToLedger($payment, int $companyId): void
     {
         $Transactions = $this->fetchTable('Transactions');
         $Accounts     = $this->fetchTable('Accounts');
+        $Rates        = $this->fetchTable('ExchangeRates');
+
+        // Fetch current exchange rate for ZWG conversion
+        $rate = $Rates->find()
+            ->where(['company_id' => $companyId, 'currency' => $payment->currency])
+            ->where(['date <=' => $payment->date ?: date('Y-m-d')])
+            ->orderBy(['date' => 'DESC'])
+            ->first();
+        $rateVal = $rate ? (float)$rate->rate_to_base : 1.0;
 
         $apAccount = $Accounts->find()
             ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Payable%'])
             ->first();
 
-        if (!$apAccount) return;
+        if (!$apAccount) {
+            $apAccount = $Accounts->newEntity([
+                'name' => 'Accounts Payable',
+                'category' => 'Accounts Payable',
+                'type' => 'Liability',
+                'company_id' => $companyId
+            ]);
+            $Accounts->save($apAccount);
+        }
 
         $bankAccountId = $payment->account_id ?? null;
         if (!$bankAccountId) return;
@@ -128,11 +140,11 @@ class PaymentsController extends AppController
         $amount   = (float)($payment->amount ?? 0);
         $currency = $payment->currency ?? 'USD';
         $groupId  = Text::uuid();
-        $ref      = "PMT-{$payment->id}";
+        $ref      = $payment->reference ?? "PMT-{$payment->id}";
 
         $Transactions->getConnection()->transactional(function () use (
             $Transactions, $payment, $apAccount, $bankAccountId,
-            $date, $amount, $currency, $groupId, $ref, $companyId
+            $date, $amount, $currency, $groupId, $ref, $companyId, $rateVal
         ) {
             // Debit: AP (reduces liability)
             $dr = $Transactions->newEntity([
@@ -141,7 +153,7 @@ class PaymentsController extends AppController
                 'description'       => "Payment $ref",
                 'currency'          => $currency,
                 'amount'            => $amount,
-                'zwg'               => $amount,
+                'zwg'               => $amount * $rateVal,
                 'type'              => 'Debit',
                 'account_id'        => $apAccount->id,
                 'supplier_id'       => $payment->supplier_id ?? null,
@@ -156,7 +168,7 @@ class PaymentsController extends AppController
                 'description'       => "Payment $ref",
                 'currency'          => $currency,
                 'amount'            => $amount,
-                'zwg'               => $amount,
+                'zwg'               => $amount * $rateVal,
                 'type'              => 'Credit',
                 'account_id'        => $bankAccountId,
                 'supplier_id'       => $payment->supplier_id ?? null,
@@ -192,5 +204,22 @@ class PaymentsController extends AppController
             ->order(['Accounts.type', 'Accounts.name'])->all();
 
         return [$suppliers, $accounts];
+    }
+
+    /**
+     * Helper to send payment email
+     */
+    private function _sendPaymentEmail(int $id): void
+    {
+        try {
+            $payment = $this->fetchTable('Payments')->get($id, contain: ['Suppliers' => ['Contacts']]);
+            $email = $payment->supplier->contact->email ?? null;
+
+            if ($email) {
+                $this->getMailer('Notification')->send('payment', [$payment->toArray(), $email]);
+            }
+        } catch (\Exception $e) {
+            $this->Flash->warning(__('Payment saved, but email could not be sent: ' . $e->getMessage()));
+        }
     }
 }

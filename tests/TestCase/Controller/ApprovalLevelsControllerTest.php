@@ -10,7 +10,7 @@ use Cake\TestSuite\TestCase;
 /**
  * App\Controller\ApprovalLevelsController Test Case
  *
- * @uses \App\Controller\ApprovalLevelsController
+ * @link \App\Controller\ApprovalLevelsController
  */
 class ApprovalLevelsControllerTest extends TestCase
 {
@@ -19,17 +19,19 @@ class ApprovalLevelsControllerTest extends TestCase
     /**
      * Fixtures
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'app.ApprovalLevels',
+        'app.Roles',
+        'app.Companies',
     ];
 
     /**
      * Test index method
      *
      * @return void
-     * @uses \App\Controller\ApprovalLevelsController::index()
+     * @link \App\Controller\ApprovalLevelsController::index()
      */
     public function testIndex(): void
     {
@@ -40,7 +42,7 @@ class ApprovalLevelsControllerTest extends TestCase
      * Test view method
      *
      * @return void
-     * @uses \App\Controller\ApprovalLevelsController::view()
+     * @link \App\Controller\ApprovalLevelsController::view()
      */
     public function testView(): void
     {
@@ -51,7 +53,7 @@ class ApprovalLevelsControllerTest extends TestCase
      * Test add method
      *
      * @return void
-     * @uses \App\Controller\ApprovalLevelsController::add()
+     * @link \App\Controller\ApprovalLevelsController::add()
      */
     public function testAdd(): void
     {
@@ -62,7 +64,7 @@ class ApprovalLevelsControllerTest extends TestCase
      * Test edit method
      *
      * @return void
-     * @uses \App\Controller\ApprovalLevelsController::edit()
+     * @link \App\Controller\ApprovalLevelsController::edit()
      */
     public function testEdit(): void
     {
@@ -73,7 +75,7 @@ class ApprovalLevelsControllerTest extends TestCase
      * Test delete method
      *
      * @return void
-     * @uses \App\Controller\ApprovalLevelsController::delete()
+     * @link \App\Controller\ApprovalLevelsController::delete()
      */
     public function testDelete(): void
     {

@@ -64,39 +64,69 @@ class SchemaBuilderController extends AppController
     /**
      * Add a field (column) to an existing table.
      *
+     * @param string|null $tableName The table to add fields to
      * @return \Cake\Http\Response|null
      */
-    public function addField()
+    public function addField($tableName = null)
     {
-        if ($this->request->is('post')) {
-            $data      = $this->request->getData();
-            $tableName = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($data['table_name'] ?? '')));
-            $fieldName = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($data['field_name'] ?? '')));
-            $fieldType = $data['field_type'] ?? 'VARCHAR(255)';
-            $nullable  = !empty($data['nullable']) ? 'NULL' : 'NOT NULL';
-            $default   = isset($data['default_value']) && $data['default_value'] !== ''
-                ? "DEFAULT '" . addslashes($data['default_value']) . "'"
-                : 'DEFAULT NULL';
-
-            if (empty($tableName) || empty($fieldName)) {
-                $this->Flash->error('Table name and field name are required.');
-                return null;
-            }
-
-            $connection = \Cake\Datasource\ConnectionManager::get('default');
-            try {
-                $connection->execute(
-                    "ALTER TABLE `$tableName` ADD COLUMN `$fieldName` $fieldType $nullable $default"
-                );
-                $this->Flash->success("Field '$fieldName' added to '$tableName'.");
-                return $this->redirect(['action' => 'index']);
-            } catch (\Exception $e) {
-                $this->Flash->error('Error adding field: ' . $e->getMessage());
-            }
+        if (!$tableName) {
+            $this->Flash->error('No table specified.');
+            return $this->redirect(['action' => 'index']);
         }
 
         $connection = \Cake\Datasource\ConnectionManager::get('default');
-        $tables = $connection->getSchemaCollection()->listTables();
-        $this->set(compact('tables'));
+        $schemaCollection = $connection->getSchemaCollection();
+        
+        $tables = $schemaCollection->listTables();
+        if (!in_array($tableName, $tables)) {
+            $this->Flash->error('Table not found.');
+            return $this->redirect(['action' => 'index']);
+        }
+
+        if ($this->request->is(['post', 'put'])) {
+            $data = $this->request->getData();
+            if (!empty($data['fields']) && is_array($data['fields'])) {
+                try {
+                    $connection->begin();
+                    foreach ($data['fields'] as $field) {
+                        $fieldName = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($field['name'] ?? '')));
+                        $fieldType = $field['type'] ?? 'string';
+                        
+                        if (empty($fieldName)) continue;
+                        
+                        $sqlType = 'VARCHAR(255)';
+                        switch ($fieldType) {
+                            case 'text': $sqlType = 'TEXT'; break;
+                            case 'int': $sqlType = 'INT'; break;
+                            case 'decimal': $sqlType = 'DECIMAL(10,2)'; break;
+                            case 'boolean': $sqlType = 'TINYINT(1) DEFAULT 0'; break;
+                            case 'date': $sqlType = 'DATE'; break;
+                            case 'datetime': $sqlType = 'DATETIME'; break;
+                        }
+
+                        $connection->execute("ALTER TABLE `$tableName` ADD COLUMN `$fieldName` $sqlType");
+                    }
+                    $connection->commit();
+                    $this->Flash->success('Schema updated successfully.');
+                    return $this->redirect(['action' => 'index']);
+                } catch (\Exception $e) {
+                    $connection->rollback();
+                    $this->Flash->error('Error updating schema: ' . $e->getMessage());
+                }
+            } else {
+                $this->Flash->error('No fields to add.');
+            }
+        }
+
+        $tableSchema = $schemaCollection->describe($tableName);
+        $existingFields = [];
+        foreach ($tableSchema->columns() as $col) {
+            $existingFields[] = [
+                'name' => $col,
+                'type' => $tableSchema->getColumnType($col)
+            ];
+        }
+
+        $this->set(compact('tableName', 'existingFields'));
     }
 }

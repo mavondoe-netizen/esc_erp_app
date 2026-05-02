@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Text;
+use Cake\Mailer\MailerAwareTrait;
 
 /**
  * Invoices Controller
@@ -15,6 +16,7 @@ use Cake\Utility\Text;
  */
 class InvoicesController extends AppController
 {
+    use MailerAwareTrait;
     // -----------------------------------------------------------------------
     // INDEX
     // -----------------------------------------------------------------------
@@ -63,10 +65,11 @@ class InvoicesController extends AppController
 
     public function view(int $id)
     {
+        $this->viewBuilder()->setLayout('document');
         $companyId = $this->request->getAttribute('company_id');
 
         $invoice = $this->fetchTable('Invoices')
-            ->get($id, contain: ['Customers', 'InvoiceItems' => ['Accounts'], 'Transactions' => ['Accounts']]);
+            ->get($id, contain: ['Customers', 'InvoiceItems' => ['Accounts', 'Products'], 'Transactions' => ['Accounts']]);
 
         $company = $this->fetchTable('Companies')->get($companyId);
 
@@ -107,11 +110,17 @@ class InvoicesController extends AppController
             }
 
             if ($Invoices->save($invoice)) {
-                // Post ledger entries if status is not Draft
-                if (!in_array($invoice->status, ['Draft'])) {
-                    $this->_postInvoiceToLedger($invoice, $companyId);
+                // Post ledger entries if status is Approved, Sent, or Paid
+                if (in_array($invoice->status, ['Approved', 'Sent', 'Paid'])) {
+                    $Invoices->postToLedger($invoice, $companyId);
                 }
                 $this->Flash->success(__('Invoice saved.'));
+                
+                // Send email if status is Sent
+                if ($invoice->status === 'Sent') {
+                    $this->_sendInvoiceEmail($invoice->id);
+                }
+                
                 return $this->redirect(['action' => 'view', $invoice->id]);
             }
             $this->Flash->error(__('Could not save invoice.'));
@@ -168,14 +177,20 @@ class InvoicesController extends AppController
 
             if ($Invoices->save($invoice)) {
                 // Always reverse previous transactions to ensure the ledger is in sync
-                $this->_reverseInvoiceLedger($invoice->id, $companyId);
+                $Invoices->reverseLedger($invoice->id, $companyId);
 
-                // Re-post to ledger if status is not Draft
-                if ($newStatus !== 'Draft') {
-                    $this->_postInvoiceToLedger($invoice, $companyId);
+                // Re-post to ledger if status is Approved, Sent, or Paid
+                if (in_array($newStatus, ['Approved', 'Sent', 'Paid'])) {
+                    $Invoices->postToLedger($invoice, $companyId);
                 }
 
                 $this->Flash->success(__('Invoice updated.'));
+
+                // Send email if status is changed to Sent
+                if ($invoice->status === 'Sent') {
+                    $this->_sendInvoiceEmail($invoice->id);
+                }
+
                 return $this->redirect(['action' => 'view', $invoice->id]);
             }
 
@@ -201,14 +216,119 @@ class InvoicesController extends AppController
             ];
         }
 
-        // To pre-select the correct contact in the dropdown, we need the contact_id for this customer
         $currentContactId = null;
         if ($invoice->customer_id) {
             $customer = $this->fetchTable('Customers')->get($invoice->customer_id);
             $currentContactId = $customer->contact_id;
+            
+            // Override the entity value so FormHelper correctly pre-selects the contact
+            if (!$this->request->is(['post', 'put'])) {
+                $invoice->customer_id = $currentContactId;
+            }
         }
 
         $this->set(compact('invoice', 'customers', 'accounts', 'productsOptions', 'productsJson', 'currentContactId'));
+    }
+
+    // -----------------------------------------------------------------------
+    // REQUEST APPROVAL
+    // -----------------------------------------------------------------------
+
+    public function requestForApproval(int $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $companyId = $this->request->getAttribute('company_id');
+        
+        $Invoices = $this->fetchTable('Invoices');
+        $invoice = $Invoices->find()
+            ->where(['Invoices.id' => $id, 'Invoices.company_id' => $companyId])
+            ->first();
+
+        if (!$invoice) {
+            $this->Flash->error(__('Invoice not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $invoice->status = 'Pending Approval';
+        if ($Invoices->save($invoice)) {
+            $workflow = new \App\Service\WorkflowService();
+            $userId = clone $this->Authentication->getIdentity();
+            $workflow->submitForApproval('Invoices', $invoice->id, $userId->getIdentifier());
+            
+            $this->Flash->success(__('The invoice has been submitted for approval.'));
+        } else {
+            $this->Flash->error(__('The invoice could not be submitted. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function approve(int $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $companyId = $this->request->getAttribute('company_id');
+        
+        $Invoices = $this->fetchTable('Invoices');
+        $invoice = $Invoices->find()
+            ->where(['Invoices.id' => $id, 'Invoices.company_id' => $companyId])
+            ->first();
+
+        if (!$invoice) {
+            $this->Flash->error(__('Invoice not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $invoice->status = 'Approved';
+        if ($Invoices->save($invoice)) {
+            $Invoices->postToLedger($invoice, $companyId);
+            
+            // Sync with Approvals table if exists
+            $Approvals = $this->fetchTable('Approvals');
+            $approval = $Approvals->find()->where(['table_name' => 'Invoices', 'entity_id' => $id, 'status' => 'Pending'])->first();
+            if ($approval) {
+                $approval->status = 'Approved';
+                $Approvals->save($approval);
+            }
+            
+            $this->Flash->success(__('The invoice has been approved.'));
+        } else {
+            $this->Flash->error(__('The invoice could not be approved. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function reject(int $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $companyId = $this->request->getAttribute('company_id');
+        
+        $Invoices = $this->fetchTable('Invoices');
+        $invoice = $Invoices->find()
+            ->where(['Invoices.id' => $id, 'Invoices.company_id' => $companyId])
+            ->first();
+
+        if (!$invoice) {
+            $this->Flash->error(__('Invoice not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $invoice->status = 'Rejected';
+        if ($Invoices->save($invoice)) {
+            // Sync with Approvals table if exists
+            $Approvals = $this->fetchTable('Approvals');
+            $approval = $Approvals->find()->where(['table_name' => 'Invoices', 'entity_id' => $id, 'status' => 'Pending'])->first();
+            if ($approval) {
+                $approval->status = 'Rejected';
+                $Approvals->save($approval);
+            }
+            
+            $this->Flash->success(__('The invoice has been rejected.'));
+        } else {
+            $this->Flash->error(__('The invoice could not be rejected. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
     }
 
     // -----------------------------------------------------------------------
@@ -232,9 +352,13 @@ class InvoicesController extends AppController
         }
 
         // Reverse any ledger entries associated with this invoice
-        $this->_reverseInvoiceLedger($invoice->id, $companyId);
+        $Invoices->reverseLedger($invoice->id, $companyId);
 
         if ($Invoices->delete($invoice)) {
+            // Delete associated Approvals to prevent orphans
+            $Approvals = $this->fetchTable('Approvals');
+            $Approvals->deleteAll(['table_name' => 'Invoices', 'entity_id' => $invoice->id]);
+
             $this->Flash->success(__('Invoice deleted.'));
         } else {
             $this->Flash->error(__('Could not delete invoice.'));
@@ -269,7 +393,7 @@ class InvoicesController extends AppController
         if ($Invoices->save($invoice)) {
             $paymentAccountId = $this->request->getData('payment_account_id');
             if ($paymentAccountId) {
-                $this->_postPaymentToLedger($invoice, (int)$paymentAccountId, $companyId);
+                $Invoices->postPaymentToLedger($invoice, (int)$paymentAccountId, $companyId);
             }
             $this->Flash->success('Invoice marked as paid.');
         } else {
@@ -314,166 +438,6 @@ class InvoicesController extends AppController
     }
 
     // -----------------------------------------------------------------------
-    // PRIVATE — LEDGER POSTING HELPERS
-    // -----------------------------------------------------------------------
-
-    private function _postInvoiceToLedger($invoice, int $companyId): void
-    {
-        $Invoices = $this->fetchTable('Invoices');
-
-        if (!isset($invoice->invoice_items) || empty($invoice->invoice_items)) {
-            $invoice = $Invoices->get($invoice->id, contain: ['InvoiceItems']);
-        }
-
-        $Transactions = $this->fetchTable('Transactions');
-        $Accounts     = $this->fetchTable('Accounts');
-
-        $arAccount = $Accounts->find()
-            ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Receivable%'])
-            ->first();
-
-        $arAccountId = $arAccount ? $arAccount->id : null;
-        if (!$arAccountId) return; 
-
-        $date      = $invoice->date ? $invoice->date->format('Y-m-d') : date('Y-m-d');
-        $ref       = $invoice->reference ?? "INV-{$invoice->id}";
-        $currency  = $invoice->currency ?? 'USD';
-        $groupId   = Text::uuid();
-
-        $Transactions->getConnection()->transactional(function () use (
-            $Transactions, $invoice, $arAccountId, $date, $ref, $currency, $groupId, $companyId
-        ) {
-            $total = (float)($invoice->total ?? 0);
-
-            $dr = $Transactions->newEntity([
-                'company_id'        => $companyId,
-                'date'              => $date,
-                'description'       => "Invoice $ref",
-                'currency'          => $currency,
-                'amount'            => $total,
-                'zwg'               => $total,
-                'type'              => 'Debit',
-                'account_id'        => $arAccountId,
-                'customer_id'       => $invoice->customer_id,
-                'invoice_id'        => $invoice->id,
-                'transaction_group' => $groupId,
-            ], ['validate' => false]);
-            $Transactions->save($dr, ['check_balance' => false]);
-
-            if (!empty($invoice->invoice_items)) {
-                foreach ($invoice->invoice_items as $item) {
-                    $itemTotal = (float)($item->total ?? ($item->quantity ?? 1) * ($item->unit_price ?? 0));
-                    if (!$item->account_id || $itemTotal == 0) continue;
-
-                    $cr = $Transactions->newEntity([
-                        'company_id'        => $companyId,
-                        'date'              => $date,
-                        'description'       => "Invoice $ref — " . ($item->description ?? ''),
-                        'currency'          => $currency,
-                        'amount'            => $itemTotal,
-                        'zwg'               => $itemTotal,
-                        'type'              => 'Credit',
-                        'account_id'        => $item->account_id,
-                        'customer_id'       => $invoice->customer_id,
-                        'invoice_id'        => $invoice->id,
-                        'transaction_group' => $groupId,
-                    ], ['validate' => false]);
-                    $Transactions->save($cr, ['check_balance' => false]);
-                }
-            } else {
-                $cr = $Transactions->newEntity([
-                    'company_id'        => $companyId,
-                    'date'              => $date,
-                    'description'       => "Invoice $ref",
-                    'currency'          => $currency,
-                    'amount'            => $total,
-                    'zwg'               => $total,
-                    'type'              => 'Credit',
-                    'account_id'        => $arAccountId, // fallback
-                    'customer_id'       => $invoice->customer_id,
-                    'invoice_id'        => $invoice->id,
-                    'transaction_group' => $groupId,
-                ], ['validate' => false]);
-                $Transactions->save($cr, ['check_balance' => false]);
-            }
-        });
-    }
-
-    private function _postPaymentToLedger($invoice, int $paymentAccountId, int $companyId): void
-    {
-        $Transactions = $this->fetchTable('Transactions');
-        $Accounts     = $this->fetchTable('Accounts');
-
-        $arAccount = $Accounts->find()
-            ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Receivable%'])
-            ->first();
-
-        if (!$arAccount) return;
-
-        $date     = date('Y-m-d');
-        $ref      = $invoice->reference ?? "INV-{$invoice->id}";
-        $total    = (float)($invoice->total ?? 0);
-        $currency = $invoice->currency ?? 'USD';
-        $groupId  = Text::uuid();
-
-        $Transactions->getConnection()->transactional(function () use (
-            $Transactions, $arAccount, $invoice, $paymentAccountId,
-            $date, $ref, $total, $currency, $groupId, $companyId
-        ) {
-            $dr = $Transactions->newEntity([
-                'company_id'        => $companyId,
-                'date'              => $date,
-                'description'       => "Payment received — $ref",
-                'currency'          => $currency,
-                'amount'            => $total,
-                'zwg'               => $total,
-                'type'              => 'Debit',
-                'account_id'        => $paymentAccountId,
-                'customer_id'       => $invoice->customer_id,
-                'invoice_id'        => $invoice->id,
-                'transaction_group' => $groupId,
-            ], ['validate' => false]);
-            $Transactions->save($dr, ['check_balance' => false]);
-
-            $cr = $Transactions->newEntity([
-                'company_id'        => $companyId,
-                'date'              => $date,
-                'description'       => "Payment received — $ref",
-                'currency'          => $currency,
-                'amount'            => $total,
-                'zwg'               => $total,
-                'type'              => 'Credit',
-                'account_id'        => $arAccount->id,
-                'customer_id'       => $invoice->customer_id,
-                'invoice_id'        => $invoice->id,
-                'transaction_group' => $groupId,
-            ], ['validate' => false]);
-            $Transactions->save($cr, ['check_balance' => false]);
-        });
-    }
-
-    private function _reverseInvoiceLedger(int $invoiceId, int $companyId): void
-    {
-        $Transactions = $this->fetchTable('Transactions');
-
-        $groups = $Transactions->find()
-            ->where(['Transactions.invoice_id' => $invoiceId, 'Transactions.company_id' => $companyId])
-            ->select(['transaction_group'])
-            ->distinct(['transaction_group'])
-            ->all()
-            ->extract('transaction_group')
-            ->filter()
-            ->toArray();
-
-        if (!empty($groups)) {
-            $Transactions->deleteAll([
-                'Transactions.transaction_group IN' => $groups,
-                'Transactions.company_id'           => $companyId,
-            ]);
-        }
-    }
-
-    // -----------------------------------------------------------------------
     // SHARED DROPDOWN HELPER — NOW RETURNS CONTACTS
     // -----------------------------------------------------------------------
 
@@ -493,5 +457,22 @@ class InvoicesController extends AppController
             ->all();
 
         return [$customers, $accounts];
+    }
+
+    /**
+     * Helper to send invoice email
+     */
+    private function _sendInvoiceEmail(int $id): void
+    {
+        try {
+            $invoice = $this->fetchTable('Invoices')->get($id, contain: ['Customers' => ['Contacts']]);
+            $email = $invoice->customer->contact->email ?? null;
+
+            if ($email) {
+                $this->getMailer('Notification')->send('invoice', [$invoice->toArray(), $email]);
+            }
+        } catch (\Exception $e) {
+            $this->Flash->warning(__('Invoice saved, but email could not be sent: ' . $e->getMessage()));
+        }
     }
 }

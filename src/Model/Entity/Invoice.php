@@ -47,5 +47,6 @@ class Invoice extends Entity
         'account_id'=> true,
         'transactions' => true,
         'line_total'=> true,
+        'manual_reference' => true,
     ];
 }

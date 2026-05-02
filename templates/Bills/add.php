@@ -22,6 +22,7 @@
                 <legend><?= __('Add Bill') ?></legend>
                 <div class="row">
                     <div class="column"><?= $this->Form->control('date') ?></div>
+                    <div class="column"><?= $this->Form->control('manual_reference', ['label' => 'Manual Ref / Serial No.']) ?></div>
                     <div class="column">
                         <div class="quick-add-group">
                             <div class="form-control-wrapper">
@@ -117,7 +118,10 @@
             <td><input type="text" name="bill_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" placeholder="HS Code"></td>
             <td><input type="text" name="bill_items[${rowIndex}][vat_type]" id="vat-type-${rowIndex}" class="form-control" placeholder="Type"></td>
             <td><input type="number" name="bill_items[${rowIndex}][vat_rate]" id="vat-rate-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
-            <td><input type="number" name="bill_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;"></td>
+            <td>
+                <input type="number" name="bill_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;">
+                <input type="hidden" name="bill_items[${rowIndex}][vat_amount]" id="vat-amount-${rowIndex}" value="0.00">
+            </td>
             <td style="text-align: center;"><button type="button" class="btn-danger" style="padding: 4px 8px;" onclick="removeRow(${rowIndex})"><i class="fa fa-trash"></i></button></td>
         `;
 
@@ -152,6 +156,7 @@
         const vatAmount = netTotal * (vatRate / 100);
         const grossTotal = netTotal + vatAmount;
 
+        document.getElementById(`vat-amount-${idx}`).value = vatAmount.toFixed(2);
         document.getElementById(`total-${idx}`).value = grossTotal.toFixed(2);
         
         calculateGrandTotal();

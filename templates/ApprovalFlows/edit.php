@@ -23,9 +23,9 @@
             <fieldset>
                 <legend><?= __('Edit Approval Flow') ?></legend>
                 <?php
-                    echo $this->Form->control('module_name');
-                    echo $this->Form->control('level');
-                    echo $this->Form->control('role_id', ['options' => $roles]);
+                    echo $this->Form->control('module_name', ['options' => $modules, 'label' => 'Module/Entity']);
+                    echo $this->Form->control('level', ['label' => 'Approval Level (1, 2, 3...)']);
+                    echo $this->Form->control('role_id', ['options' => $roles, 'label' => 'Approver Role']);
                     echo $this->Form->control('description');
                 ?>
             </fieldset>

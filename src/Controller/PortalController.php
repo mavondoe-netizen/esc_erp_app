@@ -14,20 +14,37 @@ use Cake\ORM\TableRegistry;
 class PortalController extends AppController
 {
     /**
+     * Resolve the Employee record linked to the logged-in user.
+     *
+     * Returns null when the user has no employee_id set (e.g. admin accounts).
+     *
+     * @return \App\Model\Entity\Employee|null
+     */
+    private function _getEmployee()
+    {
+        $user = $this->Authentication->getIdentity();
+        $employeeId = $user->get('employee_id');
+
+        if (empty($employeeId)) {
+            return null;
+        }
+
+        $companyId = $user->get('company_id');
+        $Employees = TableRegistry::getTableLocator()->get('Employees');
+
+        return $Employees->find()
+            ->where(['Employees.id' => $employeeId, 'Employees.company_id' => $companyId])
+            ->first();
+    }
+
+    /**
      * Portal dashboard.
      *
      * @return void
      */
     public function dashboard()
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-        $userId = $user->get('id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $userId, 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         $leaveBalances = [];
         $recentPayslips = [];
@@ -57,13 +74,7 @@ class PortalController extends AppController
      */
     public function payslips()
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         $payslips = [];
         if ($employee) {
@@ -85,13 +96,7 @@ class PortalController extends AppController
      */
     public function payslipView(int $id)
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         if (!$employee) {
             throw new \Cake\Http\Exception\NotFoundException('Employee not found.');
@@ -114,13 +119,7 @@ class PortalController extends AppController
      */
     public function leaveApply()
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         if (!$employee) {
             $this->Flash->error('No employee profile found for your account.');
@@ -142,6 +141,8 @@ class PortalController extends AppController
             $this->Flash->error('Could not submit leave application. Please check for errors.');
         }
 
+        $user = $this->Authentication->getIdentity();
+        $companyId = $user->get('company_id');
         $LeaveTypes = TableRegistry::getTableLocator()->get('LeaveTypes');
         $leaveTypes = $LeaveTypes->find('list', keyField: 'id', valueField: 'name')
             ->where(['LeaveTypes.company_id' => $companyId])
@@ -157,13 +158,7 @@ class PortalController extends AppController
      */
     public function leaveHistory()
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         $leaveApplications = [];
         if ($employee) {
@@ -185,13 +180,7 @@ class PortalController extends AppController
      */
     public function leaveBalances()
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         $leaveBalances = [];
         if ($employee) {
@@ -212,13 +201,7 @@ class PortalController extends AppController
      */
     public function profile()
     {
-        $user = $this->Authentication->getIdentity();
-        $companyId = $user->get('company_id');
-
-        $Employees = TableRegistry::getTableLocator()->get('Employees');
-        $employee = $Employees->find()
-            ->where(['Employees.user_id' => $user->get('id'), 'Employees.company_id' => $companyId])
-            ->first();
+        $employee = $this->_getEmployee();
 
         $this->set(compact('employee'));
     }

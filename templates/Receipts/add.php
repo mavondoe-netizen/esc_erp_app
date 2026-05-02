@@ -2,9 +2,8 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Receipt $receipt
- * @var \Cake\Collection\CollectionInterface|string[] $suppliers
+ * @var \Cake\Collection\CollectionInterface|string[] $customers
  * @var \Cake\Collection\CollectionInterface|string[] $accounts
- * @var \Cake\Collection\CollectionInterface|string[] $transactions
  */
 ?>
 <div class="row">
@@ -20,14 +19,18 @@
             <fieldset>
                 <legend><?= __('Add Receipt') ?></legend>
                 <?php
-                    echo $this->Form->control('supplier_id', ['options' => $suppliers]);
-                    echo $this->Form->control('currency');
+                    echo $this->Form->control('customer_id', ['options' => $customers, 'empty' => '-- Select Customer --']);
+                    echo $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR']]);
                     echo $this->Form->control('amount');
-                    echo $this->Form->control('account_id', ['options' => $accounts, 'empty' => true]);
-                    echo $this->Form->control('transactions._ids', ['options' => $transactions]);
+                    echo $this->Form->control('account_id', ['options' => $accounts, 'empty' => '-- Select Bank/Asset Account --', 'label' => 'Deposited Into Account']);
+                    echo $this->Form->control('reference', ['label' => 'Reference (e.g., Bank Ref, Invoice #)']);
+                    echo $this->Form->control('date');
+                    echo $this->Form->control('description', ['rows' => 2]);
+                    echo $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Pending Approval' => 'Pending Approval', 'Approved' => 'Approved', 'Rejected' => 'Rejected']]);
                 ?>
             </fieldset>
-            <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>
+            <?= $this->Form->button(__('Submit')) ?>
+            <?= $this->Html->link(__('Cancel'), ['action' => 'index'], ['class' => 'button secondary', 'style' => 'margin-left: 10px;']) ?>
             <?= $this->Form->end() ?>
         </div>
     </div>

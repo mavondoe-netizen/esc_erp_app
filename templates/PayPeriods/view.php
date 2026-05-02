@@ -88,6 +88,48 @@
                         <?= $this->Html->link(__('Generate Now'), ['controller' => 'Payslips', 'action' => 'generate', '?' => ['pay_period_id' => $payPeriod->id]], ['class' => 'button']) ?>
                     </div>
                 <?php endif; ?>
+            <div class="related" style="margin-top: 40px;">
+                <h4><?= __('Ledger Transactions') ?></h4>
+                <?php if (!empty($payPeriod->transactions)) : ?>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th><?= __('Date') ?></th>
+                                <th><?= __('Description') ?></th>
+                                <th><?= __('Account') ?></th>
+                                <th style="text-align: right;"><?= __('Amount') ?></th>
+                                <th><?= __('Currency') ?></th>
+                                <th style="text-align: right;"><?= __('ZWG') ?></th>
+                                <th><?= __('Type') ?></th>
+                                <th class="actions"><?= __('Actions') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($payPeriod->transactions as $transaction) : ?>
+                            <tr>
+                                <td><?= h($transaction->date) ?></td>
+                                <td><?= h($transaction->description) ?></td>
+                                <td><?= $transaction->hasValue('account') ? h($transaction->account->name) : 'Unknown' ?></td>
+                                <td style="text-align: right;"><?= $this->Number->format($transaction->amount) ?></td>
+                                <td><?= h($transaction->currency) ?></td>
+                                <td style="text-align: right;"><?= $this->Number->format($transaction->zwg) ?></td>
+                                <td>
+                                    <span class="badge" style="background: <?= strtolower($transaction->type) === 'debit' ? '#27ae60' : '#2980b9' ?>; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.85em;">
+                                        <?= h($transaction->type) ?>
+                                    </span>
+                                </td>
+                                <td class="actions">
+                                    <?= $this->Html->link(__('View'), ['controller' => 'Transactions', 'action' => 'view', $transaction->id]) ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php else: ?>
+                    <p class="text-muted" style="font-style: italic;">No ledger transactions have been posted for this period. Posting usually happens during rollover.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

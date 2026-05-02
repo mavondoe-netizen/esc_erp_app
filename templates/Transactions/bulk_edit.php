@@ -4,6 +4,8 @@
  * @var array $accounts
  * @var array $customers
  * @var array $suppliers
+ * @var array $buildings
+ * @var array $tenants
  * @var array $departments
  * @var iterable<\App\Model\Entity\Transaction> $journalLines
  * @var string $groupId
@@ -154,6 +156,8 @@ $this->assign('title', 'Edit Bulk Journal Entries');
                 <th>Account <span style="color:#f87171">*</span></th>
                 <th>Customer</th>
                 <th>Supplier</th>
+                <th>Building</th>
+                <th>Tenant</th>
                 <th>Department</th>
                 <th></th>
             </tr>
@@ -207,6 +211,8 @@ $this->assign('title', 'Edit Bulk Journal Entries');
     const accounts    = <?= json_encode(is_array($accounts) ? $accounts : iterator_to_array($accounts)) ?>;
     const customers   = <?= json_encode(is_array($customers) ? $customers : iterator_to_array($customers)) ?>;
     const suppliers   = <?= json_encode(is_array($suppliers) ? $suppliers : iterator_to_array($suppliers)) ?>;
+    const buildings   = <?= json_encode(is_array($buildings) ? $buildings : iterator_to_array($buildings)) ?>;
+    const tenants     = <?= json_encode(is_array($tenants) ? $tenants : iterator_to_array($tenants)) ?>;
     const departments = <?= json_encode(is_array($departments) ? $departments : iterator_to_array($departments)) ?>;
 
     const existingLines = <?= json_encode(array_values(array_map(function($line) {
@@ -220,6 +226,8 @@ $this->assign('title', 'Edit Bulk Journal Entries');
             'account_id' => $line->account_id,
             'customer_id' => $line->customer_id,
             'supplier_id' => $line->supplier_id,
+            'building_id' => $line->building_id,
+            'tenant_id' => $line->tenant_id,
             'department_id' => $line->department_id,
         ];
     }, is_array($journalLines) ? $journalLines : $journalLines->toArray()))) ?>;
@@ -241,6 +249,8 @@ $this->assign('title', 'Edit Bulk Journal Entries');
         const d_acc = data && data.account_id ? data.account_id : '';
         const d_cus = data && data.customer_id ? data.customer_id : '';
         const d_sup = data && data.supplier_id ? data.supplier_id : '';
+        const d_bld = data && data.building_id ? data.building_id : '';
+        const d_ten = data && data.tenant_id ? data.tenant_id : '';
         const d_dep = data && data.department_id ? data.department_id : '';
 
         const tr = document.createElement('tr');
@@ -277,6 +287,16 @@ $this->assign('title', 'Edit Bulk Journal Entries');
             <td>
                 <select name="rows[${i}][supplier_id]" class="no-s2">
                     ${buildOptions(suppliers, '-- Supplier --', d_sup)}
+                </select>
+            </td>
+            <td>
+                <select name="rows[${i}][building_id]" class="no-s2">
+                    ${buildOptions(buildings, '-- Bldg --', d_bld)}
+                </select>
+            </td>
+            <td>
+                <select name="rows[${i}][tenant_id]" class="no-s2">
+                    ${buildOptions(tenants, '-- Tenant --', d_ten)}
                 </select>
             </td>
             <td>

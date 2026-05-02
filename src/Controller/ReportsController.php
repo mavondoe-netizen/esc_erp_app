@@ -43,10 +43,7 @@ class ReportsController extends AppController
         $companyId = \Cake\Core\Configure::read('Tenant.company_id');
         $currency  = $this->request->getQuery('currency', 'USD');
         if (is_array($currency)) $currency = $currency[0] ?? 'USD';
-        $endDate   = $this->request->getQuery('end_date', '2025-12-31');
-        if (strpos($endDate, '2026') !== false) {
-            $endDate = '2025-12-31';
-        }
+        $endDate   = $this->request->getQuery('end_date', date('Y-m-d'));
 
         $Accounts   = TableRegistry::getTableLocator()->get('Accounts');
         $Transactions = TableRegistry::getTableLocator()->get('Transactions');
@@ -167,14 +164,9 @@ class ReportsController extends AppController
             return (string)$val;
         };
 
-        // Ensure the Income Statement defaults to 2025 for all test data across all companies
-        $startDate = $parseDate('start_date', '2025-01-01');
-        $endDate   = $parseDate('end_date', '2025-12-31');
-
-        if (strpos($startDate, '2026') !== false) {
-            $startDate = '2025-01-01';
-            $endDate   = '2025-12-31';
-        }
+        // Ensure the Income Statement defaults to current year
+        $startDate = $parseDate('start_date', date('Y-01-01'));
+        $endDate   = $parseDate('end_date', date('Y-m-d'));
 
         $conn = TableRegistry::getTableLocator()->get('Transactions')->getConnection();
         $balanceField = $currency === 'ZWG' ? 't.zwg' : 't.amount';
@@ -710,5 +702,132 @@ class ReportsController extends AppController
             $response['message'] = $e->getMessage();
         }
         return $this->response->withType('application/json')->withStringBody(json_encode($response));
+    }
+
+    /**
+     * Receivables Aging Report
+     */
+    public function receivablesAging()
+    {
+        $companyId = \Cake\Core\Configure::read('Tenant.company_id');
+        $currency  = $this->request->getQuery('currency', 'USD');
+        $asOfDate  = $this->request->getQuery('as_of_date', date('Y-m-d'));
+
+        $Invoices = TableRegistry::getTableLocator()->get('Invoices');
+        $Transactions = TableRegistry::getTableLocator()->get('Transactions');
+
+        // Fetch all non-draft, non-paid invoices
+        $invoices = $Invoices->find()
+            ->where([
+                'Invoices.company_id' => $companyId,
+                'Invoices.status IN' => ['Approved', 'Sent', 'Partial'],
+                'Invoices.date <=' => $asOfDate
+            ])
+            ->contain(['Customers'])
+            ->all();
+
+        $report = [];
+        $totals = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
+
+        foreach ($invoices as $inv) {
+            $customerName = $inv->customer->name ?? 'Unknown';
+            
+            // Calculate balance for this specific invoice
+            // Total Debits - Total Credits on this invoice_id
+            $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+            $txs = $Transactions->find()
+                ->where(['invoice_id' => $inv->id, 'company_id' => $companyId, 'date <=' => $asOfDate])
+                ->all();
+            
+            $balance = 0;
+            foreach ($txs as $tx) {
+                $isDebit = in_array(strtolower(trim((string)$tx->type)), ['debit', '1']);
+                $balance += $isDebit ? (float)$tx->{$balanceField} : -(float)$tx->{$balanceField};
+            }
+
+            if (abs($balance) < 0.01) continue;
+
+            $dateDiff = (strtotime($asOfDate) - strtotime($inv->date->format('Y-m-d'))) / (60 * 60 * 24);
+            
+            $bucket = 'current';
+            if ($dateDiff > 90) $bucket = '90';
+            elseif ($dateDiff > 60) $bucket = '60';
+            elseif ($dateDiff > 30) $bucket = '30';
+
+            if (!isset($report[$customerName])) {
+                $report[$customerName] = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
+            }
+
+            $report[$customerName][$bucket] += $balance;
+            $report[$customerName]['total'] += $balance;
+            $totals[$bucket] += $balance;
+            $totals['total'] += $balance;
+        }
+
+        $this->set(compact('report', 'totals', 'asOfDate', 'currency'));
+    }
+
+    /**
+     * Payables Aging Report
+     */
+    public function payablesAging()
+    {
+        $companyId = \Cake\Core\Configure::read('Tenant.company_id');
+        $currency  = $this->request->getQuery('currency', 'USD');
+        $asOfDate  = $this->request->getQuery('as_of_date', date('Y-m-d'));
+
+        $Bills = TableRegistry::getTableLocator()->get('Bills');
+        $Transactions = TableRegistry::getTableLocator()->get('Transactions');
+
+        // Fetch all non-draft bills
+        $bills = $Bills->find()
+            ->where([
+                'Bills.company_id' => $companyId,
+                'Bills.status !=' => 'Draft',
+                'Bills.date <=' => $asOfDate
+            ])
+            ->contain(['Suppliers'])
+            ->all();
+
+        $report = [];
+        $totals = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
+
+        foreach ($bills as $bill) {
+            $supplierName = $bill->supplier->name ?? 'Unknown';
+            
+            // Calculate balance for this specific bill
+            // Total Credits - Total Debits on this bill_id (Payables are Credits)
+            $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+            $txs = $Transactions->find()
+                ->where(['bill_id' => $bill->id, 'company_id' => $companyId, 'date <=' => $asOfDate])
+                ->all();
+            
+            $balance = 0;
+            foreach ($txs as $tx) {
+                $isDebit = in_array(strtolower(trim((string)$tx->type)), ['debit', '1']);
+                // For Payables, Credit increases the liability
+                $balance += $isDebit ? -(float)$tx->{$balanceField} : (float)$tx->{$balanceField};
+            }
+
+            if (abs($balance) < 0.01) continue;
+
+            $dateDiff = (strtotime($asOfDate) - strtotime($bill->date->format('Y-m-d'))) / (60 * 60 * 24);
+            
+            $bucket = 'current';
+            if ($dateDiff > 90) $bucket = '90';
+            elseif ($dateDiff > 60) $bucket = '60';
+            elseif ($dateDiff > 30) $bucket = '30';
+
+            if (!isset($report[$supplierName])) {
+                $report[$supplierName] = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
+            }
+
+            $report[$supplierName][$bucket] += $balance;
+            $report[$supplierName]['total'] += $balance;
+            $totals[$bucket] += $balance;
+            $totals['total'] += $balance;
+        }
+
+        $this->set(compact('report', 'totals', 'asOfDate', 'currency'));
     }
 }

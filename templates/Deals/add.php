@@ -22,7 +22,7 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('description');
                     echo $this->Form->control('date');
-                    echo $this->Form->control('type');
+                    echo $this->Form->control('type',['options'=>['New' => 'New', 'Repeat'=> 'Repeat']]);
                     echo $this->Form->control('value');
                     echo $this->Form->control('stage', ['options' => [
                         'Lead' => 'Lead',

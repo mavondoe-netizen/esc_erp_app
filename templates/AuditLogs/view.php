@@ -20,7 +20,12 @@
             <table>
                 <tr>
                     <th><?= __('User') ?></th>
-                    <td><?= $auditLog->hasValue('user') ? $this->Html->link($auditLog->user->role_id, ['controller' => 'Users', 'action' => 'view', $auditLog->user->id]) : '' ?></td>
+                    <td>
+                        <?= $auditLog->user_id ?>
+                        <?php if (!empty($user)): ?>
+                            (<?= $this->Html->link($user->email, ['controller' => 'Users', 'action' => 'view', $user->id]) ?>)
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <tr>
                     <th><?= __('Model') ?></th>

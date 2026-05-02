@@ -77,6 +77,13 @@ class PayslipsController extends AppController
         if ($this->request->is('post')) {
             $data               = $this->request->getData();
             $data['company_id'] = $companyId;
+            // Stamp company_id on every item so TenantAware can find them
+            if (!empty($data['payslip_items'])) {
+                foreach ($data['payslip_items'] as &$item) {
+                    $item['company_id'] = $companyId;
+                }
+                unset($item);
+            }
             $payslip = $Payslips->patchEntity($payslip, $data, [
                 'associated' => ['PayslipItems']
             ]);
@@ -109,7 +116,15 @@ class PayslipsController extends AppController
         $payslip  = $Payslips->get($id, contain: ['PayslipItems']);
 
         if ($this->request->is(['post', 'put'])) {
-            $payslip = $Payslips->patchEntity($payslip, $this->request->getData(), [
+            $data = $this->request->getData();
+            // Stamp company_id on every item so TenantAware can find them
+            if (!empty($data['payslip_items'])) {
+                foreach ($data['payslip_items'] as &$item) {
+                    $item['company_id'] = $companyId;
+                }
+                unset($item);
+            }
+            $payslip = $Payslips->patchEntity($payslip, $data, [
                 'associated' => ['PayslipItems']
             ]);
             if ($Payslips->save($payslip)) {
@@ -176,18 +191,29 @@ class PayslipsController extends AppController
         $items = $data['payslip_items'] ?? [];
         $rate = (float)($data['exchange_rate'] ?? 1.0);
 
+        $taxResult = $this->_getCalculatedTaxItems($items, $rate);
+
+        return $this->response->withType('application/json')
+            ->withStringBody(json_encode(['success' => true, 'data' => $taxResult['taxes']]));
+    }
+
+    /**
+     * Internal helper to calculate taxes from a list of earnings/deductions.
+     */
+    private function _getCalculatedTaxItems(array $items, float $rate): array
+    {
         $usdGross = 0; $zwgGross = 0;
         $usdBasic = 0; $zwgBasic = 0;
 
         foreach($items as $item) {
-            if ($item['item_type'] === 'Earning') {
-                $amt = (float)$item['amount'];
+            if (($item['item_type'] ?? '') === 'Earning') {
+                $amt = (float)($item['amount'] ?? 0);
                 $isBasic = stripos($item['name'] ?? '', 'Basic Salary') !== false;
 
-                if ($item['currency'] === 'USD') {
+                if (($item['currency'] ?? 'USD') === 'USD') {
                     $usdGross += $amt;
                     if ($isBasic) $usdBasic += $amt;
-                } else if ($item['currency'] === 'ZWG') {
+                } else if (($item['currency'] ?? 'USD') === 'ZWG') {
                     $zwgGross += $amt;
                     if ($isBasic) $zwgBasic += $amt;
                 }
@@ -198,8 +224,7 @@ class PayslipsController extends AppController
         $totalUsdBasic = $usdBasic + ($zwgBasic / $rate);
 
         if ($totalUsdGross <= 0) {
-            return $this->response->withType('application/json')
-                ->withStringBody(json_encode(['success' => true, 'data' => []]));
+            return ['taxes' => [], 'totals' => ['gross' => 0, 'paye' => 0, 'nssa' => 0, 'aids' => 0]];
         }
 
         // Proportions for General Taxes (PAYE, Aids Levy)
@@ -211,7 +236,6 @@ class PayslipsController extends AppController
             $usdWeightNssa = $usdBasic / $totalUsdBasic;
             $zwgWeightNssa = 1.0 - $usdWeightNssa;
         } else {
-            // Fallback to general weights if no basic salary identified
             $usdWeightNssa = $usdWeightGen;
             $zwgWeightNssa = $zwgWeightGen;
         }
@@ -254,13 +278,20 @@ class PayslipsController extends AppController
             }
         }
 
-        return $this->response->withType('application/json')
-            ->withStringBody(json_encode(['success' => true, 'data' => $taxes]));
+        return [
+            'taxes' => $taxes,
+            'totals' => [
+                'usd_gross' => $usdGross,
+                'zwg_gross' => $zwgGross,
+                'total_usd_gross' => $totalUsdGross,
+                'paye' => $totalPayeUsd,
+                'nssa' => $totalNssaUsd,
+                'aids' => $totalAidsUsd,
+            ]
+        ];
     }
 
-    /**
-     * Bulk-generate payslips for all active employees in a pay period.
-     */
+
     public function generate()
     {
         $companyId = $this->request->getAttribute('company_id');
@@ -307,24 +338,63 @@ class PayslipsController extends AppController
                     continue;
                 }
 
-                $gross = (float)($employee->basic_salary ?? 0);
-                $paye = $this->_calculatePaye($gross);
-                $net  = $gross - $paye - ($gross * 0.045) - ($paye * 0.03); // Rough net
+                // Detailed items for the payslip
+                $items = [];
+                if (($employee->basic_salary ?? 0) > 0) {
+                    $items[] = [
+                        'company_id' => $companyId,
+                        'item_type' => 'Earning',
+                        'name' => 'Basic Salary',
+                        'amount' => $employee->basic_salary,
+                        'currency' => 'USD', // Bulk generation assumes USD basic for now
+                        'is_permanent' => true
+                    ];
+                }
 
-                $payslip = $Payslips->newEntity([
+                // Add any other recurring earnings/deductions if defined (future enhancement)
+                
+                // Calculate taxes based on items
+                $taxResult = $this->_getCalculatedTaxItems($items, 1.0);
+                $taxes = $taxResult['taxes'];
+                $totals = $taxResult['totals'];
+
+                // Add tax items to the items list
+                foreach ($taxes as $tax) {
+                    $tax['company_id'] = $companyId;
+                    $items[] = $tax;
+                }
+
+                $gross = $totals['total_usd_gross'] ?? 0;
+                $paye = $totals['paye'] ?? 0;
+                $nssa = $totals['nssa'] ?? 0;
+                $aids = $totals['aids'] ?? 0;
+                
+                $totalDeductions = $paye + $nssa + $aids;
+                $net = $gross - $totalDeductions;
+
+                $payslipData = [
                     'company_id'    => $companyId,
                     'employee_id'   => $employee->id,
                     'pay_period_id' => $periodId,
                     'gross_pay'     => $gross,
                     'paye'          => $paye,
+                    'nssa'          => $nssa,
+                    'aids_levy'     => $aids,
+                    'deductions'    => $totalDeductions,
                     'net_pay'       => $net,
                     'generated_date' => date('Y-m-d'),
                     'exchange_rate' => 1.0,
                     'usd_gross' => $gross,
-                    'usd_deductions' => $gross - $net,
+                    'usd_deductions' => $totalDeductions,
                     'usd_net' => $net,
                     'status'        => 'Draft',
-                ], ['validate' => false]);
+                    'payslip_items' => $items
+                ];
+
+                $payslip = $Payslips->newEntity($payslipData, [
+                    'associated' => ['PayslipItems'],
+                    'validate' => false
+                ]);
 
                 if ($Payslips->save($payslip)) {
                     $generated++;

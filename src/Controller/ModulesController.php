@@ -55,7 +55,8 @@ class ModulesController extends AppController
             $this->Flash->error(__('The module could not be saved. Please, try again.'));
         }
         $companies = $this->Modules->Companies->find('list', limit: 200)->all();
-        $this->set(compact('module', 'companies'));
+        $modelsOptions = $this->_getModelsOptions();
+        $this->set(compact('module', 'companies', 'modelsOptions'));
     }
 
     /**
@@ -78,7 +79,31 @@ class ModulesController extends AppController
             $this->Flash->error(__('The module could not be saved. Please, try again.'));
         }
         $companies = $this->Modules->Companies->find('list', limit: 200)->all();
-        $this->set(compact('module', 'companies'));
+        $modelsOptions = $this->_getModelsOptions();
+        $this->set(compact('module', 'companies', 'modelsOptions'));
+    }
+
+    /**
+     * Build a list of available application Table model names for the dropdown.
+     *
+     * @return array<string, string>
+     */
+    private function _getModelsOptions(): array
+    {
+        $tableDir = APP . 'Model' . DS . 'Table' . DS;
+        $options = [];
+        if (is_dir($tableDir)) {
+            foreach (glob($tableDir . '*Table.php') as $file) {
+                $className = basename($file, '.php');       // e.g. "CustomersTable"
+                $modelName = str_replace('Table', '', $className); // e.g. "Customers"
+                if ($modelName !== '') {
+                    $options[$modelName] = $modelName;
+                }
+            }
+        }
+        ksort($options);
+
+        return $options;
     }
 
     /**

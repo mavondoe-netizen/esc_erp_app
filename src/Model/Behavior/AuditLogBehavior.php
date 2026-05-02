@@ -32,12 +32,16 @@ class AuditLogBehavior extends Behavior
      */
     protected function _getUserId(): ?int
     {
-         $request = Router::getRequest();
-         if ($request) {
-            $identity = $request->getAttribute('identity');
-            if ($identity) {
-                return $identity->getIdentifier();
-            }
+         try {
+             $request = Router::getRequest();
+             if ($request) {
+                $identity = $request->getAttribute('identity');
+                if ($identity) {
+                    return (int)$identity->getIdentifier();
+                }
+             }
+         } catch (\Exception $e) {
+             // Request context not available (e.g. CLI or early bootstrap)
          }
          return null;
     }
@@ -122,10 +126,15 @@ class AuditLogBehavior extends Behavior
         
         $log = $auditLogsTable->newEmptyEntity();
         $log->user_id = $this->_getUserId();
+        
+        // Explicitly set company_id from the entity being audited if available, 
+        // or from the global Configure/Session via TenantAware logic.
+        $log->company_id = $entity->get('company_id') ?: \Cake\Core\Configure::read('Tenant.company_id');
+
         $log->model = $tableAlias;
         // Primary key is usually 'id', but handle safety
         $primaryKey = (array)$this->_table->getPrimaryKey();
-        $log->record_id = $entity->get($primaryKey[0]) ?? 0;
+        $log->record_id = (string)($entity->get($primaryKey[0]) ?? 0);
         $log->action = $action;
 
         // Sanitize first so json_encode always succeeds and passes json_valid()
@@ -137,7 +146,7 @@ class AuditLogBehavior extends Behavior
         // Last-resort fallback: if encoding still fails, store a minimal JSON object
         $log->changed_data = ($encoded !== false) ? $encoded : '{"_error":"unencodable_data"}';
         
-        if (!$auditLogsTable->save($log, ['atomic' => false])) {
+        if (!$auditLogsTable->save($log, ['atomic' => false, 'checkRules' => false])) {
             \Cake\Log\Log::error('AuditLog save failed: ' . json_encode($log->getErrors()));
         }
     }

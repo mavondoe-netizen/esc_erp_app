@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Deal $deal
@@ -24,19 +25,20 @@
             <fieldset>
                 <legend><?= __('Edit Deal') ?></legend>
                 <?php
-                    echo $this->Form->control('name');
-                    echo $this->Form->control('description');
-                    echo $this->Form->control('date');
-                    echo $this->Form->control('type');
-                    echo $this->Form->control('value');
-                    echo $this->Form->control('stage', ['options' => [
-                        'Lead' => 'Lead',
-                        'Qualified' => 'Qualified',
-                        'Proposal' => 'Proposal',
-                        'Negotiation' => 'Negotiation',
-                        'Closed Won' => 'Closed Won',
-                        'Closed Lost' => 'Closed Lost'
-                    ]]);
+                echo $this->Form->control('name');
+                echo $this->Form->control('description');
+                echo $this->Form->control('date');
+                echo $this->Form->control('type', ['options' => ['New' => 'New', 'Repeat' => 'Repeat']]);
+
+                echo $this->Form->control('value');
+                echo $this->Form->control('stage', ['options' => [
+                    'Lead' => 'Lead',
+                    'Qualified' => 'Qualified',
+                    'Proposal' => 'Proposal',
+                    'Negotiation' => 'Negotiation',
+                    'Closed Won' => 'Closed Won',
+                    'Closed Lost' => 'Closed Lost'
+                ]]);
                 ?>
                 <div class="quick-add-group">
                     <div class="form-control-wrapper">
@@ -50,12 +52,12 @@
                     </button>
                 </div>
                 <?php
-                    echo $this->Form->control('status', ['options' => [
-                        'Active' => 'Active',
-                        'On Hold' => 'On Hold',
-                        'Completed' => 'Completed',
-                        'Cancelled' => 'Cancelled'
-                    ]]);
+                echo $this->Form->control('status', ['options' => [
+                    'Active' => 'Active',
+                    'On Hold' => 'On Hold',
+                    'Completed' => 'Completed',
+                    'Cancelled' => 'Cancelled'
+                ]]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

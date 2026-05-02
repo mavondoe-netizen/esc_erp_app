@@ -108,6 +108,11 @@ class BillsTable extends Table
             ->requirePresence('total', 'create')
             ->notEmptyString('total');
 
+        $validator
+            ->scalar('manual_reference')
+            ->maxLength('manual_reference', 100)
+            ->allowEmptyString('manual_reference');
+
         return $validator;
     }
 

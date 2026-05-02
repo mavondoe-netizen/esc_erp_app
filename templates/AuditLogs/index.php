@@ -25,7 +25,12 @@
                 <?php foreach ($auditLogs as $auditLog): ?>
                 <tr>
                     <td><?= $this->Number->format($auditLog->id) ?></td>
-                    <td><?= $auditLog->hasValue('user') ? $this->Html->link($auditLog->user->role_id, ['controller' => 'Users', 'action' => 'view', $auditLog->user->id]) : '' ?></td>
+                    <td>
+                        <?= $auditLog->user_id ?>
+                        <?php if (!empty($usersMap[$auditLog->user_id])): ?>
+                            (<?= $this->Html->link($usersMap[$auditLog->user_id]->email, ['controller' => 'Users', 'action' => 'view', $auditLog->user_id]) ?>)
+                        <?php endif; ?>
+                    </td>
                     <td><?= h($auditLog->model) ?></td>
                     <td><?= h($auditLog->record_id) ?></td>
                     <td><?= h($auditLog->action) ?></td>

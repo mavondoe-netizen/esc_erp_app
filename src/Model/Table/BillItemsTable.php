@@ -108,6 +108,10 @@ class BillItemsTable extends Table
             ->allowEmptyString('vat_rate');
 
         $validator
+            ->numeric('vat_amount')
+            ->allowEmptyString('vat_amount');
+
+        $validator
             ->scalar('vat_type')
             ->allowEmptyString('vat_type');
 

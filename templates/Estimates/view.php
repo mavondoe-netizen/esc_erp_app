@@ -1,119 +1,114 @@
 <?php
 /**
- * @var \App\View\AppView $this
  * @var \App\Model\Entity\Estimate $estimate
+ * @var \App\Model\Entity\Company $company
  */
+
+$this->assign('actions', $this->element('document_actions', [
+    'entity' => $estimate,
+    'controller' => 'Estimates',
+    'approval_workflow' => false
+]));
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Estimate'), ['action' => 'edit', $estimate->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Estimate'), ['action' => 'delete', $estimate->id], ['confirm' => __('Are you sure you want to delete # {0}?', $estimate->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Estimates'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Estimate'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+<div class="estimates view content">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 30px;">
+        <div>
+            <?php if (!empty($company->logo)): ?>
+                <img src="<?= h($company->logo) ?>" style="max-height: 100px; margin-bottom: 15px;" alt="Logo" />
+            <?php else: ?>
+                <h1 style="color: var(--primary-color); margin: 0;"><?= h($company->name) ?></h1>
+            <?php endif; ?>
+            <p style="color: #64748b; line-height: 1.6; margin: 0;">
+                <?= nl2br(h($company->address)) ?><br>
+                <strong>Email:</strong> <?= h($company->email) ?><br>
+                <strong>Phone:</strong> <?= h($company->phone) ?>
+            </p>
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="estimates view content">
-            <h3><?= h($estimate->id) ?></h3>
-            <table>
-                <tr>
-                    <th><?= __('Company') ?></th>
-                    <td><?= $estimate->hasValue('company') ? $this->Html->link($estimate->company->name, ['controller' => 'Companies', 'action' => 'view', $estimate->company->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Customer') ?></th>
-                    <td><?= $estimate->hasValue('customer') ? $this->Html->link($estimate->customer->name, ['controller' => 'Customers', 'action' => 'view', $estimate->customer->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Description') ?></th>
-                    <td><?= h($estimate->description) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Status') ?></th>
-                    <td><?= h($estimate->status) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($estimate->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Total') ?></th>
-                    <td><?= $estimate->total === null ? '' : $this->Number->format($estimate->total) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Date') ?></th>
-                    <td><?= h($estimate->date) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Expiry Date') ?></th>
-                    <td><?= h($estimate->expiry_date) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Created') ?></th>
-                    <td><?= h($estimate->created) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Modified') ?></th>
-                    <td><?= h($estimate->modified) ?></td>
-                </tr>
-            </table>
-            <div class="related">
-                <h4><?= __('Estimate Items') ?></h4>
-                <?php if (!empty($estimate->estimate_items)) : ?>
-                <div class="table-responsive">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                                <th style="text-align: left; padding: 12px;"><?= __('Product') ?></th>
-                                <th style="text-align: center; padding: 12px;"><?= __('Qty') ?></th>
-                                <th style="text-align: right; padding: 12px;"><?= __('Unit Price') ?></th>
-                                <th style="text-align: center; padding: 12px;"><?= __('HS Code') ?></th>
-                                <th style="text-align: center; padding: 12px;"><?= __('VAT Type') ?></th>
-                                <th style="text-align: right; padding: 12px;"><?= __('VAT %') ?></th>
-                                <th style="text-align: right; padding: 12px;"><?= __('VAT Amount') ?></th>
-                                <th style="text-align: right; padding: 12px;"><?= __('Line Total') ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $subtotal = 0;
-                            $totalVat = 0;
-                            foreach ($estimate->estimate_items as $item) : 
-                                $subtotal += ($item->quantity * $item->unit_price);
-                                $totalVat += $item->vat_amount;
-                            ?>
-                            <tr style="border-bottom: 1px solid #edf2f7;">
-                                <td style="padding: 12px;"><?= $item->hasValue('product') ? h($item->product->name) : 'Custom Item' ?></td>
-                                <td style="text-align: center; padding: 12px;"><?= $this->Number->format($item->quantity) ?></td>
-                                <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($item->unit_price) ?></td>
-                                <td style="text-align: center; padding: 12px;"><?= h($item->hs_code) ?></td>
-                                <td style="text-align: center; padding: 12px;"><?= h($item->vat_type) ?></td>
-                                <td style="text-align: right; padding: 12px;"><?= $this->Number->format($item->vat_rate) ?>%</td>
-                                <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($item->vat_amount) ?></td>
-                                <td style="text-align: right; padding: 12px; font-weight: 600;"><?= $this->Number->currency($item->line_total) ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="7" style="text-align: right; padding: 12px; font-weight: bold;"><?= __('Subtotal') ?></td>
-                                <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($subtotal) ?></td>
-                            </tr>
-                            <tr>
-                                <td colspan="7" style="text-align: right; padding: 12px; font-weight: bold;"><?= __('Total VAT') ?></td>
-                                <td style="text-align: right; padding: 12px;"><?= $this->Number->currency($totalVat) ?></td>
-                            </tr>
-                            <tr style="background: #f1f5f9;">
-                                <td colspan="7" style="text-align: right; padding: 12px; font-size: 1.2rem; font-weight: bold;"><?= __('GRAND TOTAL') ?></td>
-                                <td style="text-align: right; padding: 12px; font-size: 1.2rem; font-weight: bold; color: #0f172a;"><?= $this->Number->currency($estimate->total) ?></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <?php endif; ?>
+        <div style="text-align: right;">
+            <h1 style="font-size: 2.5rem; letter-spacing: -0.02em; color: #4b5563; margin-bottom: 10px;">ESTIMATE</h1>
+            <div style="color: #64748b;">
+                <strong>Estimate #:</strong> <span style="color: #0f172a;"><?= h($estimate->id) ?></span><br>
+                <strong>Date:</strong> <span style="color: #0f172a;"><?= h($estimate->date) ?></span><br>
+                <strong>Expiry:</strong> <span style="color: #0f172a;"><?= h($estimate->expiry_date) ?></span><br>
+                <strong>Status:</strong> <span style="background: #f1f5f9; padding: 4px 12px; border-radius: 20px; color: #0f172a; font-weight: 600; font-size: 0.8rem;"><?= strtoupper(h($estimate->status)) ?></span>
             </div>
         </div>
     </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+        <div>
+            <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Estimate For</h4>
+            <h3 style="margin-bottom: 5px;"><?= $estimate->hasValue('customer') ? h($estimate->customer->name) : '—' ?></h3>
+            <?php if ($estimate->description): ?>
+                <p style="color: #64748b; line-height: 1.5;">
+                    <?= h($estimate->description) ?>
+                </p>
+            <?php endif; ?>
+        </div>
+        <div style="text-align: right;">
+             <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Estimate Total</h4>
+             <h2 style="color: #4b5563; font-size: 2.2rem; margin: 0;"><?= $this->Number->currency($estimate->total) ?></h2>
+        </div>
+    </div>
+
+    <div class="related">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th class="text-center" style="width: 80px;">Qty</th>
+                    <th class="text-right" style="width: 120px;">Unit Price</th>
+                    <th class="text-right" style="width: 100px;">Tax (VAT)</th>
+                    <th class="text-right" style="width: 130px;">Line Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $subtotal = 0;
+                $totalVat = 0;
+                foreach ($estimate->estimate_items as $item) : 
+                    $subtotal += ($item->quantity * $item->unit_price);
+                    $totalVat += ($item->vat_amount ?? 0);
+                ?>
+                <tr>
+                    <td>
+                        <strong style="color: #0f172a;"><?= $item->hasValue('product') ? h($item->product->name) : 'Custom Item' ?></strong><br>
+                        <small style="color: #64748b;"><?= h($item->description) ?></small>
+                    </td>
+                    <td class="text-center"><?= $this->Number->format($item->quantity) ?></td>
+                    <td class="text-right"><?= $this->Number->currency($item->unit_price) ?></td>
+                    <td class="text-right">
+                        <span style="display: block; font-size: 0.75rem; color: #94a3b8;"><?= $this->Number->format($item->vat_rate) ?>%</span>
+                        <?= $this->Number->currency($item->vat_amount) ?>
+                    </td>
+                    <td class="text-right" style="font-weight: 600; color: #0f172a;"><?= $this->Number->currency($item->line_total) ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+            <div style="width: 300px;">
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
+                    <span>Subtotal</span>
+                    <span><?= $this->Number->currency($subtotal) ?></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
+                    <span>Tax (VAT)</span>
+                    <span><?= $this->Number->currency($totalVat) ?></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 15px 0; border-top: 2px solid #0f172a; margin-top: 10px; font-weight: 800; font-size: 1.25rem; color: #0f172a;">
+                    <span>Total</span>
+                    <span><?= $this->Number->currency($estimate->total) ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
+
+<style>
+    .text-right { text-align: right !important; }
+    .text-center { text-align: center !important; }
+</style>

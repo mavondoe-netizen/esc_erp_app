@@ -25,7 +25,7 @@
             <fieldset>
                 <legend><?= __('Edit Payment') ?></legend>
                 <?php
-                    echo $this->Form->control('customer_id', ['options' => $customers, 'empty' => '-- Select Customer --']);
+                    echo $this->Form->control('supplier_id', ['options' => $suppliers, 'empty' => '-- Select Supplier --']);
                     echo $this->Form->control('account_id', ['options' => $accounts, 'empty' => '-- Select Bank/Asset Account --', 'label' => 'Payment Into Account']);
                     echo $this->Form->control('amount');
                     echo $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR']]);

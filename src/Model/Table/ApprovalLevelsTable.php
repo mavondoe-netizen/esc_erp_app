@@ -39,13 +39,19 @@ class ApprovalLevelsTable extends Table
     {
         parent::initialize($config);
 
-        $this->addBehavior('TenantAware');
-
         $this->setTable('approval_levels');
         $this->setDisplayField('entity');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Roles', [
+            'foreignKey' => 'role_id',
+            'joinType' => 'INNER',
+        ]);
+        $this->belongsTo('Companies', [
+            'foreignKey' => 'company_id',
+        ]);
     }
 
     /**
@@ -68,14 +74,32 @@ class ApprovalLevelsTable extends Table
             ->notEmptyString('level');
 
         $validator
-            ->scalar('role')
-            ->maxLength('role', 100)
-            ->allowEmptyString('role');
+            ->integer('role_id')
+            ->notEmptyString('role_id');
 
         $validator
             ->decimal('min_value')
             ->allowEmptyString('min_value');
 
+        $validator
+            ->integer('company_id')
+            ->allowEmptyString('company_id');
+
         return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        $rules->add($rules->existsIn(['role_id'], 'Roles'), ['errorField' => 'role_id']);
+        $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+
+        return $rules;
     }
 }

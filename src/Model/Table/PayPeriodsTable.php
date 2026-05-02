@@ -55,6 +55,9 @@ class PayPeriodsTable extends Table
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',
         ]);
+        $this->hasMany('Transactions', [
+            'foreignKey' => 'payperiod_id',
+        ]);
     }
 
     /**

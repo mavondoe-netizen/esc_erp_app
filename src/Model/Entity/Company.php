@@ -42,6 +42,9 @@ class Company extends Entity
         'address' => true,
         'phone' => true,
         'email' => true,
+        'logo' => true,
+        'reporting_currency' => true,
+        'license_expiry_date' => true,
         'created' => true,
         'modified' => true,
         'accounts' => true,
@@ -53,7 +56,6 @@ class Company extends Entity
         'products' => true,
         'transactions' => true,
         'users' => true,
-        'permissions'=>true,
-        'license_expiry_date' => true,
+        'permissions' => true,
     ];
 }

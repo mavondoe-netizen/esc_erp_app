@@ -4,110 +4,129 @@
  * @var \App\Model\Entity\Bill $bill
  * @var \App\Model\Entity\Company $company
  */
+
+$this->assign('actions', $this->element('document_actions', [
+    'entity' => $bill,
+    'controller' => 'Bills',
+    'approval_workflow' => false // Bills might not use workflow yet
+]));
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Bill'), ['action' => 'edit', $bill->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Bill'), ['action' => 'delete', $bill->id], ['confirm' => __('Are you sure you want to delete # {0}?', $bill->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Bills'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Bill'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+<div class="bills view content">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 30px;">
+        <div>
+            <?php if ($company->logo): ?>
+                <img src="<?= h($company->logo) ?>" style="max-height: 100px; margin-bottom: 15px;" alt="Logo" />
+            <?php else: ?>
+                <h1 style="color: var(--primary-color); margin: 0;"><?= h($company->name) ?></h1>
+            <?php endif; ?>
+            <p style="color: #64748b; line-height: 1.6; margin: 0;">
+                <?= nl2br(h($company->address)) ?><br>
+                <strong>Email:</strong> <?= h($company->email) ?><br>
+                <strong>Phone:</strong> <?= h($company->phone) ?>
+            </p>
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="bills view content">
-            <div class="bill-header row">
-                <div class="column">
-                    <?php if ($company->logo): ?>
-                        <img src="<?= h($company->logo) ?>" class="bill-logo" alt="Logo" />
-                    <?php else: ?>
-                        <h3><?= h($company->name) ?></h3>
-                    <?php endif; ?>
-                    <p>
-                        <?= h($company->address) ?><br>
-                        <?= h($company->email) ?> | <?= h($company->phone) ?>
-                    </p>
-                </div>
-                <div class="column bill-info">
-                    <h2>BILL</h2>
-                    <strong>Bill #:</strong> <?= h($bill->id) ?><br>
-                    <strong>Date:</strong> <?= h($bill->date) ?><br>
-                    <strong>Currency:</strong> <?= h($bill->currency) ?>
-                </div>
-            </div>
-            
-            <table class="table">
-                <tr>
-                    <th><?= __('Supplier') ?></th>
-                    <td><?= $bill->hasValue('supplier') ? $this->Html->link($bill->supplier->name, ['controller' => 'Suppliers', 'action' => 'view', $bill->supplier->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Tenant') ?></th>
-                    <td><?= $bill->hasValue('tenant') ? $this->Html->link($bill->tenant->name, ['controller' => 'Tenants', 'action' => 'view', $bill->tenant->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Description') ?></th>
-                    <td><?= h($bill->description) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Currency') ?></th>
-                    <td><?= h($bill->currency) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($bill->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Total') ?></th>
-                    <td><?= $this->Number->format($bill->total) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Date') ?></th>
-                    <td><?= h($bill->date) ?></td>
-                </tr>
-            </table>
-            <div class="related">
-                <h4><?= __('Related Transactions') ?></h4>
-                <?php if (!empty($bill->transactions)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Date') ?></th>
-                            <th><?= __('Description') ?></th>
-                            <th><?= __('Currency') ?></th>
-                            <th><?= __('Amount') ?></th>
-                            <th><?= __('Zwg') ?></th>
-                            <th><?= __('Account Id') ?></th>
-                            <th><?= __('Building Id') ?></th>
-                            <th><?= __('Tenant Id') ?></th>
-                            <th><?= __('Supplier Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($bill->transactions as $transaction) : ?>
-                        <tr>
-                            <td><?= h($transaction->id) ?></td>
-                            <td><?= h($transaction->date) ?></td>
-                            <td><?= h($transaction->description) ?></td>
-                            <td><?= h($transaction->currency) ?></td>
-                            <td><?= h($transaction->amount) ?></td>
-                            <td><?= h($transaction->zwg) ?></td>
-                            <td><?= h($transaction->account_id) ?></td>
-                            <td><?= h($transaction->building_id) ?></td>
-                            <td><?= h($transaction->tenant_id) ?></td>
-                            <td><?= h($transaction->supplier_id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Transactions', 'action' => 'view', $transaction->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Transactions', 'action' => 'edit', $transaction->id]) ?>
-                                <?= $this->Form->postLink(__('Delete'), ['controller' => 'Transactions', 'action' => 'delete', $transaction->id], ['confirm' => __('Are you sure you want to delete # {0}?', $transaction->id)]) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
+        <div style="text-align: right;">
+            <h1 style="font-size: 2.5rem; letter-spacing: -0.02em; color: #dc2626; margin-bottom: 10px;">BILL</h1>
+            <div style="color: #64748b;">
+                <strong>Bill #:</strong> <span style="color: #0f172a;"><?= h($bill->id) ?></span><br>
+                <?php if ($bill->manual_reference): ?>
+                    <strong>Reference:</strong> <span style="color: #0f172a;"><?= h($bill->manual_reference) ?></span><br>
                 <?php endif; ?>
+                <strong>Date:</strong> <span style="color: #0f172a;"><?= h($bill->date) ?></span><br>
+                <strong>Currency:</strong> <span style="color: #0f172a;"><?= h($bill->currency) ?></span>
             </div>
         </div>
     </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+        <div>
+            <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Payable To</h4>
+            <h3 style="margin-bottom: 5px;"><?= $bill->hasValue('supplier') ? h($bill->supplier->name) : '—' ?></h3>
+            <p style="color: #64748b; line-height: 1.5;">
+                <?= h($bill->description) ?>
+            </p>
+        </div>
+        <div style="text-align: right;">
+             <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Total Amount Due</h4>
+             <h2 style="color: #dc2626; font-size: 2.2rem; margin: 0;"><?= $this->Number->currency($bill->total, $bill->currency) ?></h2>
+        </div>
+    </div>
+
+    <div class="related">
+        <h4 style="color: #64748b; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 20px;">Bill Items</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Account</th>
+                    <th class="text-center" style="width: 60px;">Qty</th>
+                    <th class="text-right" style="width: 110px;">Unit Price</th>
+                    <th class="text-right" style="width: 100px;">VAT</th>
+                    <th class="text-right" style="width: 120px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($bill->bill_items)): ?>
+                    <?php foreach ($bill->bill_items as $item): ?>
+                    <tr>
+                        <td><?= h($item->description ?: 'Line Item') ?></td>
+                        <td><?= $item->hasValue('account') ? h($item->account->name) : '—' ?></td>
+                        <td class="text-center"><?= $this->Number->format($item->quantity) ?></td>
+                        <td class="text-right"><?= $this->Number->currency($item->unit_price, $bill->currency) ?></td>
+                        <td class="text-right">
+                             <span style="display: block; font-size: 0.75rem; color: #94a3b8;"><?= $this->Number->format($item->vat_rate) ?>%</span>
+                             <?= $this->Number->currency($item->vat_amount, $bill->currency) ?>
+                        </td>
+                        <td class="text-right" style="font-weight: 600;"><?= $this->Number->currency($item->line_total, $bill->currency) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <?php if (!empty($bill->transactions)) : ?>
+    <div class="related no-print" style="margin-top: 60px; border-top: 1px dashed #e2e8f0; padding-top: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h4 style="color: #64748b; font-size: 0.9rem; text-transform: uppercase; margin: 0;">Accounting & Reconciliation Trail</h4>
+            <span style="font-size: 0.8rem; color: #94a3b8;"><i class="fa fa-info-circle"></i> This section shows all ledger entries linked to this bill, including payments.</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table" style="font-size: 0.85rem;">
+                <thead>
+                    <tr style="background: #f8fafc;">
+                        <th style="border-bottom: 1px solid #e2e8f0;">Date</th>
+                        <th style="border-bottom: 1px solid #e2e8f0;">Description / Reference</th>
+                        <th style="border-bottom: 1px solid #e2e8f0;">Account</th>
+                        <th style="border-bottom: 1px solid #e2e8f0;">Type</th>
+                        <th class="text-right" style="border-bottom: 1px solid #e2e8f0;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($bill->transactions as $transaction) : 
+                    $isOffset = strpos(strtolower($transaction->description), 'payment') !== false || strpos(strtolower($transaction->description), 'bill payment') !== false;
+                ?>
+                <tr style="<?= $isOffset ? 'background: #fef2f2;' : '' ?>">
+                    <td><?= h($transaction->date) ?></td>
+                    <td>
+                        <?= h($transaction->description) ?>
+                        <?php if ($transaction->manual_reference): ?>
+                            <br><small class="text-muted">Ref: <?= h($transaction->manual_reference) ?></small>
+                        <?php endif; ?>
+                    </td>
+                    <td><?= $transaction->hasValue('account') ? h($transaction->account->name) : '—' ?></td>
+                    <td><span style="color: <?= $transaction->type === 'Debit' ? '#16a34a' : '#dc2626' ?>; font-weight: 600;"><?= h($transaction->type) ?></span></td>
+                    <td class="text-right" style="font-weight: 600;"><?= $this->Number->currency($transaction->amount, $transaction->currency) ?></td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
+
+<style>
+    .text-right { text-align: right !important; }
+    .text-center { text-align: center !important; }
+</style>

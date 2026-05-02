@@ -11,8 +11,9 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string $entity
  * @property int $level
- * @property string|null $role
+ * @property int $role_id
  * @property string|null $min_value
+ * @property int|null $company_id
  * @property \Cake\I18n\DateTime|null $created
  * @property \Cake\I18n\DateTime|null $modified
  */
@@ -30,8 +31,9 @@ class ApprovalLevel extends Entity
     protected array $_accessible = [
         'entity' => true,
         'level' => true,
-        'role' => true,
+        'role_id' => true,
         'min_value' => true,
+        'company_id' => true,
         'created' => true,
         'modified' => true,
     ];

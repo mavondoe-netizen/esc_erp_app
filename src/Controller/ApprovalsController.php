@@ -79,6 +79,64 @@ class ApprovalsController extends AppController
     }
 
     /**
+     * Approve method
+     *
+     * @param string|null $id Approval id.
+     * @return \Cake\Http\Response|null Redirects to referer.
+     */
+    public function approve($id = null)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $approval = $this->Approvals->get($id);
+        
+        $approval->status = 'Approved';
+        
+        if ($this->Approvals->save($approval)) {
+            $approvalService = new \App\Service\ApprovalService();
+            $userId = $this->Authentication->getIdentity()->get('id');
+            
+            if ($approvalService->progress((int)$approval->id, (int)$userId, 'Approved', (string)$this->request->getData('remarks'))) {
+                $this->Flash->success(__('The approval has been processed.'));
+            } else {
+                $this->Flash->error(__('Approval record updated, but workflow progression failed.'));
+            }
+        } else {
+            $this->Flash->error(__('The approval could not be saved. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    /**
+     * Reject method
+     *
+     * @param string|null $id Approval id.
+     * @return \Cake\Http\Response|null Redirects to referer.
+     */
+    public function reject($id = null)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $approval = $this->Approvals->get($id);
+        
+        $approval->status = 'Rejected';
+        
+        if ($this->Approvals->save($approval)) {
+            $approvalService = new \App\Service\ApprovalService();
+            $userId = $this->Authentication->getIdentity()->get('id');
+            
+            if ($approvalService->progress((int)$approval->id, (int)$userId, 'Rejected', (string)$this->request->getData('remarks'))) {
+                $this->Flash->success(__('The approval has been rejected.'));
+            } else {
+                $this->Flash->error(__('Approval record updated, but rejection progression failed.'));
+            }
+        } else {
+            $this->Flash->error(__('The approval could not be rejected. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    /**
      * Delete method
      *
      * @param string|null $id Approval id.

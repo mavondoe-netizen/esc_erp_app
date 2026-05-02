@@ -198,12 +198,58 @@ class TransactionsController extends AppController
 
             // --- Exchange-rate lookup for ZWG conversion ---
             $ExchangeRates = $this->fetchTable('ExchangeRates');
+            $AccountsTable = $this->fetchTable('Accounts');
+
+            // Fetch account details for validation
+            $accountIds = array_filter(array_unique(array_map(fn($r) => (int)($r['account_id'] ?? 0), $rows)));
+            $accountsMap = $AccountsTable->find()
+                ->where(['id IN' => $accountIds])
+                ->select(['id', 'name', 'category'])
+                ->all()
+                ->combine('id', fn($a) => $a)
+                ->toArray();
 
             $groupId   = Text::uuid();
             $entities  = [];
             $zwgTotal  = 0.0;
 
-            foreach ($rows as $row) {
+            foreach ($rows as $index => $row) {
+                $rowNum = $index + 1;
+                $accId  = (int)($row['account_id'] ?? 0);
+                $account = $accountsMap[$accId] ?? null;
+
+                if ($account) {
+                    $cat = $account->category;
+                    // Enforce Customer for Receivable accounts
+                    if (stripos($cat, 'Receivable') !== false && empty($row['customer_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Customer is required for account '{$account->name}' (Receivable).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                    // Enforce Supplier for Payable accounts
+                    if (stripos($cat, 'Payable') !== false && empty($row['supplier_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Supplier is required for account '{$account->name}' (Payable).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                    // Enforce Building for Building-related accounts
+                    if (stripos($cat, 'Building') !== false && empty($row['building_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Building is required for account '{$account->name}' (Building).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                    // Enforce Tenant for Tenant-related accounts
+                    if (stripos($cat, 'Tenant') !== false && empty($row['tenant_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Tenant is required for account '{$account->name}' (Tenant).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                }
+
                 $currency = $row['currency'] ?? 'USD';
                 $amount   = (float)($row['amount'] ?? 0);
                 $date     = $row['date'] ?? date('Y-m-d');
@@ -233,6 +279,8 @@ class TransactionsController extends AppController
                     'account_id'         => (int)($row['account_id'] ?? 0),
                     'customer_id'        => !empty($row['customer_id'])   ? (int)$row['customer_id']   : null,
                     'supplier_id'        => !empty($row['supplier_id'])   ? (int)$row['supplier_id']   : null,
+                    'building_id'        => !empty($row['building_id'])   ? (int)$row['building_id']   : null,
+                    'tenant_id'          => !empty($row['tenant_id'])     ? (int)$row['tenant_id']     : null,
                     'department_id'      => !empty($row['department_id']) ? (int)$row['department_id'] : null,
                     'transaction_group'  => $groupId,
                 ];
@@ -312,10 +360,57 @@ class TransactionsController extends AppController
             }
 
             $ExchangeRates = $this->fetchTable('ExchangeRates');
+            $AccountsTable = $this->fetchTable('Accounts');
+
+            // Fetch account details for validation
+            $accountIds = array_filter(array_unique(array_map(fn($r) => (int)($r['account_id'] ?? 0), $rows)));
+            $accountsMap = $AccountsTable->find()
+                ->where(['id IN' => $accountIds])
+                ->select(['id', 'name', 'category'])
+                ->all()
+                ->combine('id', fn($a) => $a)
+                ->toArray();
+
             $zwgTotal      = 0.0;
             $entities      = [];
 
-            foreach ($rows as $row) {
+            foreach ($rows as $index => $row) {
+                $rowNum = $index + 1;
+                $accId  = (int)($row['account_id'] ?? 0);
+                $account = $accountsMap[$accId] ?? null;
+
+                if ($account) {
+                    $cat = $account->category;
+                    // Enforce Customer for Receivable accounts
+                    if (stripos($cat, 'Receivable') !== false && empty($row['customer_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Customer is required for account '{$account->name}' (Receivable).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('journalLines', 'groupId', 'accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                    // Enforce Supplier for Payable accounts
+                    if (stripos($cat, 'Payable') !== false && empty($row['supplier_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Supplier is required for account '{$account->name}' (Payable).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('journalLines', 'groupId', 'accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                    // Enforce Building for Building-related accounts
+                    if (stripos($cat, 'Building') !== false && empty($row['building_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Building is required for account '{$account->name}' (Building).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('journalLines', 'groupId', 'accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                    // Enforce Tenant for Tenant-related accounts
+                    if (stripos($cat, 'Tenant') !== false && empty($row['tenant_id'])) {
+                        $this->Flash->error("Row #{$rowNum}: Tenant is required for account '{$account->name}' (Tenant).");
+                        [$accounts, $departments, $buildings, $tenants, $suppliers, $customers] = $this->_dropdowns($companyId);
+                        $this->set(compact('journalLines', 'groupId', 'accounts', 'departments', 'buildings', 'tenants', 'suppliers', 'customers'));
+                        return null;
+                    }
+                }
+
                 $currency  = $row['currency'] ?? 'USD';
                 $amount    = (float)($row['amount'] ?? 0);
                 $date      = $row['date'] ?? date('Y-m-d');
@@ -345,6 +440,8 @@ class TransactionsController extends AppController
                     'account_id'        => (int)($row['account_id'] ?? 0),
                     'customer_id'       => !empty($row['customer_id'])   ? (int)$row['customer_id']   : null,
                     'supplier_id'       => !empty($row['supplier_id'])   ? (int)$row['supplier_id']   : null,
+                    'building_id'       => !empty($row['building_id'])   ? (int)$row['building_id']   : null,
+                    'tenant_id'         => !empty($row['tenant_id'])     ? (int)$row['tenant_id']     : null,
                     'department_id'     => !empty($row['department_id']) ? (int)$row['department_id'] : null,
                     'transaction_group' => $groupId,
                 ];

@@ -76,12 +76,34 @@ $this->assign('title', 'Reports Dashboard');
         </div>
 
         <!-- Bank Schedule -->
-        <div class="col-md-12 mb-4">
+        <div class="col-md-6 mb-4">
             <div class="card" style="border-left: 5px solid #134f5c; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                 <div class="card-body">
                     <h4 class="card-title">Bank Transfer Schedule</h4>
                     <p class="card-text text-muted">Automatically groups employee net pays by their assigned banking routing details based on target fiat currency.</p>
                     <?= $this->Html->link(__('Open Bank Schedule'), ['action' => 'bankSchedule'], ['class' => 'button button-outline']) ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receivables Aging -->
+        <div class="col-md-6 mb-4">
+            <div class="card" style="border-left: 5px solid #2563eb; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="card-body">
+                    <h4 class="card-title">Receivables Aging</h4>
+                    <p class="card-text text-muted">Detailed aged analysis of outstanding customer invoices (0-30, 31-60, 61-90, 90+ days).</p>
+                    <?= $this->Html->link(__('Open Receivables Aging'), ['action' => 'receivablesAging'], ['class' => 'button button-outline']) ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payables Aging -->
+        <div class="col-md-6 mb-4">
+            <div class="card" style="border-left: 5px solid #dc2626; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="card-body">
+                    <h4 class="card-title">Payables Aging</h4>
+                    <p class="card-text text-muted">Detailed aged analysis of outstanding supplier bills and liabilities.</p>
+                    <?= $this->Html->link(__('Open Payables Aging'), ['action' => 'payablesAging'], ['class' => 'button button-outline']) ?>
                 </div>
             </div>
         </div>

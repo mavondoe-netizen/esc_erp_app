@@ -60,13 +60,7 @@ class DeductionsController extends AppController
             'Percentage of Total Gross' => 'Percentage of Total Gross',
             'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $zimraOptions = [
-            'Pension' => 'Pension Contribution',
-            'Medical' => 'Medical Aid',
-            'Union' => 'Union Dues',
-            'Insurance' => 'Insurance',
-            'Tax' => 'Income Tax',
-        ];
+        $zimraOptions = $this->getZimraOptions();
         $this->set(compact('deduction', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 
@@ -95,13 +89,7 @@ class DeductionsController extends AppController
             'Percentage of Total Gross' => 'Percentage of Total Gross',
             'Percentage of Basic' => 'Percentage of Basic Salary',
         ];
-        $zimraOptions = [
-            'Pension' => 'Pension Contribution',
-            'Medical' => 'Medical Aid',
-            'Union' => 'Union Dues',
-            'Insurance' => 'Insurance',
-            'Tax' => 'Income Tax',
-        ];
+        $zimraOptions = $this->getZimraOptions();
         $this->set(compact('deduction', 'accounts', 'calculationTypes', 'zimraOptions'));
     }
 

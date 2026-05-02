@@ -18,10 +18,24 @@ class AuditLogsController extends AppController
     public function index()
     {
         $query = $this->AuditLogs->find()
-            ->contain(['Users', 'Companies']);
+            ->contain(['Companies']);
         $auditLogs = $this->paginate($query);
 
-        $this->set(compact('auditLogs'));
+        // Manually resolve user emails cross-tenant
+        $userIds = array_filter(array_unique(
+            array_map(fn($log) => $log->user_id, $auditLogs->toArray())
+        ));
+        $usersMap = [];
+        if (!empty($userIds)) {
+            $usersMap = $this->fetchTable('Users')
+                ->find('all', ignoreTenant: true)
+                ->where(['Users.id IN' => $userIds])
+                ->all()
+                ->combine('id', function ($u) { return $u; })
+                ->toArray();
+        }
+
+        $this->set(compact('auditLogs', 'usersMap'));
     }
 
     /**
@@ -33,8 +47,18 @@ class AuditLogsController extends AppController
      */
     public function view($id = null)
     {
-        $auditLog = $this->AuditLogs->get($id, contain: ['Users', 'Companies']);
-        $this->set(compact('auditLog'));
+        $auditLog = $this->AuditLogs->get($id, contain: ['Companies']);
+
+        // Manually resolve user cross-tenant
+        $user = null;
+        if ($auditLog->user_id) {
+            $user = $this->fetchTable('Users')
+                ->find('all', ignoreTenant: true)
+                ->where(['Users.id' => $auditLog->user_id])
+                ->first();
+        }
+
+        $this->set(compact('auditLog', 'user'));
     }
 
     /**

@@ -36,6 +36,7 @@ use Authentication\Middleware\AuthenticationMiddleware;
 //use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
+use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 /**
  * Application setup class.
  *
@@ -70,16 +71,25 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to setup.
      * @return \Cake\Http\MiddlewareQueue The updated middleware queue.
      */
+    
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue
             // Catch any exceptions in the lower layers,
             // and make an error page/response
             ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
+            // Trust Tailscale proxies
+            ->add(function ($request, $handler) {
+                $request->setTrustedProxies(['100.64.0.0/10', '127.0.0.1']);
+                return $handler->handle($request);
+            })
 
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([
                 'cacheTime' => Configure::read('Asset.cacheTime'),
+            ]))
+            ->add(new HttpsEnforcerMiddleware([
+                'redirect' => false // important!
             ]))
 
             // Add routing middleware.
@@ -98,9 +108,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
             ]))
+             
+             
             // Add the AuthenticationMiddleware. It should be
         // after routing and body parser.
         ->add(new AuthenticationMiddleware($this));
+        
         return $middlewareQueue;
     }
 

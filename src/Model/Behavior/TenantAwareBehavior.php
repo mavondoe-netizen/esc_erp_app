@@ -18,7 +18,8 @@ class TenantAwareBehavior extends Behavior
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
-        'isRoot' => false, // Set to true for the Companies table itself
+        'isRoot' => false,     // Set to true for the Companies table itself
+        'shareWith' => null,   // Array of conditions to OR with tenant filter (e.g. ['role_id' => 3])
     ];
 
     /**
@@ -38,7 +39,21 @@ class TenantAwareBehavior extends Behavior
 
         // Standard multi-tenant tables (have company_id column)
         if ($this->_table->hasField('company_id')) {
-            $query->where([$this->_table->aliasField('company_id') => $tenantId]);
+            $shareWith = $this->getConfig('shareWith');
+            if (!empty($shareWith) && is_array($shareWith)) {
+                // OR: belongs to current tenant OR matches shared condition
+                $alias = $this->_table->getAlias();
+                $query->where(function ($exp) use ($tenantId, $shareWith, $alias) {
+                    $tenantCondition = [$alias . '.company_id' => $tenantId];
+                    $sharedCondition = [];
+                    foreach ($shareWith as $field => $value) {
+                        $sharedCondition[$alias . '.' . $field] = $value;
+                    }
+                    return $exp->or($tenantCondition)->add($sharedCondition);
+                });
+            } else {
+                $query->where([$this->_table->aliasField('company_id') => $tenantId]);
+            }
             return;
         }
 

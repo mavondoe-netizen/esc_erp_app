@@ -41,5 +41,6 @@ class Bill extends Entity
         'transactions' => true,
         'account_id' => true,
         'accounts' => true,
+        'manual_reference' => true,
     ];
 }

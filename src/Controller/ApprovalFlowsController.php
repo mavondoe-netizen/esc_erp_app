@@ -55,7 +55,15 @@ class ApprovalFlowsController extends AppController
             $this->Flash->error(__('The approval flow could not be saved. Please, try again.'));
         }
         $roles = $this->ApprovalFlows->Roles->find('list', limit: 200)->all();
-        $this->set(compact('approvalFlow', 'roles'));
+        $modules = [
+            'Requisitions' => 'Requisitions',
+            'Awards' => 'Awards',
+            'Payments' => 'Payments',
+            'Invoices' => 'Invoices',
+            'Deals' => 'Deals',
+            'LoanApplications' => 'Loan Applications',
+        ];
+        $this->set(compact('approvalFlow', 'roles', 'modules'));
     }
 
     /**
@@ -78,7 +86,15 @@ class ApprovalFlowsController extends AppController
             $this->Flash->error(__('The approval flow could not be saved. Please, try again.'));
         }
         $roles = $this->ApprovalFlows->Roles->find('list', limit: 200)->all();
-        $this->set(compact('approvalFlow', 'roles'));
+        $modules = [
+            'Requisitions' => 'Requisitions',
+            'Awards' => 'Awards',
+            'Payments' => 'Payments',
+            'Invoices' => 'Invoices',
+            'Deals' => 'Deals',
+            'LoanApplications' => 'Loan Applications',
+        ];
+        $this->set(compact('approvalFlow', 'roles', 'modules'));
     }
 
     /**

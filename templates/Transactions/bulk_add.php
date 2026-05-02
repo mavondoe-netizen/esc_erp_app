@@ -4,6 +4,8 @@
  * @var array $accounts
  * @var array $customers
  * @var array $suppliers
+ * @var array $buildings
+ * @var array $tenants
  * @var array $departments
  */
 $this->assign('title', 'Post Bulk Journal Entries');
@@ -152,6 +154,8 @@ $this->assign('title', 'Post Bulk Journal Entries');
                 <th>Account <span style="color:#f87171">*</span></th>
                 <th>Customer</th>
                 <th>Supplier</th>
+                <th>Building</th>
+                <th>Tenant</th>
                 <th>Department</th>
                 <th></th>
             </tr>
@@ -189,6 +193,8 @@ $this->assign('title', 'Post Bulk Journal Entries');
     const accounts    = <?= json_encode(is_array($accounts) ? $accounts : iterator_to_array($accounts)) ?>;
     const customers   = <?= json_encode(is_array($customers) ? $customers : iterator_to_array($customers)) ?>;
     const suppliers   = <?= json_encode(is_array($suppliers) ? $suppliers : iterator_to_array($suppliers)) ?>;
+    const buildings   = <?= json_encode(is_array($buildings) ? $buildings : iterator_to_array($buildings)) ?>;
+    const tenants     = <?= json_encode(is_array($tenants) ? $tenants : iterator_to_array($tenants)) ?>;
     const departments = <?= json_encode(is_array($departments) ? $departments : iterator_to_array($departments)) ?>;
 
     function buildOptions(data, emptyLabel) {
@@ -242,6 +248,16 @@ $this->assign('title', 'Post Bulk Journal Entries');
             <td>
                 <select name="rows[${i}][supplier_id]" class="no-s2">
                     ${buildOptions(suppliers, '-- Supplier --')}
+                </select>
+            </td>
+            <td>
+                <select name="rows[${i}][building_id]" class="no-s2">
+                    ${buildOptions(buildings, '-- Bldg --')}
+                </select>
+            </td>
+            <td>
+                <select name="rows[${i}][tenant_id]" class="no-s2">
+                    ${buildOptions(tenants, '-- Tenant --')}
                 </select>
             </td>
             <td>

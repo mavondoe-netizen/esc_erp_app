@@ -12,6 +12,7 @@
                 <legend><?= __('Add Invoice') ?></legend>
                 <div class="row">
                     <div class="column"><?= $this->Form->control('date') ?></div>
+                    <div class="column"><?= $this->Form->control('manual_reference', ['label' => 'Manual Ref / Serial No.']) ?></div>
                     <div class="column">
                         <div class="quick-add-group">
                             <div class="form-control-wrapper">
@@ -29,7 +30,7 @@
                 <div class="row">
                     <div class="column"><?= $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZAR' => 'ZAR']]) ?></div>
                     <div class="column"><?= $this->Form->control('description') ?></div>
-                    <div class="column"><?= $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Sent' => 'Sent', 'Paid' => 'Paid']]) ?></div>
+                    <div class="column"><?= $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Pending Approval' => 'Pending Approval', 'Approved' => 'Approved', 'Sent' => 'Sent', 'Paid' => 'Paid']]) ?></div>
                 </div>
 
                 <h3 style="margin-top: 2rem;">Invoice Items</h3>
@@ -74,20 +75,34 @@
     const productsInfo = <?= json_encode($productsJson) ?>;
     const productsOptions = <?= json_encode($productsOptions) ?>;
     const accountsOptions = <?= json_encode($accounts) ?>;
+    const existingItems = <?= json_encode($invoice->invoice_items ?: []) ?>;
     let rowIndex = 0;
 
-    function addRow() {
+    function addRow(data = null) {
         const container = document.getElementById('items-container');
         const tr = document.createElement('tr');
         tr.id = `row-${rowIndex}`;
 
-        let productHtml = `<select name="invoice_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
+        const prodId = data ? data.product_id : '';
+        const accId = data ? data.account_id : '';
+        const qty = data ? data.quantity : 1;
+        const price = data ? data.unit_price : '0.00';
+        const vatRate = data ? data.vat_rate : '0.00';
+        const hsCode = data && data.hs_code ? data.hs_code : '';
+        const vatType = data && data.vat_type ? data.vat_type : '';
+        const vatAmount = data ? data.vat_amount : '0.00';
+        const lineTotal = data ? data.line_total : '0.00';
+        const itemId = data ? data.id : '';
+
+        let productHtml = itemId ? `<input type="hidden" name="invoice_items[${rowIndex}][id]" value="${itemId}">` : '';
+        productHtml += `<select name="invoice_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
         for (let id in productsOptions) {
-            productHtml += `<option value="${id}">${productsOptions[id]}</option>`;
+            const selected = (id == prodId) ? 'selected' : '';
+            productHtml += `<option value="${id}" ${selected}>${productsOptions[id]}</option>`;
         }
         productHtml += `</select>`;
 
-        let defaultAccountId = Object.keys(accountsOptions).length > 0 ? Object.keys(accountsOptions)[0] : '';
+        let defaultAccountId = accId ? accId : (Object.keys(accountsOptions).length > 0 ? Object.keys(accountsOptions)[0] : '');
         let accountHtml = `<input type="hidden" name="invoice_items[${rowIndex}][account_id]" id="account-${rowIndex}" value="${defaultAccountId}">`;
 
         tr.innerHTML = `
@@ -102,13 +117,13 @@
                     </button>
                 </div>
             </td>
-            <td><input type="number" name="invoice_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="1" onchange="calculateLine(${rowIndex})" class="form-control"></td>
-            <td><input type="number" name="invoice_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
-            <td><input type="text" name="invoice_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" placeholder="HS Code" onchange="handleHsCode(${rowIndex})"></td>
-            <td><input type="text" name="invoice_items[${rowIndex}][vat_type]" id="vat-type-${rowIndex}" class="form-control" placeholder="Type"></td>
-            <td><input type="number" name="invoice_items[${rowIndex}][vat_rate]" id="vat-rate-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
-            <td><input type="number" name="invoice_items[${rowIndex}][vat_amount]" id="vat-amount-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none;"></td>
-            <td><input type="number" name="invoice_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;"></td>
+            <td><input type="number" name="invoice_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="${qty}" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="number" name="invoice_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="${price}" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="text" name="invoice_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" value="${hsCode}" placeholder="HS Code" onchange="handleHsCode(${rowIndex})"></td>
+            <td><input type="text" name="invoice_items[${rowIndex}][vat_type]" id="vat-type-${rowIndex}" class="form-control" value="${vatType}" placeholder="Type"></td>
+            <td><input type="number" name="invoice_items[${rowIndex}][vat_rate]" id="vat-rate-${rowIndex}" step="0.01" value="${vatRate}" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="number" name="invoice_items[${rowIndex}][vat_amount]" id="vat-amount-${rowIndex}" step="0.01" value="${vatAmount}" readonly class="form-control" style="background: #f8fafc; border: none;"></td>
+            <td><input type="number" name="invoice_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="${lineTotal}" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;"></td>
             <td style="text-align: center;"><button type="button" class="btn-danger" style="padding: 4px 8px;" onclick="removeRow(${rowIndex})"><i class="fa fa-trash"></i></button></td>
         `;
 
@@ -177,8 +192,11 @@
         document.getElementById('total').value = grandTotal.toFixed(2);
     }
 
-    // Initialize with one row
     document.addEventListener('DOMContentLoaded', function() {
-        addRow();
+        if (existingItems.length > 0) {
+            existingItems.forEach(item => addRow(item));
+        } else {
+            addRow();
+        }
     });
 </script>

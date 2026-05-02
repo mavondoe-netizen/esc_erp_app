@@ -9,7 +9,8 @@ use Cake\Utility\Text;
  * Receipts Controller
  *
  * Customer payment receipts — records cash collected against an invoice
- * and posts the corresponding ledger entries (Debit Bank, Credit AR).
+ * and posts the corresponding ledger entries (Debit Bank, Credit AR)
+ * once the receipt has been approved.
  */
 class ReceiptsController extends AppController
 {
@@ -29,9 +30,14 @@ class ReceiptsController extends AppController
 
     public function view(int $id)
     {
+        $this->viewBuilder()->setLayout('document');
+        $companyId = $this->request->getAttribute('company_id');
         $receipt = $this->fetchTable('Receipts')
-            ->get($id, contain: ['Customers', 'Accounts', 'Transactions']);
-        $this->set(compact('receipt'));
+            ->get($id, contain: ['Customers', 'Accounts', 'Transactions', 'Companies']);
+
+        $company = $this->fetchTable('Companies')->get($receipt->company_id ?? $companyId);
+
+        $this->set(compact('receipt', 'company'));
     }
 
     public function add()
@@ -44,6 +50,7 @@ class ReceiptsController extends AppController
         if ($this->request->is('post')) {
             $data               = $this->request->getData();
             $data['company_id'] = $companyId;
+            $data['status']     = $data['status'] ?? 'Draft';
             $receipt = $Receipts->patchEntity($receipt, $data);
 
             if ($this->request->getQuery('popup')) {
@@ -55,7 +62,10 @@ class ReceiptsController extends AppController
             }
 
             if ($Receipts->save($receipt)) {
-                $this->_postReceiptToLedger($receipt, $companyId);
+                // Only post to ledger if already Approved (e.g. super-admin direct approval)
+                if (in_array($receipt->status, ['Approved'])) {
+                    $this->_postReceiptToLedger($receipt, $companyId);
+                }
                 $this->Flash->success(__('Receipt saved.'));
                 return $this->redirect(['action' => 'view', $receipt->id]);
             }
@@ -111,38 +121,151 @@ class ReceiptsController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
+    // -----------------------------------------------------------------------
+    // APPROVAL WORKFLOW
+    // -----------------------------------------------------------------------
+
+    public function requestForApproval(int $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Receipts = $this->fetchTable('Receipts');
+        $receipt  = $Receipts->find()->where(['Receipts.id' => $id, 'Receipts.company_id' => $companyId])->first();
+
+        if (!$receipt) {
+            $this->Flash->error(__('Receipt not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $receipt->status = 'Pending Approval';
+        if ($Receipts->save($receipt)) {
+            $workflow = new \App\Service\WorkflowService();
+            $userId   = clone $this->Authentication->getIdentity();
+            $workflow->submitForApproval('Receipts', $receipt->id, $userId->getIdentifier());
+            $this->Flash->success(__('The receipt has been submitted for approval.'));
+        } else {
+            $this->Flash->error(__('The receipt could not be submitted. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function approve(int $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Receipts = $this->fetchTable('Receipts');
+        $receipt  = $Receipts->find()->where(['Receipts.id' => $id, 'Receipts.company_id' => $companyId])->first();
+
+        if (!$receipt) {
+            $this->Flash->error(__('Receipt not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $receipt->status = 'Approved';
+        if ($Receipts->save($receipt)) {
+            $this->_postReceiptToLedger($receipt, $companyId);
+
+            // Sync Approvals record if exists
+            $Approvals = $this->fetchTable('Approvals');
+            $approval  = $Approvals->find()->where(['table_name' => 'Receipts', 'entity_id' => $id, 'status' => 'Pending'])->first();
+            if ($approval) {
+                $approval->status = 'Approved';
+                $Approvals->save($approval);
+            }
+
+            $this->Flash->success(__('The receipt has been approved and transactions posted.'));
+        } else {
+            $this->Flash->error(__('The receipt could not be approved. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function reject(int $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+        $companyId = $this->request->getAttribute('company_id');
+
+        $Receipts = $this->fetchTable('Receipts');
+        $receipt  = $Receipts->find()->where(['Receipts.id' => $id, 'Receipts.company_id' => $companyId])->first();
+
+        if (!$receipt) {
+            $this->Flash->error(__('Receipt not found.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
+        $receipt->status = 'Rejected';
+        if ($Receipts->save($receipt)) {
+            $Approvals = $this->fetchTable('Approvals');
+            $approval  = $Approvals->find()->where(['table_name' => 'Receipts', 'entity_id' => $id, 'status' => 'Pending'])->first();
+            if ($approval) {
+                $approval->status = 'Rejected';
+                $Approvals->save($approval);
+            }
+            $this->Flash->success(__('The receipt has been rejected.'));
+        } else {
+            $this->Flash->error(__('The receipt could not be rejected. Please, try again.'));
+        }
+
+        return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    // -----------------------------------------------------------------------
+    // LEDGER
+    // -----------------------------------------------------------------------
+
     private function _postReceiptToLedger($receipt, int $companyId): void
     {
         $Transactions = $this->fetchTable('Transactions');
         $Accounts     = $this->fetchTable('Accounts');
+        $Rates        = $this->fetchTable('ExchangeRates');
+
+        // Fetch current exchange rate for ZWG conversion
+        $rate = $Rates->find()
+            ->where(['company_id' => $companyId, 'currency' => $receipt->currency])
+            ->where(['date <=' => $receipt->date ?: date('Y-m-d')])
+            ->orderBy(['date' => 'DESC'])
+            ->first();
+        $rateVal = $rate ? (float)$rate->rate_to_base : 1.0;
 
         $arAccount = $Accounts->find()
             ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Receivable%'])
             ->first();
 
-        if (!$arAccount) return;
+        if (!$arAccount) {
+            $arAccount = $Accounts->newEntity([
+                'name'       => 'Accounts Receivable',
+                'category'   => 'Accounts Receivable',
+                'type'       => 'Asset',
+                'company_id' => $companyId,
+            ]);
+            $Accounts->save($arAccount);
+        }
 
         $bankAccountId = $receipt->account_id ?? null;
         if (!$bankAccountId) return;
 
-        $date     = $receipt->date ? $receipt->date->format('Y-m-d') : date('Y-m-d');
+        $date     = $receipt->date ? (is_string($receipt->date) ? $receipt->date : $receipt->date->format('Y-m-d')) : date('Y-m-d');
         $amount   = (float)($receipt->amount ?? 0);
         $currency = $receipt->currency ?? 'USD';
         $groupId  = Text::uuid();
-        $ref      = "RCT-{$receipt->id}";
+        $ref      = $receipt->reference ?? "RCT-{$receipt->id}";
 
         $Transactions->getConnection()->transactional(function () use (
             $Transactions, $receipt, $arAccount, $bankAccountId,
-            $date, $amount, $currency, $groupId, $ref, $companyId
+            $date, $amount, $currency, $groupId, $ref, $companyId, $rateVal
         ) {
-            // Debit: Bank/cash account
+            // Debit: Bank/cash account (money comes in)
             $dr = $Transactions->newEntity([
                 'company_id'        => $companyId,
                 'date'              => $date,
                 'description'       => "Receipt $ref",
                 'currency'          => $currency,
                 'amount'            => $amount,
-                'zwg'               => $amount,
+                'zwg'               => $amount * $rateVal,
                 'type'              => 'Debit',
                 'account_id'        => $bankAccountId,
                 'customer_id'       => $receipt->customer_id ?? null,
@@ -150,14 +273,14 @@ class ReceiptsController extends AppController
             ], ['validate' => false]);
             $Transactions->save($dr, ['check_balance' => false]);
 
-            // Credit: AR
+            // Credit: Accounts Receivable (reduces outstanding balance)
             $cr = $Transactions->newEntity([
                 'company_id'        => $companyId,
                 'date'              => $date,
                 'description'       => "Receipt $ref",
                 'currency'          => $currency,
                 'amount'            => $amount,
-                'zwg'               => $amount,
+                'zwg'               => $amount * $rateVal,
                 'type'              => 'Credit',
                 'account_id'        => $arAccount->id,
                 'customer_id'       => $receipt->customer_id ?? null,
@@ -169,7 +292,6 @@ class ReceiptsController extends AppController
 
     private function _reverseReceiptLedger(int $receiptId, int $companyId): void
     {
-        // Receipts link to transactions via receipts_transactions join table
         $Transactions = $this->fetchTable('Transactions');
         $conn = $Transactions->getConnection();
         $stmt = $conn->execute(

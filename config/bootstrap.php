@@ -149,7 +149,7 @@ if (!$fullBaseUrl) {
      *
      * See also https://book.cakephp.org/5/en/controllers/request-response.html#trusting-proxy-headers
      */
-    $trustProxy = false;
+    $trustProxy = true;
 
     $s = null;
     if (env('HTTPS') || ($trustProxy && env('HTTP_X_FORWARDED_PROTO') === 'https')) {
@@ -173,6 +173,7 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
 Security::setSalt(Configure::consume('Security.salt'));
+
 
 /*
  * Setup detectors for mobile and tablet.

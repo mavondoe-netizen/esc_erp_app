@@ -41,7 +41,9 @@ class UsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->addBehavior('TenantAware');
+        $this->addBehavior('TenantAware', [
+            'shareWith' => ['role_id' => 3], // Super admins visible in all companies
+        ]);
 
         $this->setTable('users');
         $this->setDisplayField('email');
@@ -56,7 +58,7 @@ class UsersTable extends Table
         ]);
         $this->belongsTo('Roles', [
             'foreignKey' => 'role_id',
-            'joinType'   => 'LEFT',
+            'joinType'   => 'INNER',
         ]);
         
         $this->belongsTo('Companies', [
@@ -89,8 +91,8 @@ class UsersTable extends Table
             ->notEmptyString('password');
         $validator
             ->integer('role_id')
-            ->maxLength('role_id', 151)
-          ;
+            ->requirePresence('role_id', 'create')
+            ->notEmptyString('role_id');
 
 
         return $validator;
@@ -106,6 +108,7 @@ class UsersTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
+        $rules->add($rules->existsIn(['role_id'], 'Roles'), ['errorField' => 'role_id']);
 
         return $rules;
     }

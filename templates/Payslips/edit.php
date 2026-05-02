@@ -302,11 +302,14 @@
     function calculateTaxes() {
         const formData = new FormData(document.getElementById('payslip-form'));
         const formObj = new URLSearchParams(formData).toString();
-        
-        const btn = event.currentTarget || document.activeElement;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Calculating...';
-        btn.disabled = true;
+
+        // Safe button reference — works both from onclick and setTimeout
+        const btn = document.querySelector('button[onclick="calculateTaxes()"]');
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Calculating...';
+            btn.disabled = true;
+        }
 
         $.ajax({
             url: "<?= $this->Url->build(['action' => 'calculateTaxes']) ?>",
@@ -317,7 +320,7 @@
                 if(response.success) {
                     document.querySelectorAll('.tax-row').forEach(row => row.remove());
                     response.data.forEach(tax => addRow(tax.item_type, tax));
-                    
+
                     if (response.updated_items && response.updated_items.length > 0) {
                         response.updated_items.forEach(ui => {
                             const inp = document.querySelector(`input[name="payslip_items[${ui.index}][amount]"]`);
@@ -332,9 +335,15 @@
                     alert('Error calculating taxes.');
                 }
             },
+            error: function(xhr) {
+                console.error('Tax calculation failed:', xhr.status, xhr.responseText);
+                alert('Tax calculation failed. Please try again.');
+            },
             complete: function() {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                if (btn) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
             }
         });
     }
