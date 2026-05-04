@@ -139,6 +139,56 @@ trait ImportExportTrait
     }
 
     /**
+     * GET /[controller]/export
+     * Exports records to a CSV file.
+     */
+    public function export()
+    {
+        $table = $this->fetchTable();
+        $query = $table->find();
+        
+        // Handle potential tenant scoping if required (usually handled by TenantAwareBehavior)
+        $companyId = $this->request->getAttribute('company_id');
+        if ($companyId && $table->hasField('company_id') && !$table->hasBehavior('TenantAware')) {
+            $query->where([$table->aliasField('company_id') => $companyId]);
+        }
+        
+        $records = $query->all();
+        $columns = $table->getSchema()->columns();
+        
+        $exclude = ['company_id', 'lft', 'rght', 'level', 'deleted', 'deleted_at'];
+        $headers = array_filter($columns, function($col) use ($exclude) {
+            return !in_array($col, $exclude);
+        });
+        
+        $this->response = $this->response->withType('csv')
+            ->withDownload(Inflector::underscore($this->getName()) . '_export.csv');
+            
+        $stream = fopen('php://temp', 'w+');
+        fputcsv($stream, $headers); // Row 1: Headers
+        
+        foreach ($records as $record) {
+            $row = [];
+            foreach ($headers as $col) {
+                $val = $record->get($col);
+                if ($val instanceof \Cake\I18n\DateTime || $val instanceof \Cake\I18n\Date || $val instanceof \DateTimeInterface) {
+                    $val = $val->format('Y-m-d H:i:s');
+                } elseif (is_array($val) || is_object($val)) {
+                    $val = json_encode($val);
+                }
+                $row[] = $val;
+            }
+            fputcsv($stream, $row);
+        }
+        
+        rewind($stream);
+        $content = stream_get_contents($stream);
+        fclose($stream);
+        
+        return $this->response->withStringBody($content);
+    }
+
+    /**
      * Helper to render JSON responses for AJAX calls.
      */
     private function renderJson(bool $success, string $message, array $errors = [])

@@ -153,6 +153,8 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                             <?= $this->Html->link('<i class="fas fa-landmark"></i> ZIMRA Tax Return', ['controller' => 'ZimraReports', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ZimraReports' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-exchange-alt"></i> Exchange Rates', ['controller' => 'ExchangeRates', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'ExchangeRates' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-chart-pie"></i> Budgets', ['controller' => 'Budgets', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Budgets' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-bell"></i> Receivables Alerts', ['controller' => 'Alerts', 'action' => 'receivables'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Alerts' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-invoice-dollar"></i> Financial Statements', ['controller' => 'Statements', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'Statements' ? ' active' : '')]) ?>
                         </div>
                     </div>
 
@@ -300,6 +302,24 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                             <?= $this->Html->link('<i class="fas fa-tools"></i> Repairs', ['controller' => 'AssetRepairs', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetRepairs' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-trash-alt"></i> Disposals', ['controller' => 'AssetDisposals', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetDisposals' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-cogs"></i> Configuration', ['controller' => 'AssetCategories', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'AssetCategories' ? ' active' : '')]) ?>
+                        </div>
+                    </div>
+ 
+                    <!-- SCHOOL MANAGEMENT -->
+                    <?php $ga = $groupActive(['SchStudents', 'SchAttendance', 'SchClasses', 'SchSubjects', 'SchExams', 'SchResults', 'SchFees', 'SchTeachers']); ?>
+                    <div class="nav-group <?= $ga ?>">
+                        <div class="nav-group-header" onclick="toggleGroup(this)">
+                            <span><i class="fas fa-graduation-cap"></i> School Management</span>
+                            <i class="fas fa-chevron-down nav-arrow"></i>
+                        </div>
+                        <div class="nav-group-body">
+                            <?= $this->Html->link('<i class="fas fa-user-graduate"></i> Students', ['controller' => 'SchStudents', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchStudents' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-chalkboard-teacher"></i> Teachers', ['controller' => 'SchTeachers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchTeachers' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-calendar-check"></i> Attendance', ['controller' => 'SchAttendance', 'action' => 'mark'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchAttendance' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-school"></i> Classes & Streams', ['controller' => 'SchClasses', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchClasses' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-book"></i> Subjects', ['controller' => 'SchSubjects', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchSubjects' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-file-invoice-dollar"></i> School Fees', ['controller' => 'SchFees', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchFees' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-poll-h"></i> Exam Results', ['controller' => 'SchResults', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchResults' ? ' active' : '')]) ?>
                         </div>
                     </div>
 

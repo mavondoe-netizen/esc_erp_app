@@ -6,6 +6,7 @@
  * @var string $asOfDate
  * @var string $currency
  */
+$rate = (float)$this->request->getQuery('interest_rate', 10);
 ?>
 <div class="reports index content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
@@ -22,6 +23,12 @@
                     <?= $this->Form->select('currency', ['USD' => 'USD', 'ZWG' => 'ZWG'], ['value' => $currency, 'class' => 'form-select form-select-sm']) ?>
                 </div>
                 <div class="col-auto">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light border-end-0" style="font-size: 0.75rem;">Rate %</span>
+                        <?= $this->Form->number('interest_rate', ['value' => $this->request->getQuery('interest_rate', 10), 'class' => 'form-control', 'style' => 'width: 60px;']) ?>
+                    </div>
+                </div>
+                <div class="col-auto">
                     <button type="submit" class="btn btn-primary btn-sm">Generate</button>
                     <button type="button" onclick="window.print()" class="btn btn-secondary btn-sm"><i class="fa fa-print"></i></button>
                 </div>
@@ -31,7 +38,7 @@
 
     <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-hover mb-0" style="min-width: 800px;">
+            <table class="table table-hover mb-0 no-dt" style="min-width: 800px;">
                 <thead style="background: #f8fafc;">
                     <tr>
                         <th style="padding: 15px 20px;">Customer Name</th>
@@ -39,13 +46,14 @@
                         <th class="text-end" style="width: 140px;">31 - 60 Days</th>
                         <th class="text-end" style="width: 140px;">61 - 90 Days</th>
                         <th class="text-end" style="width: 140px;">Over 90 Days</th>
+                        <th class="text-end" style="width: 140px; color: #4f46e5;">Potential Interest</th>
                         <th class="text-end" style="width: 150px; background: #f1f5f9; font-weight: 700;">Total Balance</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($report)): ?>
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">No outstanding receivables found for the selected criteria.</td>
+                            <td colspan="7" class="text-center py-5 text-muted">No outstanding receivables found for the selected criteria.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($report as $customer => $data): ?>
@@ -55,6 +63,10 @@
                             <td class="text-end text-warning"><?= $data['30'] > 0 ? $this->Number->currency($data['30'], $currency) : '—' ?></td>
                             <td class="text-end text-orange" style="color: #f97316;"><?= $data['60'] > 0 ? $this->Number->currency($data['60'], $currency) : '—' ?></td>
                             <td class="text-end text-danger"><?= $data['90'] > 0 ? $this->Number->currency($data['90'], $currency) : '—' ?></td>
+                            <?php 
+                                $potentialInterest = $data['total'] * ($rate / 100);
+                            ?>
+                            <td class="text-end fw-bold" style="color: #4f46e5;"><?= $potentialInterest > 0 ? $this->Number->currency($potentialInterest, $currency) : '—' ?></td>
                             <td class="text-end" style="background: #f8fafc; font-weight: 700; color: var(--primary-color);"><?= $this->Number->currency($data['total'], $currency) ?></td>
                         </tr>
                         <?php endforeach; ?>
@@ -67,6 +79,7 @@
                         <td class="text-end"><?= $this->Number->currency($totals['30'], $currency) ?></td>
                         <td class="text-end"><?= $this->Number->currency($totals['60'], $currency) ?></td>
                         <td class="text-end"><?= $this->Number->currency($totals['90'], $currency) ?></td>
+                        <td class="text-end fw-bold" style="color: #4f46e5;"><?= $this->Number->currency($totals['total'] * ($rate / 100), $currency) ?></td>
                         <td class="text-end" style="background: #e2e8f0; font-size: 1.1rem; color: #0f172a;"><?= $this->Number->currency($totals['total'], $currency) ?></td>
                     </tr>
                 </tfoot>

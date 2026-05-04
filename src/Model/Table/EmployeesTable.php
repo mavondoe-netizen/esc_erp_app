@@ -67,6 +67,9 @@ class EmployeesTable extends Table
         $this->hasMany('Users', [
             'foreignKey' => 'employee_id',
         ]);
+        $this->hasOne('SchTeachers', [
+            'foreignKey' => 'employee_id',
+        ]);
     }
 
     /**

@@ -47,10 +47,34 @@ class ReceiptsController extends AppController
         $Receipts = $this->fetchTable('Receipts');
         $receipt  = $Receipts->newEmptyEntity();
 
+        // Pre-fill from student profile context
+        $studentId = $this->request->getQuery('student_id');
+        $prefilledCustomerId = null;
+        if ($studentId) {
+            $receipt->student_id = (int)$studentId;
+            // Try to find the student's guardian as a customer
+            $student = $this->fetchTable('SchStudents')->get((int)$studentId, contain: ['Contacts']);
+            if ($student->hasValue('contact')) {
+                $customer = $this->fetchTable('Customers')->find()
+                    ->where(['contact_id' => $student->contact->id, 'company_id' => $companyId])
+                    ->first();
+                if ($customer) {
+                    $prefilledCustomerId = $customer->id;
+                    $receipt->customer_id = $customer->id;
+                }
+            }
+        }
+
         if ($this->request->is('post')) {
             $data               = $this->request->getData();
             $data['company_id'] = $companyId;
             $data['status']     = $data['status'] ?? 'Draft';
+
+            // Carry student_id from query string if not in POST
+            if (empty($data['student_id']) && $studentId) {
+                $data['student_id'] = (int)$studentId;
+            }
+
             $receipt = $Receipts->patchEntity($receipt, $data);
 
             if ($this->request->getQuery('popup')) {
@@ -67,13 +91,17 @@ class ReceiptsController extends AppController
                     $this->_postReceiptToLedger($receipt, $companyId);
                 }
                 $this->Flash->success(__('Receipt saved.'));
+                // Redirect back to student if coming from student profile
+                if ($studentId) {
+                    return $this->redirect(['controller' => 'SchStudents', 'action' => 'view', $studentId]);
+                }
                 return $this->redirect(['action' => 'view', $receipt->id]);
             }
             $this->Flash->error(__('Could not save receipt.'));
         }
 
         [$customers, $accounts] = $this->_dropdowns($companyId);
-        $this->set(compact('receipt', 'customers', 'accounts'));
+        $this->set(compact('receipt', 'customers', 'accounts', 'studentId', 'prefilledCustomerId'));
     }
 
     public function edit(int $id)

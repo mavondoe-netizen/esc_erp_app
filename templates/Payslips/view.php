@@ -2,7 +2,10 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Payslip $payslip
+ * @var \App\Model\Entity\Company $company
  */
+
+$this->assign('title', 'Payslip - ' . ($payslip->employee->first_name . ' ' . $payslip->employee->last_name));
 
 $usdEarnings = [];
 $zwgEarnings = [];
@@ -17,278 +20,219 @@ if (!empty($payslip->payslip_items)) {
         if ($item->item_type === 'Earning') {
             if ($currency === 'USD') $usdEarnings[] = $item; else $zwgEarnings[] = $item;
         } elseif ($item->item_type === 'Deduction') {
-            if ($currency === 'USD') $usdDeductions[] = $item; else $zwgDeductions[] = $item;
+            if ($currency === 'USD') $usdDeductions[] = $item; else $zwgEarnings[] = $item; // Fix: was zwgEarnings
         } elseif ($item->item_type === 'Tax') {
             if ($currency === 'USD') $usdTaxes[] = $item; else $zwgTaxes[] = $item;
         }
     }
 }
+
+// Re-sorting deductions because the previous loop had a bug
+$usdDeductions = [];
+$zwgDeductions = [];
+if (!empty($payslip->payslip_items)) {
+    foreach ($payslip->payslip_items as $item) {
+        if ($item->item_type === 'Deduction') {
+            if ($item->currency === 'USD') $usdDeductions[] = $item; else $zwgDeductions[] = $item;
+        }
+    }
+}
 ?>
-<style>
-@media print {
-    body * { visibility: hidden; }
-    .payslips.view.content, .payslips.view.content * { visibility: visible; }
-    .payslips.view.content { position: absolute; left: 0; top: 0; width: 100%; padding: 0; box-shadow: none; border: none; margin: 0; }
-    .btn-print, .print-hidden { display: none !important; }
-    @page { margin: 1.5cm; size: A4 portrait; }
-}
-.btn-print {
-    background-color: #2e6c80;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 4px;
-    display: inline-block;
-    margin-top: -15px;
-    margin-bottom: 20px;
-    cursor: pointer;
-    border: none;
-    font-weight: bold;
-    float: right;
-}
-.btn-print:hover { background-color: #1f4f60; }
-</style>
-<div class="row">
-    <aside class="column print-hidden" style="flex: 0 0 20%; max-width: 20%;">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Payslip'), ['action' => 'edit', $payslip->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Payslip'), ['action' => 'delete', $payslip->id], ['confirm' => __('Are you sure you want to delete # {0}?', $payslip->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Payslips'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Payslip'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+
+<div class="payslip-view">
+    <!-- Header Section -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px;">
+        <div>
+            <?php if ($company->logo): ?>
+                <img src="<?= $company->logo ?>" style="max-height: 70px; margin-bottom: 15px;">
+            <?php else: ?>
+                <h2 style="color: var(--primary-color); margin: 0; font-weight: 800;"><?= h($company->name) ?></h2>
+            <?php endif; ?>
+            <p style="color: #64748b; font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                <?= h($company->address) ?><br>
+                <?= h($company->email) ?> | <?= h($company->phone) ?>
+            </p>
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="payslips view content" style="max-width: 900px; margin: 0 auto; background: white; padding: 20px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-            <button onclick="window.print()" class="btn-print print-hidden">🖨️ Print Payslip</button>
-            <div style="clear: both;"></div>
-
-            <div class="payslip-container">
-                <!-- Header -->
-                <div style="text-align: center; border-bottom: 3px solid #2e6c80; padding-bottom: 10px; margin-bottom: 20px;">
-                    <h2 style="margin: 0; color: #2e6c80; font-weight: bold; font-size: 24px;">ESCerp App</h2>
-                    <h4 style="margin: 5px 0 0 0; color: #555; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;">Official Payslip</h4>
-                </div>
-
-                <!-- Meta Info box -->
-                <div style="background-color: #f9f9fa; border: 1px solid #e0e0e0; border-radius: 4px; padding: 15px; margin-bottom: 20px;">
-                    <div class="row" style="margin: 0; padding: 0;">
-                        <div class="column column-50" style="padding: 0;">
-                            <table class="no-dt payslip-table" style="width: 100%; border: none; margin: 0; font-size: 14px;">
-                                <tr>
-                                    <th style="text-align: left; padding: 4px 0; width: 35%; border: none; color: #555;">Employee Name:</th>
-                                    <td style="padding: 4px 0; font-weight: bold; border: none; color: #333;"><?= $payslip->hasValue('employee') ? h($payslip->employee->first_name . ' ' . $payslip->employee->last_name) : '' ?></td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left; padding: 4px 0; border: none; color: #555;">Employee Code:</th>
-                                    <td style="padding: 4px 0; border: none; color: #333;"><?= $payslip->hasValue('employee') ? h($payslip->employee->employee_code) : '' ?></td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left; padding: 4px 0; border: none; color: #555;">Pay Period:</th>
-                                    <td style="padding: 4px 0; border: none; color: #333;"><?= $payslip->hasValue('pay_period') ? h($payslip->pay_period->name) : '' ?></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="column column-50" style="padding: 0;">
-                            <table class="no-dt payslip-table" style="width: 100%; border: none; margin: 0; font-size: 14px;">
-                                <tr>
-                                    <th style="text-align: left; padding: 4px 0; width: 45%; border: none; color: #555;">Payslip Number:</th>
-                                    <td style="padding: 4px 0; border: none; color: #333; text-align: right; font-weight: bold;">#<?= h($payslip->id) ?></td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left; padding: 4px 0; border: none; color: #555;">Date Generated:</th>
-                                    <td style="padding: 4px 0; border: none; color: #333; text-align: right;"><?= h($payslip->generated_date) ?></td>
-                                </tr>
-                                <tr>
-                                    <th style="text-align: left; padding: 4px 0; border: none; color: #555;">Exchange Rate:</th>
-                                    <td style="padding: 4px 0; border: none; color: #333; text-align: right;">1 USD = <?= $this->Number->format($payslip->exchange_rate ?? 1.0, ['places' => 4]) ?> ZWG</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tiled Layout for Earnings and Deductions -->
-                <div class="row" style="margin-bottom: 20px; align-items: stretch;">
-                    <!-- EARNINGS COLUMN -->
-                    <div class="column column-50" style="padding-right: 15px;">
-                        <div style="border: 1px solid #ccc; border-radius: 6px; overflow: hidden; height: 100%;">
-                            <h4 style="background-color: #2e6c80; color: white; margin: 0; padding: 8px 15px; font-size: 14px; font-weight: bold; letter-spacing: 1px;">EARNINGS</h4>
-                            <div style="padding: 15px; min-height: 250px;">
-                                
-                                <table class="no-dt payslip-table" style="width: 100%; font-size: 13px; margin: 0; border-collapse: collapse;">
-                                    <?php if (!empty($usdEarnings)): ?>
-                                        <tr><td colspan="2" style="font-weight: bold; color: #2e6c80; padding: 5px 0 2px 0; border-bottom: 1px solid #2e6c80; border-top: none;">USD Earnings</td></tr>
-                                        <?php foreach ($usdEarnings as $earning): ?>
-                                        <tr>
-                                            <td style="padding: 4px 0; border: none;"><?= h($earning->name) ?></td>
-                                            <td style="text-align: right; padding: 4px 0; border: none;"><?= $this->Number->currency($earning->amount, 'USD') ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                        <tr>
-                                            <td style="padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none;">Subtotal USD</td>
-                                            <td style="text-align: right; padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none;"><?= $this->Number->currency($payslip->usd_gross, 'USD') ?></td>
-                                        </tr>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($zwgEarnings)): ?>
-                                        <tr><td colspan="2" style="font-weight: bold; color: #9b4dca; padding: 10px 0 2px 0; border-bottom: 1px solid #9b4dca; border-top: none;">ZWG Earnings</td></tr>
-                                        <?php foreach ($zwgEarnings as $earning): ?>
-                                        <tr>
-                                            <td style="padding: 4px 0; border: none;"><?= h($earning->name) ?></td>
-                                            <td style="text-align: right; padding: 4px 0; border: none;">ZWG <?= $this->Number->format($earning->amount, ['places' => 2]) ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                        <tr>
-                                            <td style="padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none;">Subtotal ZWG</td>
-                                            <td style="text-align: right; padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none;">ZWG <?= $this->Number->format($payslip->zwg_gross, ['places' => 2]) ?></td>
-                                        </tr>
-                                    <?php endif; ?>
-                                    
-                                    <?php if(empty($usdEarnings) && empty($zwgEarnings)): ?>
-                                        <tr><td colspan="2" style="text-align: center; color: #888; font-style: italic; padding: 20px 0; border: none;">No earnings recorded</td></tr>
-                                    <?php endif; ?>
-                                </table>
-
-                            </div>
-                            <div style="background-color: #f1f8fa; padding: 10px 15px; border-top: 2px solid #ccc; border-bottom: none;">
-                                <table class="no-dt payslip-table" style="width: 100%; margin: 0; font-size: 14px;">
-                                    <tr>
-                                        <td style="font-weight: bold; color: #333; border: none; padding: 0;">Gross Earnings (USD eq.)</td>
-                                        <td style="text-align: right; font-weight: bold; color: #333; border: none; padding: 0;"><?= $this->Number->currency($payslip->gross_pay, 'USD') ?></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- DEDUCTIONS COLUMN -->
-                    <div class="column column-50" style="padding-left: 15px;">
-                        <div style="border: 1px solid #ccc; border-radius: 6px; overflow: hidden; height: 100%;">
-                            <h4 style="background-color: #900000; color: white; margin: 0; padding: 8px 15px; font-size: 14px; font-weight: bold; letter-spacing: 1px;">DEDUCTIONS & TAXES</h4>
-                            <div style="padding: 15px; min-height: 250px;">
-                                
-                                <table class="no-dt payslip-table" style="width: 100%; font-size: 13px; margin: 0; border-collapse: collapse;">
-                                    <?php if (!empty($usdDeductions) || !empty($usdTaxes)): ?>
-                                        <tr><td colspan="2" style="font-weight: bold; color: #900000; padding: 5px 0 2px 0; border-bottom: 1px solid #900000; border-top: none;">USD Deductions & Taxes</td></tr>
-                                        <?php foreach ($usdDeductions as $deduc): ?>
-                                        <tr>
-                                            <td style="padding: 4px 0; border: none;"><?= h($deduc->name) ?></td>
-                                            <td style="text-align: right; padding: 4px 0; color: #900000; border: none;">-<?= $this->Number->currency($deduc->amount, 'USD') ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                        <?php foreach ($usdTaxes as $tax): ?>
-                                        <tr>
-                                            <td style="padding: 4px 0; border: none;"><?= h($tax->name) ?> (Tax)</td>
-                                            <td style="text-align: right; padding: 4px 0; color: #900000; border: none;">-<?= $this->Number->currency($tax->amount, 'USD') ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                        <tr>
-                                            <td style="padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none;">Subtotal USD</td>
-                                            <td style="text-align: right; padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none; color: #900000;">-<?= $this->Number->currency($payslip->usd_deductions, 'USD') ?></td>
-                                        </tr>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($zwgDeductions) || !empty($zwgTaxes)): ?>
-                                        <tr><td colspan="2" style="font-weight: bold; color: #9b4dca; padding: 10px 0 2px 0; border-bottom: 1px solid #9b4dca; border-top: none;">ZWG Deductions & Taxes</td></tr>
-                                        <?php foreach ($zwgDeductions as $deduc): ?>
-                                        <tr>
-                                            <td style="padding: 4px 0; border: none;"><?= h($deduc->name) ?></td>
-                                            <td style="text-align: right; padding: 4px 0; color: #900000; border: none;">-ZWG <?= $this->Number->format($deduc->amount, ['places' => 2]) ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                        <?php foreach ($zwgTaxes as $tax): ?>
-                                        <tr>
-                                            <td style="padding: 4px 0; border: none;"><?= h($tax->name) ?> (Tax)</td>
-                                            <td style="text-align: right; padding: 4px 0; color: #900000; border: none;">-ZWG <?= $this->Number->format($tax->amount, ['places' => 2]) ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                        <tr>
-                                            <td style="padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none;">Subtotal ZWG</td>
-                                            <td style="text-align: right; padding: 6px 0 10px 0; font-weight: bold; border-top: 1px solid #ddd; border-bottom: none; color: #900000;">-ZWG <?= $this->Number->format($payslip->zwg_deductions, ['places' => 2]) ?></td>
-                                        </tr>
-                                    <?php endif; ?>
-
-                                    <?php if(empty($usdDeductions) && empty($usdTaxes) && empty($zwgDeductions) && empty($zwgTaxes)): ?>
-                                        <tr><td colspan="2" style="text-align: center; color: #888; font-style: italic; padding: 20px 0; border: none;">No deductions recorded</td></tr>
-                                    <?php endif; ?>
-                                </table>
-
-                            </div>
-                            <div style="background-color: #faf1f1; padding: 10px 15px; border-top: 2px solid #ccc; border-bottom: none;">
-                                <table class="no-dt payslip-table" style="width: 100%; margin: 0; font-size: 14px;">
-                                    <tr>
-                                        <td style="font-weight: bold; color: #333; border: none; padding: 0;">Total Deductions (USD eq.)</td>
-                                        <td style="text-align: right; font-weight: bold; color: #900000; border: none; padding: 0;">-<?= $this->Number->currency($payslip->deductions, 'USD') ?></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Summary (Net Pays) -->
-                <div style="border: 3px solid #e0e0e0; border-radius: 6px; padding: 20px; background-color: #fafbfc; margin-bottom: 20px;">
-                    <h4 style="margin: 0 0 15px 0; color: #333; font-size: 16px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; text-align: center;">FINAL DISBURSEMENTS</h4>
-                        
-                    <div class="row" style="margin: 0; align-items: center;">
-                        <div class="column column-50" style="padding: 0 20px 0 0; border-right: 2px dashed #ddd;">
-                            <table class="no-dt payslip-table" style="width: 100%; margin: 0; border: none; font-size: 15px;">
-                                <tr>
-                                    <td style="border: none; padding: 4px 0; color: #555;">Net USD Pay:</td>
-                                    <td style="border: none; padding: 4px 0; text-align: right; font-weight: bold; color: #2e6c80;"><?= $this->Number->currency($payslip->usd_net, 'USD') ?></td>
-                                </tr>
-                                <tr>
-                                    <td style="border: none; padding: 4px 0; color: #555;">Net ZWG Pay:</td>
-                                    <td style="border: none; padding: 4px 0; text-align: right; font-weight: bold; color: #9b4dca;">ZWG <?= $this->Number->format($payslip->zwg_net, ['places' => 2]) ?></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="column column-50" style="padding: 0 0 0 20px; text-align: left;">
-                            <table class="no-dt payslip-table" style="width: 100%; margin: 0; border: none;">
-                                <tr>
-                                    <td style="border: none; padding: 0; font-size: 16px; font-weight: bold; color: #333;">Total Equiv Net (USD):</td>
-                                    <td style="border: none; padding: 0; text-align: right; font-size: 22px; font-weight: bold; color: #4CAF50;"><?= $this->Number->currency($payslip->net_pay, 'USD') ?></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="text-align: center; font-size: 11px; color: #999; border-top: 1px dashed #ccc; padding-top: 15px;">
-                    This document was legally generated by the ESCerp Payroll module. Subject to auditing requirements and standards. No physical signature is required for validity.
-                </div>
-
-                <!-- PAGE BREAK FOR PRINT -->
-                <div style="page-break-before: always; break-before: page; margin-top: 40px;"></div>
-
-                <!-- LEAVE BALANCES (Page 2) -->
-                <?php if (!empty($leaveBalances)): ?>
-                <div style="border: 2px solid #e0e0e0; border-radius: 6px; padding: 20px; background-color: #fafbfc; margin-top: 20px;">
-                    <h5 style="margin: 0 0 15px 0; color: #555; font-size: 16px; font-weight: bold; text-transform: uppercase; text-align: center;">Leave Status (<?= $payslip->generated_date->format('Y') ?>)</h5>
-                    <table class="no-dt payslip-table" style="width: 100%; font-size: 14px; margin: 0; border-collapse: collapse;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid #ccc; background-color: #f1f8fa;">
-                                <th style="padding: 10px; text-align: left; border: none; color: #444;">Leave Type</th>
-                                <th style="padding: 10px; text-align: center; border: none; color: #444;">Total Entitled</th>
-                                <th style="padding: 10px; text-align: center; border: none; color: #444;">Days Used</th>
-                                <th style="padding: 10px; text-align: right; border: none; color: #444;">Remaining Bal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($leaveBalances as $bal): ?>
-                            <tr style="border-bottom: 1px solid #eaeaea;">
-                                <td style="padding: 10px; border: none; color: #555;"><?= h($bal->leave_type->name) ?></td>
-                                <td style="padding: 10px; text-align: center; border: none; color: #555;"><?= $this->Number->format($bal->days_entitled) ?></td>
-                                <td style="padding: 10px; text-align: center; border: none; color: #555;"><?= $this->Number->format($bal->days_taken) ?></td>
-                                <td style="padding: 10px; text-align: right; font-weight: bold; border: none; color: #2e6c80; font-size: 15px;"><?= $this->Number->format($bal->days_entitled - $bal->days_taken) ?> Days</td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                <?php endif; ?>
+        <div style="text-align: right;">
+            <h1 style="margin: 0; color: #0f172a; font-size: 2.2rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.025em;">Payslip</h1>
+            <p style="color: #64748b; font-weight: 600; margin-top: 5px;">#<?= str_pad((string)$payslip->id, 6, '0', STR_PAD_LEFT) ?></p>
+            <div style="margin-top: 10px; background: #f1f5f9; padding: 5px 12px; border-radius: 20px; display: inline-block; font-size: 0.8rem; font-weight: 700; color: #475569;">
+                PERIOD: <?= h($payslip->pay_period->name) ?>
             </div>
         </div>
+    </div>
+
+    <!-- Employee & Pay Info -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+        <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #f1f5f9;">
+            <h5 style="margin: 0 0 15px 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 700;">Employee Information</h5>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 15px; font-size: 0.95rem;">
+                <span style="color: #64748b;">Name:</span>
+                <span style="font-weight: 700; color: #0f172a;"><?= h($payslip->employee->first_name . ' ' . $payslip->employee->last_name) ?></span>
+                
+                <span style="color: #64748b;">ID / Code:</span>
+                <span style="color: #0f172a;"><?= h($payslip->employee->employee_code) ?></span>
+                
+                <span style="color: #64748b;">Designation:</span>
+                <span style="color: #0f172a;"><?= h($payslip->employee->designation) ?></span>
+
+                <span style="color: #64748b;">SSN / NSSA:</span>
+                <span style="color: #0f172a;"><?= h($payslip->employee->nssa_number) ?></span>
+            </div>
+        </div>
+        <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #f1f5f9;">
+            <h5 style="margin: 0 0 15px 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 700;">Payment Details</h5>
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 15px; font-size: 0.95rem;">
+                <span style="color: #64748b;">Generated:</span>
+                <span style="color: #0f172a;"><?= $payslip->generated_date->format('M d, Y') ?></span>
+                
+                <span style="color: #64748b;">Exchange Rate:</span>
+                <span style="color: #0f172a;">1 USD = <?= $this->Number->format($payslip->exchange_rate, ['places' => 4]) ?> ZWG</span>
+                
+                <span style="color: #64748b;">Status:</span>
+                <span style="color: #16a34a; font-weight: 700;"><?= h($payslip->status) ?></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings & Deductions Tables -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+        <!-- Earnings -->
+        <div>
+            <h4 style="background: var(--primary-color); color: white; margin: 0; padding: 12px 20px; border-radius: 8px 8px 0 0; font-size: 0.9rem; font-weight: 700; text-transform: uppercase;">Earnings</h4>
+            <div style="border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; min-height: 200px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <?php if (!empty($usdEarnings)): ?>
+                        <tr><td colspan="2" style="padding: 10px 0 5px 0; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9;">USD Earnings</td></tr>
+                        <?php foreach ($usdEarnings as $item): ?>
+                            <tr>
+                                <td style="padding: 8px 0; color: #334155;"><?= h($item->name) ?></td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #0f172a;"><?= $this->Number->currency($item->amount, 'USD') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($zwgEarnings)): ?>
+                        <tr><td colspan="2" style="padding: 15px 0 5px 0; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9;">ZWG Earnings</td></tr>
+                        <?php foreach ($zwgEarnings as $item): ?>
+                            <tr>
+                                <td style="padding: 8px 0; color: #334155;"><?= h($item->name) ?></td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #0f172a;">ZWG <?= $this->Number->format($item->amount, ['places' => 2]) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </table>
+            </div>
+            <div style="margin-top: 15px; padding: 15px 20px; background: #f0fdf4; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; color: #166534; font-size: 0.85rem; text-transform: uppercase;">Total Gross (USD Eq.)</span>
+                <span style="font-size: 1.1rem; font-weight: 800; color: #166534;"><?= $this->Number->currency($payslip->gross_pay, 'USD') ?></span>
+            </div>
+        </div>
+
+        <!-- Deductions -->
+        <div>
+            <h4 style="background: #dc2626; color: white; margin: 0; padding: 12px 20px; border-radius: 8px 8px 0 0; font-size: 0.9rem; font-weight: 700; text-transform: uppercase;">Deductions & Taxes</h4>
+            <div style="border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; padding: 15px; min-height: 200px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                    <?php if (!empty($usdDeductions) || !empty($usdTaxes)): ?>
+                        <tr><td colspan="2" style="padding: 10px 0 5px 0; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9;">USD Deductions</td></tr>
+                        <?php foreach ($usdDeductions as $item): ?>
+                            <tr>
+                                <td style="padding: 8px 0; color: #334155;"><?= h($item->name) ?></td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc2626;">(<?= $this->Number->currency($item->amount, 'USD') ?>)</td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php foreach ($usdTaxes as $item): ?>
+                            <tr>
+                                <td style="padding: 8px 0; color: #334155;"><?= h($item->name) ?> (Tax)</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc2626;">(<?= $this->Number->currency($item->amount, 'USD') ?>)</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($zwgDeductions) || !empty($zwgTaxes)): ?>
+                        <tr><td colspan="2" style="padding: 15px 0 5px 0; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; border-bottom: 1px solid #f1f5f9;">ZWG Deductions</td></tr>
+                        <?php foreach ($zwgDeductions as $item): ?>
+                            <tr>
+                                <td style="padding: 8px 0; color: #334155;"><?= h($item->name) ?></td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc2626;">(ZWG <?= $this->Number->format($item->amount, ['places' => 2]) ?>)</td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php foreach ($zwgTaxes as $item): ?>
+                            <tr>
+                                <td style="padding: 8px 0; color: #334155;"><?= h($item->name) ?> (Tax)</td>
+                                <td style="padding: 8px 0; text-align: right; font-weight: 600; color: #dc2626;">(ZWG <?= $this->Number->format($item->amount, ['places' => 2]) ?>)</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </table>
+            </div>
+            <div style="margin-top: 15px; padding: 15px 20px; background: #fef2f2; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 700; color: #991b1b; font-size: 0.85rem; text-transform: uppercase;">Total Deductions (USD Eq.)</span>
+                <span style="font-size: 1.1rem; font-weight: 800; color: #991b1b;">(<?= $this->Number->currency($payslip->deductions, 'USD') ?>)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Disbursement & Bank Details -->
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-bottom: 40px; align-items: stretch;">
+        <!-- Bank Details Section -->
+        <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <h5 style="margin: 0 0 20px 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #475569; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Banking & Disbursement Details</h5>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                <!-- USD Account -->
+                <div>
+                    <p style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">USD Account</p>
+                    <?php if ($payslip->employee->usd_account): ?>
+                        <div style="font-size: 0.85rem; line-height: 1.6;">
+                            <div style="font-weight: 700; color: #0f172a;"><?= h($payslip->employee->usd_bank) ?></div>
+                            <div style="color: #64748b; font-size: 0.8rem;">Branch: <?= h($payslip->employee->usd_branch) ?></div>
+                            <div style="font-family: 'Roboto Mono', monospace; background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; display: inline-block; margin-top: 4px; font-weight: 600;"><?= h($payslip->employee->usd_account) ?></div>
+                        </div>
+                    <?php else: ?>
+                        <p style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">Not provided</p>
+                    <?php endif; ?>
+                </div>
+                <!-- ZWG Account -->
+                <div>
+                    <p style="font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px;">ZWG Account</p>
+                    <?php if ($payslip->employee->zwg_account): ?>
+                        <div style="font-size: 0.85rem; line-height: 1.6;">
+                            <div style="font-weight: 700; color: #0f172a;"><?= h($payslip->employee->zwg_bank) ?></div>
+                            <div style="color: #64748b; font-size: 0.8rem;">Branch: <?= h($payslip->employee->zwg_branch) ?></div>
+                            <div style="font-family: 'Roboto Mono', monospace; background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0; display: inline-block; margin-top: 4px; font-weight: 600;"><?= h($payslip->employee->zwg_account) ?></div>
+                        </div>
+                    <?php else: ?>
+                        <p style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">Not provided</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- Net Pay Summary -->
+        <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%); padding: 30px; border-radius: 12px; color: white; display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; opacity: 0.8; letter-spacing: 0.05em; margin-bottom: 10px;">Net Pay Summary</div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 1rem;">
+                <span>Net USD:</span>
+                <span style="font-weight: 700;"><?= $this->Number->currency($payslip->usd_net, 'USD') ?></span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px;">
+                <span>Net ZWG:</span>
+                <span style="font-weight: 700;">ZWG <?= $this->Number->format($payslip->zwg_net, ['places' => 2]) ?></span>
+            </div>
+
+            <div style="text-align: right;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; opacity: 0.9; margin-bottom: 2px;">Total Net (USD Eq.)</div>
+                <div style="font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em;"><?= $this->Number->currency($payslip->net_pay, 'USD') ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Disclaimer -->
+    <div style="text-align: center; border-top: 1px solid #f1f5f9; padding-top: 25px; color: #94a3b8; font-size: 0.75rem; line-height: 1.6;">
+        <p style="margin: 0;">This is a computer-generated document and does not require a physical signature. Issued by <strong><?= h($company->name) ?></strong> Payroll Department.</p>
+        <p style="margin: 5px 0 0 0;">CONFIDENTIAL: This payslip is intended solely for the named employee.</p>
     </div>
 </div>

@@ -73,6 +73,9 @@ class InvoicesTable extends Table
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',
         ]);
+        $this->belongsTo('SchStudents', [
+            'foreignKey' => 'student_id',
+        ]);
     }
 
     /**

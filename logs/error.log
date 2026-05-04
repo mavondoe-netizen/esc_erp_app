@@ -38650,3 +38650,827 @@ Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
 2026-05-01 21:18:00 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
 2026-05-01 21:21:12 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
 2026-05-01 21:21:12 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-05-02 12:10:00 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-05-02 12:10:09 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-05-02 12:53:13 warning: Unable to garbage collect requests table. This is probably due to concurrent requests.
+2026-05-02 12:53:13 warning: PDOException: SQLSTATE[HY000]: General error: 10 disk I/O error in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php:146
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php(146): PDOStatement->execute(NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\SqliteStatement.php(38): Cake\Database\Statement\Statement->execute(NULL)
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(327): Cake\Database\Statement\SqliteStatement->execute(NULL)
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#12 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#13 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#14 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#15 {main}
+
+Next Cake\Database\Exception\QueryException: SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php (line 132) */ DELETE FROM panels WHERE request_id NOT IN ('59833b34-705f-4833-a4f6-2fd90a094b69','00c7183d-093b-4a21-a4e7-bef81838da34','b1c379da-877d-4dcf-83e3-83440fb4c313','f2505c73-9338-436c-8152-c5550178a083','8afa63bc-59e9-40e5-8839-c5be08f63def','e8d21861-e21a-4dbb-bf9c-1543376c3593','467a7019-6d7c-4db2-8dfb-8bf42bb1a5c1','7982aa6a-51d3-4567-8f09-c2a4eba6342b','0a37b892-3318-4924-9416-5ee193ffbf4f','f7a4c443-f724-4877-a3a3-a59d90da0f69','87c86d0e-6db4-4e35-abb9-2a9fe54f7e4f','de9a3402-7953-4832-8a05-49a7302a1787','6dc04cff-ba80-40b1-a3e2-01532605a57e','7ba63526-6553-4302-885e-db61a3a976c3','410f681f-0b86-443c-b38c-e9f62b9a5a89','4dac2200-b881-44d9-a4b0-24fbf06a9a39','baa33846-8c8b-46b6-a6b9-6eb1951dbd7f','abad36a1-aed2-44ac-ae6f-d56ca4c5d814','8a7286f0-a352-4747-8b4e-ce3bc3c9b605','ad40bb93-5051-4870-a1c4-6df7a69aac40') in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php:382
+Stack trace:
+#0 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(329): Cake\Database\Driver->createQueryException(Object(PDOException), Object(Cake\Database\Statement\SqliteStatement), NULL)
+#1 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php(311): Cake\Database\Driver->executeStatement(Object(Cake\Database\Statement\SqliteStatement))
+#2 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Database\Driver->run(Object(Cake\ORM\Query\DeleteQuery))
+#3 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Core\Retry\CommandRetry.php(71): Cake\Database\Connection->Cake\Database\{closure}()
+#4 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Connection.php(280): Cake\Core\Retry\CommandRetry->run(Object(Closure))
+#5 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Query.php(223): Cake\Database\Connection->run(Object(Cake\ORM\Query\DeleteQuery))
+#6 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Model\Table\RequestsTable.php(134): Cake\Database\Query->execute()
+#7 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\ToolbarService.php(277): DebugKit\Model\Table\RequestsTable->gc()
+#8 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php(66): DebugKit\ToolbarService->saveData(Object(Cake\Http\ServerRequest), Object(Cake\Http\Response))
+#9 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(82): DebugKit\Middleware\DebugKitMiddleware->process(Object(Cake\Http\ServerRequest), Object(Cake\Http\Runner))
+#10 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php(60): Cake\Http\Runner->handle(Object(Cake\Http\ServerRequest))
+#11 C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php(104): Cake\Http\Runner->run(Object(Cake\Http\MiddlewareQueue), Object(Cake\Http\ServerRequest), Object(App\Application))
+#12 C:\xampp\htdocs\esc_erp_app3\webroot\index.php(37): Cake\Http\Server->run()
+#13 {main}
+2026-05-02 12:53:16 warning: Failed to serialize data for panel "History": SQLSTATE[HY000]: General error: 10 disk I/O error
+Query: /* ROOT\vendor\cakephp\debug_kit\src\Panel\HistoryPanel.php (line 35) */ SELECT Requests.id AS Requests__id, Requests.url AS Requests__url, Requests.content_type AS Requests__content_type, Requests.status_code AS Requests__status_code, Requests.method AS Requests__method, Requests.requested_at AS Requests__requested_at FROM requests Requests ORDER BY Requests.requested_at DESC LIMIT 10
+2026-05-02 13:03:16 warning: Undefined variable $currentCompanyId
+Request URL: /
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/payslips/view/214
+Client IP: 127.0.0.1
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\layout\default.php, line 659
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 837
+Cake\View\View->renderLayout() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 796
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\HttpsEnforcerMiddleware.php, line 95
+Cake\Http\Middleware\HttpsEnforcerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\src\Application.php, line 84
+App\Application->App\{closure}() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\ClosureDecoratorMiddleware.php, line 67
+Cake\Http\Middleware\ClosureDecoratorMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-05-02 13:58:51 warning: DebugKit is disabling itself as your host `dell-dellsmall.taild02db3.ts.net` is not in the known safe list of top-level-domains (localhost, invalid, test, example, local, internal). If you would like to force DebugKit on use the `DebugKit.forceEnable` Configure option.
+2026-05-03 06:55:19 error: [Cake\Database\Exception\QueryException] SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '36-1-2026' for key 'employee_id'
+Query: INSERT INTO leave_balances (employee_id, company_id, leave_type_id, year, days_entitled, days_taken, created, modified) VALUES (36, 199, 1, 2026, '22', '0.00', '2026-05-03 06:55:19', '2026-05-03 06:55:19') in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Driver.php on line 382
+Stack Trace:
+- CORE\src\Database\Driver.php:358
+- CORE\src\Database\Driver\Mysql.php:183
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\ORM\Table.php:2163
+- CORE\src\ORM\Table.php:2056
+- CORE\src\ORM\Table.php:1951
+- CORE\src\ORM\Table.php:1582
+- CORE\src\Database\Connection.php:649
+- CORE\src\ORM\Table.php:1582
+- CORE\src\ORM\Table.php:1950
+- APP/Controller\LeaveBalancesController.php:50
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Caused by: [PDOException] SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '36-1-2026' for key 'employee_id' in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Database\Statement\Statement.php on line 146
+Stack Trace:
+- CORE\src\Database\Statement\Statement.php:146
+- CORE\src\Database\Driver.php:340
+- CORE\src\Database\Driver\Mysql.php:183
+- CORE\src\Database\Connection.php:280
+- CORE\src\Core\Retry\CommandRetry.php:71
+- CORE\src\Database\Connection.php:280
+- CORE\src\Database\Query.php:223
+- CORE\src\ORM\Table.php:2163
+- CORE\src\ORM\Table.php:2056
+- CORE\src\ORM\Table.php:1951
+- CORE\src\ORM\Table.php:1582
+- CORE\src\Database\Connection.php:649
+- CORE\src\ORM\Table.php:1582
+- CORE\src\ORM\Table.php:1950
+- APP/Controller\LeaveBalancesController.php:50
+- CORE\src\Controller\Controller.php:505
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:162
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /leave-balances/add
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/leave-balances/add
+Client IP: 127.0.0.1
+2026-05-03 07:10:51 error: [ParseError] syntax error, unexpected token "public" in C:\xampp\htdocs\esc_erp_app3\src\Controller\StatementsController.php on line 84
+Stack Trace:
+- ROOT\vendor\composer\ClassLoader.php:427
+- [internal]:??
+- CORE\src\Core\App.php:162
+- CORE\src\Core\App.php:69
+- CORE\src\Controller\ControllerFactory.php:324
+- CORE\src\Controller\ControllerFactory.php:75
+- CORE\src\Http\BaseApplication.php:360
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /statements
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/leave-balances
+Client IP: 127.0.0.1
+2026-05-03 07:20:28 error: [Cake\View\Exception\MissingTemplateException] Template file `SchTeachers\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchTeachers\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchTeachers\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchTeachers\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-teachers
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-subjects
+Client IP: 127.0.0.1
+2026-05-03 07:32:00 error: [Cake\View\Exception\MissingTemplateException] Template file `SchResults\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchResults\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchResults\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchResults\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-results
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-subjects
+Client IP: 127.0.0.1
+2026-05-03 07:32:08 error: [Cake\View\Exception\MissingTemplateException] Template file `SchTeachers\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchTeachers\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchTeachers\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchTeachers\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-teachers
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-subjects
+Client IP: 127.0.0.1
+2026-05-03 07:34:22 error: [Cake\View\Exception\MissingTemplateException] Template file `SchTeachers\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchTeachers\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchTeachers\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchTeachers\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-teachers
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-students
+Client IP: 127.0.0.1
+2026-05-03 08:25:11 error: [Cake\View\Exception\MissingTemplateException] Template file `SchTeachers\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchTeachers\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchTeachers\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchTeachers\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-teachers
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-students
+Client IP: 127.0.0.1
+2026-05-03 08:25:30 error: [Cake\View\Exception\MissingTemplateException] Template file `SchTeachers\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchTeachers\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchTeachers\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchTeachers\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-teachers
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-students
+Client IP: 127.0.0.1
+2026-05-03 08:25:53 error: [Cake\View\Exception\MissingTemplateException] Template file `SchTeachers\index.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchTeachers\index.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchTeachers\index.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchTeachers\\index.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-teachers
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-students
+Client IP: 127.0.0.1
+2026-05-03 08:52:39 error: [Cake\View\Exception\MissingTemplateException] Template file `SchSubjects\add.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchSubjects\add.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchSubjects\add.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchSubjects\\add.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-subjects/add
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-subjects
+Client IP: 127.0.0.1
+2026-05-03 20:56:02 error: [Cake\View\Exception\MissingTemplateException] Template file `SchStudents\add.php` could not be found.
+
+The following paths were searched:
+
+- `C:\xampp\htdocs\esc_erp_app3\templates\SchStudents\add.php`
+- `C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\templates\SchStudents\add.php`
+ in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php on line 1377
+Exception Attributes: array (
+  'file' => 'SchStudents\\add.php',
+  'paths' => 
+  array (
+    0 => 'C:\\xampp\\htdocs\\esc_erp_app3\\templates\\',
+    1 => 'C:\\xampp\\htdocs\\esc_erp_app3\\vendor\\cakephp\\cakephp\\templates\\',
+  ),
+)
+Stack Trace:
+- CORE\src\View\View.php:782
+- CORE\src\Controller\Controller.php:712
+- CORE\src\Controller\Controller.php:516
+- CORE\src\Controller\ControllerFactory.php:166
+- CORE\src\Controller\ControllerFactory.php:141
+- CORE\src\Http\BaseApplication.php:362
+- CORE\src\Http\Runner.php:86
+- ROOT\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php:106
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\CsrfProtectionMiddleware.php:169
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\BodyParserMiddleware.php:157
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\RoutingMiddleware.php:118
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Middleware\HttpsEnforcerMiddleware.php:95
+- CORE\src\Http\Runner.php:82
+- CORE\src\Routing\Middleware\AssetMiddleware.php:69
+- CORE\src\Http\Runner.php:82
+- APP/Application.php:84
+- CORE\src\Http\Middleware\ClosureDecoratorMiddleware.php:67
+- CORE\src\Http\Runner.php:82
+- CORE\src\Error\Middleware\ErrorHandlerMiddleware.php:115
+- CORE\src\Http\Runner.php:82
+- ROOT\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php:60
+- CORE\src\Http\Runner.php:82
+- CORE\src\Http\Runner.php:60
+- CORE\src\Http\Server.php:104
+- ROOT\webroot\index.php:37
+- [main]:
+
+Request URL: /sch-students/add
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/sch-students
+Client IP: 127.0.0.1
+2026-05-04 06:03:36 warning: Undefined variable $currentCompanyId
+Request URL: /
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/invoices/view/66
+Client IP: 127.0.0.1
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\layout\default.php, line 679
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 837
+Cake\View\View->renderLayout() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 796
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\HttpsEnforcerMiddleware.php, line 95
+Cake\Http\Middleware\HttpsEnforcerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\src\Application.php, line 84
+App\Application->App\{closure}() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\ClosureDecoratorMiddleware.php, line 67
+Cake\Http\Middleware\ClosureDecoratorMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-05-04 06:05:02 warning: Undefined variable $currentCompanyId
+Request URL: /
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/invoices/view/66
+Client IP: 127.0.0.1
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\layout\default.php, line 679
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 837
+Cake\View\View->renderLayout() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 796
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\HttpsEnforcerMiddleware.php, line 95
+Cake\Http\Middleware\HttpsEnforcerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\src\Application.php, line 84
+App\Application->App\{closure}() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\ClosureDecoratorMiddleware.php, line 67
+Cake\Http\Middleware\ClosureDecoratorMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-05-04 06:09:06 warning: Undefined variable $currentCompanyId
+Request URL: /
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/receipts/view/2
+Client IP: 127.0.0.1
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\layout\default.php, line 679
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 837
+Cake\View\View->renderLayout() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 796
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\HttpsEnforcerMiddleware.php, line 95
+Cake\Http\Middleware\HttpsEnforcerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\src\Application.php, line 84
+App\Application->App\{closure}() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\ClosureDecoratorMiddleware.php, line 67
+Cake\Http\Middleware\ClosureDecoratorMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+
+2026-05-04 06:25:21 warning: Undefined variable $currentCompanyId
+Request URL: /
+Referer URL: http://esc_erp_app3.local/esc_erp_app3/invoices/view/66
+Client IP: 127.0.0.1
+Trace:
+Cake\Error\ErrorTrap->handleError() C:\xampp\htdocs\esc_erp_app3\templates\layout\default.php, line 679
+C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1188
+Cake\View\View->_evaluate() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 1145
+Cake\View\View->_render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 837
+Cake\View\View->renderLayout() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\View.php, line 796
+Cake\View\View->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 712
+Cake\Controller\Controller->render() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\Controller.php, line 516
+Cake\Controller\Controller->invokeAction() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 166
+Cake\Controller\ControllerFactory->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Controller\ControllerFactory.php, line 141
+Cake\Controller\ControllerFactory->invoke() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\BaseApplication.php, line 362
+Cake\Http\BaseApplication->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 86
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\authentication\src\Middleware\AuthenticationMiddleware.php, line 106
+Authentication\Middleware\AuthenticationMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\CsrfProtectionMiddleware.php, line 169
+Cake\Http\Middleware\CsrfProtectionMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\BodyParserMiddleware.php, line 157
+Cake\Http\Middleware\BodyParserMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\RoutingMiddleware.php, line 118
+Cake\Routing\Middleware\RoutingMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\HttpsEnforcerMiddleware.php, line 95
+Cake\Http\Middleware\HttpsEnforcerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Routing\Middleware\AssetMiddleware.php, line 69
+Cake\Routing\Middleware\AssetMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\src\Application.php, line 84
+App\Application->App\{closure}() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Middleware\ClosureDecoratorMiddleware.php, line 67
+Cake\Http\Middleware\ClosureDecoratorMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Error\Middleware\ErrorHandlerMiddleware.php, line 115
+Cake\Error\Middleware\ErrorHandlerMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\debug_kit\src\Middleware\DebugKitMiddleware.php, line 60
+DebugKit\Middleware\DebugKitMiddleware->process() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 82
+Cake\Http\Runner->handle() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Runner.php, line 60
+Cake\Http\Runner->run() C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\Http\Server.php, line 104
+Cake\Http\Server->run() C:\xampp\htdocs\esc_erp_app3\webroot\index.php, line 37
+[main]
+

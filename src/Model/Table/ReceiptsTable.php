@@ -61,9 +61,12 @@ class ReceiptsTable extends Table
             'foreignKey' => 'company_id',
         ]);
         $this->belongsToMany('Transactions', [
-            'foreignKey' => 'receipt_id',
+            'foreignKey'       => 'receipt_id',
             'targetForeignKey' => 'transaction_id',
-            'joinTable' => 'receipts_transactions',
+            'joinTable'        => 'receipts_transactions',
+        ]);
+        $this->belongsTo('SchStudents', [
+            'foreignKey' => 'student_id',
         ]);
     }
 

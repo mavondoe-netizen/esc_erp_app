@@ -19,10 +19,12 @@ use Cake\ORM\Entity;
  * @property float $amount
  * @property int|null $account_id
  * @property int|null $company_id
+ * @property int|null $student_id
  *
  * @property \App\Model\Entity\Supplier $supplier
  * @property \App\Model\Entity\Customer $customer
  * @property \App\Model\Entity\Account $account
+ * @property \App\Model\Entity\SchStudent $sch_student
  * @property \App\Model\Entity\Transaction[] $transactions
  */
 class Receipt extends Entity
@@ -43,7 +45,9 @@ class Receipt extends Entity
         'amount'       => true,
         'account_id'   => true,
         'company_id'   => true,
+        'student_id'   => true,
         'customer'     => true,
+        'sch_student'  => true,
         'account'      => true,
         'transactions' => true,
         'manual_reference' => true,

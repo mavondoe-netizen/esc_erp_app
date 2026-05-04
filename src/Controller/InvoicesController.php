@@ -92,6 +92,11 @@ class InvoicesController extends AppController
             $data['company_id'] = $companyId;
             $data['status']     = $data['status'] ?? 'Draft';
 
+            // Carry student_id from query string if not in POST
+            if (empty($data['student_id']) && $this->request->getQuery('student_id')) {
+                $data['student_id'] = (int)$this->request->getQuery('student_id');
+            }
+
             // Automatic Customer Creation/Selection from Contact ID
             if (!empty($data['customer_id'])) {
                 $data['customer_id'] = $this->_ensureCustomerFromContact((int)$data['customer_id'], $companyId);
@@ -126,6 +131,12 @@ class InvoicesController extends AppController
             $this->Flash->error(__('Could not save invoice.'));
         }
 
+        // Pre-fill student_id from query string (when coming from student profile)
+        $studentId = $this->request->getQuery('student_id');
+        if ($studentId) {
+            $invoice->student_id = (int)$studentId;
+        }
+
         [$customers, $accounts] = $this->_dropdowns($companyId);
 
         $products = $this->fetchTable('Products')->find()
@@ -145,7 +156,7 @@ class InvoicesController extends AppController
             ];
         }
 
-        $this->set(compact('invoice', 'customers', 'accounts', 'productsOptions', 'productsJson'));
+        $this->set(compact('invoice', 'customers', 'accounts', 'productsOptions', 'productsJson', 'studentId'));
     }
 
     // -----------------------------------------------------------------------

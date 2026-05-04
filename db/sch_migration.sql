@@ -1,0 +1,116 @@
+-- School Management System Migration Script
+
+-- 1. Classes
+CREATE TABLE IF NOT EXISTS sch_classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    section VARCHAR(50) DEFAULT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 2. Subjects
+CREATE TABLE IF NOT EXISTS sch_subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    class_id INT NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id),
+    INDEX (class_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3. Students
+CREATE TABLE IF NOT EXISTS sch_students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    user_id INT DEFAULT NULL,
+    admission_no VARCHAR(50) NOT NULL,
+    class_id INT DEFAULT NULL,
+    date_of_birth DATE DEFAULT NULL,
+    guardian_name VARCHAR(100) DEFAULT NULL,
+    guardian_phone VARCHAR(20) DEFAULT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id),
+    INDEX (user_id),
+    INDEX (class_id),
+    UNIQUE (admission_no)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 4. Teachers
+CREATE TABLE IF NOT EXISTS sch_teachers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    user_id INT DEFAULT NULL,
+    employee_no VARCHAR(50) NOT NULL,
+    specialty VARCHAR(255) DEFAULT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id),
+    INDEX (user_id),
+    UNIQUE (employee_no)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 5. Exams
+CREATE TABLE IF NOT EXISTS sch_exams (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    term VARCHAR(20) DEFAULT NULL,
+    year INT DEFAULT NULL,
+    date DATE DEFAULT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6. Results
+CREATE TABLE IF NOT EXISTS sch_results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    student_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    exam_id INT NOT NULL,
+    marks DECIMAL(5,2) DEFAULT 0.00,
+    grade VARCHAR(10) DEFAULT NULL,
+    remarks TEXT DEFAULT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id),
+    INDEX (student_id),
+    INDEX (subject_id),
+    INDEX (exam_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 7. Attendance
+CREATE TABLE IF NOT EXISTS sch_attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    student_id INT NOT NULL,
+    date DATE NOT NULL,
+    status ENUM('Present', 'Absent', 'Excused') DEFAULT 'Present',
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id),
+    INDEX (student_id),
+    INDEX (date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 8. Fees
+CREATE TABLE IF NOT EXISTS sch_fees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    student_id INT NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    paid DECIMAL(15,2) DEFAULT 0.00,
+    balance DECIMAL(15,2) GENERATED ALWAYS AS (amount - paid) VIRTUAL,
+    due_date DATE DEFAULT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (company_id),
+    INDEX (student_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

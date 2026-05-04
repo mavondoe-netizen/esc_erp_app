@@ -714,9 +714,13 @@ class ReportsController extends AppController
         $asOfDate  = $this->request->getQuery('as_of_date', date('Y-m-d'));
 
         $Invoices = TableRegistry::getTableLocator()->get('Invoices');
+        $SchFees = TableRegistry::getTableLocator()->get('SchFees');
         $Transactions = TableRegistry::getTableLocator()->get('Transactions');
 
-        // Fetch all non-draft, non-paid invoices
+        $report = [];
+        $totals = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
+
+        // 1. Process ERP Invoices
         $invoices = $Invoices->find()
             ->where([
                 'Invoices.company_id' => $companyId,
@@ -726,15 +730,10 @@ class ReportsController extends AppController
             ->contain(['Customers'])
             ->all();
 
-        $report = [];
-        $totals = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
-
         foreach ($invoices as $inv) {
-            $customerName = $inv->customer->name ?? 'Unknown';
-            
-            // Calculate balance for this specific invoice
-            // Total Debits - Total Credits on this invoice_id
+            $customerName = "[Customer] " . ($inv->customer->name ?? 'Unknown');
             $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+            
             $txs = $Transactions->find()
                 ->where(['invoice_id' => $inv->id, 'company_id' => $companyId, 'date <=' => $asOfDate])
                 ->all();
@@ -748,18 +747,38 @@ class ReportsController extends AppController
             if (abs($balance) < 0.01) continue;
 
             $dateDiff = (strtotime($asOfDate) - strtotime($inv->date->format('Y-m-d'))) / (60 * 60 * 24);
-            
-            $bucket = 'current';
-            if ($dateDiff > 90) $bucket = '90';
-            elseif ($dateDiff > 60) $bucket = '60';
-            elseif ($dateDiff > 30) $bucket = '30';
+            $bucket = ($dateDiff > 90) ? '90' : (($dateDiff > 60) ? '60' : (($dateDiff > 30) ? '30' : 'current'));
 
             if (!isset($report[$customerName])) {
                 $report[$customerName] = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
             }
-
             $report[$customerName][$bucket] += $balance;
             $report[$customerName]['total'] += $balance;
+            $totals[$bucket] += $balance;
+            $totals['total'] += $balance;
+        }
+
+        // 2. Process School Fees (SMS)
+        $fees = $SchFees->find()
+            ->where(['SchFees.company_id' => $companyId, 'SchFees.paid < SchFees.amount'])
+            ->contain(['SchStudents.Users'])
+            ->all();
+
+        foreach ($fees as $fee) {
+            $studentName = "[Student] " . ($fee->sch_student->user->name ?? 'Unknown');
+            $balance = (float)$fee->amount - (float)$fee->paid;
+            
+            if ($balance <= 0) continue;
+
+            $baseDate = $fee->due_date ?: $fee->created;
+            $dateDiff = (strtotime($asOfDate) - strtotime($baseDate->format('Y-m-d'))) / (60 * 60 * 24);
+            $bucket = ($dateDiff > 90) ? '90' : (($dateDiff > 60) ? '60' : (($dateDiff > 30) ? '30' : 'current'));
+
+            if (!isset($report[$studentName])) {
+                $report[$studentName] = ['current' => 0, '30' => 0, '60' => 0, '90' => 0, 'total' => 0];
+            }
+            $report[$studentName][$bucket] += $balance;
+            $report[$studentName]['total'] += $balance;
             $totals[$bucket] += $balance;
             $totals['total'] += $balance;
         }

@@ -62,9 +62,13 @@ class PayslipsController extends AppController
 
     public function view(int $id)
     {
+        $this->viewBuilder()->setLayout('document');
+        $companyId = \Cake\Core\Configure::read('Tenant.company_id');
+        $company = $this->fetchTable('Companies')->get($companyId);
+
         $payslip = $this->fetchTable('Payslips')
             ->get($id, contain: ['Employees', 'PayPeriods', 'PayslipItems']);
-        $this->set(compact('payslip'));
+        $this->set(compact('payslip', 'company'));
     }
 
     public function add()
