@@ -24,7 +24,7 @@
             <fieldset>
                 <legend><?= __('Edit Approval Level') ?></legend>
                 <?php
-                    echo $this->Form->control('entity');
+                    echo $this->Form->control('entity', ['options' => $entities, 'empty' => 'Select Entity']);
                     echo $this->Form->control('level');
                     echo $this->Form->control('role_id', ['options' => $roles]);
                     echo $this->Form->control('min_value');

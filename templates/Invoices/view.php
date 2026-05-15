@@ -23,6 +23,8 @@ $this->assign('actions', $this->element('document_actions', [
                 <?= nl2br(h($company->address)) ?><br>
                 <strong>Email:</strong> <?= h($company->email) ?><br>
                 <strong>Phone:</strong> <?= h($company->phone) ?>
+                <?php if ($company->tin): ?><br><strong>TIN:</strong> <?= h($company->tin) ?><?php endif; ?>
+                <?php if ($company->vat_number): ?><br><strong>VAT No:</strong> <?= h($company->vat_number) ?><?php endif; ?>
             </p>
         </div>
         <div style="text-align: right;">
@@ -44,6 +46,8 @@ $this->assign('actions', $this->element('document_actions', [
             <h3 style="margin-bottom: 5px;"><?= $invoice->hasValue('customer') ? h($invoice->customer->name) : '—' ?></h3>
             <p style="color: #64748b; line-height: 1.5;">
                 <?= h($invoice->description) ?>
+                <?php if ($invoice->hasValue('customer') && $invoice->customer->tin): ?><br><strong>TIN:</strong> <?= h($invoice->customer->tin) ?><?php endif; ?>
+                <?php if ($invoice->hasValue('customer') && $invoice->customer->vat_number): ?><br><strong>VAT No:</strong> <?= h($invoice->customer->vat_number) ?><?php endif; ?>
             </p>
         </div>
         <div style="text-align: right;">
@@ -90,7 +94,40 @@ $this->assign('actions', $this->element('document_actions', [
             </tbody>
         </table>
 
-        <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+        <div style="display: flex; justify-content: flex-end; margin-top: 30px; align-items: flex-end;">
+            <?php
+            try {
+                $qrData = sprintf(
+                    "Supplier: %s\nTIN: %s\nVAT No: %s\nInvoice #: %s\nDate: %s\nBill To: %s\nCustomer TIN: %s\nCustomer VAT: %s\nSubtotal: %s\nVAT Total: %s\nGrand Total: %s",
+                    $company->name,
+                    $company->tin ?? 'N/A',
+                    $company->vat_number ?? 'N/A',
+                    $invoice->id,
+                    $invoice->date,
+                    $invoice->hasValue('customer') ? $invoice->customer->name : 'N/A',
+                    ($invoice->hasValue('customer') && $invoice->customer->tin) ? $invoice->customer->tin : 'N/A',
+                    ($invoice->hasValue('customer') && $invoice->customer->vat_number) ? $invoice->customer->vat_number : 'N/A',
+                    $this->Number->currency($subtotal, $invoice->currency),
+                    $this->Number->currency($totalVat, $invoice->currency),
+                    $this->Number->currency($invoice->total, $invoice->currency)
+                );
+
+                $qrOptions = new \chillerlan\QRCode\QROptions([
+                    'version'      => \chillerlan\QRCode\Common\Version::AUTO,
+                    'outputType'   => \chillerlan\QRCode\Output\QRMarkupSVG::class,
+                    'eccLevel'     => \chillerlan\QRCode\Common\EccLevel::M,
+                    'addQuietzone' => false,
+                ]);
+                $qrCodeSvg = (new \chillerlan\QRCode\QRCode($qrOptions))->render($qrData);
+            ?>
+            <div style="margin-right: 40px; text-align: center;">
+                <div style="width: 100px; height: 100px; display: inline-block;">
+                    <img src="<?= $qrCodeSvg ?>" alt="Invoice QR Code" style="width: 100%; height: 100%;" />
+                </div>
+                <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 5px;">SCAN TO VERIFY</div>
+            </div>
+            <?php } catch (\Throwable $e) { echo "<div style='color:red;'>QR Error: " . $e->getMessage() . "</div>"; } ?>
+
             <div style="width: 300px;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
                     <span>Subtotal</span>

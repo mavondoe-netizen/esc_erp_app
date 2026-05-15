@@ -117,7 +117,7 @@ $accounts = [
     ['Fuel & Transport',           'Expense',   'Transport',        null],
     ['IT & Software',              'Expense',   'IT Costs',         null],
     ['Accumulated Depreciation',   'Asset',     'Fixed Assets',     null],
-    ['Accounts Receivable',        'Asset',     'Trade Receivables',null],
+    ['Accounts Receivable',        'Asset',     'Accounts Receivable',null],
 ];
 $accountIds = [];
 foreach ($accounts as [$name, $type, $category, $subcategory]) {

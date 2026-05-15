@@ -25,6 +25,9 @@ class SchExamsTable extends Table
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',
         ]);
+        $this->belongsTo('SchSubjects', [
+            'foreignKey' => 'subject_id',
+        ]);
         $this->hasMany('SchResults', [
             'foreignKey' => 'exam_id',
         ]);
@@ -41,6 +44,10 @@ class SchExamsTable extends Table
             ->maxLength('name', 100)
             ->requirePresence('name', 'create')
             ->notEmptyString('name');
+
+        $validator
+            ->integer('subject_id')
+            ->allowEmptyString('subject_id');
 
         $validator
             ->scalar('term')

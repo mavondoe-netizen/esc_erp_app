@@ -11,14 +11,16 @@ use Cake\ORM\Entity;
 class SchExam extends Entity
 {
     protected array $_accessible = [
-        'company_id' => true,
-        'name' => true,
-        'term' => true,
-        'year' => true,
-        'date' => true,
-        'created' => true,
-        'modified' => true,
-        'company' => true,
+        'company_id'  => true,
+        'subject_id'  => true,
+        'name'        => true,
+        'term'        => true,
+        'year'        => true,
+        'date'        => true,
+        'created'     => true,
+        'modified'    => true,
+        'company'     => true,
+        'sch_subject' => true,
         'sch_results' => true,
     ];
 }

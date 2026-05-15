@@ -7,6 +7,14 @@
  */
 return [
     /*
+     * Base path — tells CakePHP the app lives under /esc_erp_app3 on XAMPP.
+     * Without this the router sees 'esc_erp_app3' as a controller name.
+     */
+    'App' => [
+        'base' => '/esc_erp_app3',
+    ],
+
+    /*
      * Debug Level:
      *
      * Production Mode:

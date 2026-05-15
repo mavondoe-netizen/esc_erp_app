@@ -21,6 +21,8 @@
                     echo $this->Form->control('name');
                     echo $this->Form->control('address');
                     echo $this->Form->control('contact_id', ['options' => $contacts]);
+                    echo $this->Form->control('tin', ['label' => 'TIN (Tax Identification Number)', 'placeholder' => 'Optional']);
+                    echo $this->Form->control('vat_number', ['label' => 'VAT Registration Number', 'placeholder' => 'Optional']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

@@ -30,6 +30,9 @@ $this->assign('actions', $this->element('document_actions', [
             <div style="color: #64748b;">
                 <strong>Receipt #:</strong> <span style="color: #0f172a;"><?= h($receipt->id) ?></span><br>
                 <strong>Date:</strong> <span style="color: #0f172a;"><?= h($receipt->date) ?></span><br>
+                <?php if ($receipt->invoice_id): ?>
+                    <strong>Invoice:</strong> <span style="color: #0f172a;"><?= $this->Html->link('INV-' . $receipt->invoice_id, ['controller' => 'Invoices', 'action' => 'view', $receipt->invoice_id]) ?></span><br>
+                <?php endif; ?>
                 <?php if ($receipt->reference): ?>
                     <strong>Reference:</strong> <span style="color: #0f172a;"><?= h($receipt->reference) ?></span><br>
                 <?php endif; ?>

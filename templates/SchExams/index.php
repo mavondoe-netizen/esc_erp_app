@@ -26,6 +26,7 @@
                         <tr>
                             <th class="ps-4"><?= $this->Paginator->sort('id', '#') ?></th>
                             <th><?= $this->Paginator->sort('name', 'Exam Name') ?></th>
+                            <th>Subject</th>
                             <th><?= $this->Paginator->sort('term', 'Term') ?></th>
                             <th><?= $this->Paginator->sort('year', 'Year') ?></th>
                             <th><?= $this->Paginator->sort('date', 'Date') ?></th>
@@ -38,6 +39,15 @@
                             <td class="ps-4 text-muted small"><?= $this->Number->format($schExam->id) ?></td>
                             <td>
                                 <div class="fw-bold text-dark"><?= h($schExam->name) ?></div>
+                            </td>
+                            <td>
+                                <?php if ($schExam->hasValue('sch_subject')): ?>
+                                    <span class="badge bg-soft-purple text-purple rounded-pill px-3">
+                                        <i class="fas fa-book me-1"></i><?= h($schExam->sch_subject->name) ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-muted small">—</span>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <span class="badge bg-soft-info text-info rounded-pill px-3">
@@ -56,7 +66,7 @@
                         </tr>
                         <?php endforeach; ?>
                         <?php if ($schExams->count() === 0): ?>
-                        <tr><td colspan="6" class="text-center py-5 text-muted">No exams found.</td></tr>
+                        <tr><td colspan="7" class="text-center py-5 text-muted">No exams found. <?= $this->Html->link('Create one now →', ['action' => 'add'], ['class' => 'text-primary fw-bold ms-1']) ?></td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -77,6 +87,8 @@
 </div>
 
 <style>
-.bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
-.text-info { color: #0dcaf0 !important; }
+.bg-soft-info   { background-color: rgba(13, 202, 240, 0.12) !important; }
+.text-info      { color: #0dcaf0 !important; }
+.bg-soft-purple { background-color: #ede9fe !important; }
+.text-purple    { color: #7c3aed !important; }
 </style>

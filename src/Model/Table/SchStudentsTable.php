@@ -16,7 +16,7 @@ class SchStudentsTable extends Table
         parent::initialize($config);
 
         $this->setTable('sch_students');
-        $this->setDisplayField('admission_no');
+        $this->setDisplayField('first_name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
@@ -68,6 +68,21 @@ class SchStudentsTable extends Table
         $validator
             ->date('date_of_birth')
             ->allowEmptyDate('date_of_birth');
+
+        $validator
+            ->scalar('first_name')
+            ->maxLength('first_name', 100)
+            ->allowEmptyString('first_name');
+
+        $validator
+            ->scalar('last_name')
+            ->maxLength('last_name', 100)
+            ->allowEmptyString('last_name');
+
+        $validator
+            ->scalar('gender')
+            ->maxLength('gender', 10)
+            ->allowEmptyString('gender');
 
         $validator
             ->scalar('guardian_name')

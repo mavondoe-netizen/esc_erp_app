@@ -16,7 +16,7 @@ $status = $entity->status ?? 'Draft';
             ['escape' => false, 'class' => 'btn-doc btn-info']) ?>
     <?php endif; ?>
 
-    <?php if ($status === 'Draft' && $approval_workflow): ?>
+    <?php if (in_array($status, ['Draft', 'On Hold']) && $approval_workflow): ?>
         <?= $this->Form->postLink('<i class="fa fa-paper-plane"></i> Request Approval', 
             ['controller' => $controller, 'action' => 'requestForApproval', $entity->id], 
             ['escape' => false, 'class' => 'btn-doc btn-info']) ?>
@@ -32,7 +32,7 @@ $status = $entity->status ?? 'Draft';
             ['escape' => false, 'class' => 'btn-doc btn-danger', 'confirm' => 'Are you sure you want to reject this?']) ?>
     <?php endif; ?>
 
-    <?php if ($status !== 'Approved' && $status !== 'Sent' && $status !== 'Paid'): ?>
+    <?php if ($status !== 'Pending Approval' && $status !== 'Approved' && $status !== 'Sent' && $status !== 'Paid'): ?>
         <?= $this->Html->link('<i class="fa fa-edit"></i> Edit', 
             ['controller' => $controller, 'action' => 'edit', $entity->id], 
             ['escape' => false, 'class' => 'btn-doc btn-warning']) ?>

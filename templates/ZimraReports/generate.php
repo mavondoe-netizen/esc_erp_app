@@ -24,17 +24,28 @@
                     <table id="zimraDataTable" class="table table-striped" style="white-space: nowrap; font-size: 0.85rem;">
                         <thead>
                             <tr>
-                                <?php foreach (array_keys($reportData[0]) as $header): ?>
-                                    <th><?= h($header) ?></th>
-                                <?php endforeach; ?>
+                                <?php 
+                                    $firstRow = is_array($reportData) ? reset($reportData) : $reportData->first();
+                                    if ($firstRow) {
+                                        $headers = is_object($firstRow) && method_exists($firstRow, 'toArray') ? $firstRow->toArray() : (array)$firstRow;
+                                        foreach (array_keys($headers) as $header): 
+                                ?>
+                                    <th><?= h(ucwords(str_replace('_', ' ', $header))) ?></th>
+                                <?php 
+                                        endforeach; 
+                                    }
+                                ?>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($reportData as $row): ?>
                                 <tr>
-                                    <?php foreach ($row as $key => $value): ?>
+                                    <?php 
+                                        $rowArray = is_object($row) && method_exists($row, 'toArray') ? $row->toArray() : (array)$row;
+                                        foreach ($rowArray as $key => $value): 
+                                    ?>
                                         <td style="<?= is_numeric($value) ? 'text-align: right;' : '' ?>">
-                                            <?= is_numeric($value) && strpos($key, ' TIN') === false && strpos($key, 'Number') === false ? $this->Number->format($value, ['places' => 2]) : h($value) ?>
+                                            <?= is_numeric($value) && strpos((string)$key, 'TIN') === false && strpos((string)$key, 'Number') === false ? $this->Number->format($value, ['places' => 2]) : h($value) ?>
                                         </td>
                                     <?php endforeach; ?>
                                 </tr>

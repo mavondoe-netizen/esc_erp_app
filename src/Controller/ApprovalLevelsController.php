@@ -56,7 +56,11 @@ class ApprovalLevelsController extends AppController
         }
         $roles = $this->ApprovalLevels->Roles->find('list', limit: 200)->all();
         $companies = $this->ApprovalLevels->Companies->find('list', limit: 200)->all();
-        $this->set(compact('approvalLevel', 'roles', 'companies'));
+        $entities = $this->fetchTable('Modules')->find('list', [
+            'keyField' => 'model',
+            'valueField' => 'name'
+        ])->where(['Modules.is_active' => true])->toArray();
+        $this->set(compact('approvalLevel', 'roles', 'companies', 'entities'));
     }
 
     /**
@@ -80,7 +84,11 @@ class ApprovalLevelsController extends AppController
         }
         $roles = $this->ApprovalLevels->Roles->find('list', limit: 200)->all();
         $companies = $this->ApprovalLevels->Companies->find('list', limit: 200)->all();
-        $this->set(compact('approvalLevel', 'roles', 'companies'));
+        $entities = $this->fetchTable('Modules')->find('list', [
+            'keyField' => 'model',
+            'valueField' => 'name'
+        ])->where(['Modules.is_active' => true])->toArray();
+        $this->set(compact('approvalLevel', 'roles', 'companies', 'entities'));
     }
 
     /**

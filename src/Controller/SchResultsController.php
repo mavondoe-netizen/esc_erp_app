@@ -70,6 +70,7 @@ class SchResultsController extends AppController
         if ($classId) {
             $students = $this->fetchTable('SchStudents')->find()
                 ->where(['class_id' => $classId])
+                ->contain(['Users'])
                 ->all();
         }
         

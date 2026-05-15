@@ -37,8 +37,8 @@ class SchTeachersController extends AppController
         }
         $companyId = $this->request->getAttribute('company_id');
         $users = $this->SchTeachers->Users->find('list', limit: 200)->all();
-        $employees = $this->_buildEmployeeList($companyId);
-        $this->set(compact('schTeacher', 'users', 'employees'));
+        [$employees, $employeesJson] = $this->_buildEmployeeList($companyId);
+        $this->set(compact('schTeacher', 'users', 'employees', 'employeesJson'));
     }
 
     public function edit($id = null)
@@ -54,8 +54,8 @@ class SchTeachersController extends AppController
         }
         $companyId = $this->request->getAttribute('company_id');
         $users = $this->SchTeachers->Users->find('list', limit: 200)->all();
-        $employees = $this->_buildEmployeeList($companyId);
-        $this->set(compact('schTeacher', 'users', 'employees'));
+        [$employees, $employeesJson] = $this->_buildEmployeeList($companyId);
+        $this->set(compact('schTeacher', 'users', 'employees', 'employeesJson'));
     }
 
     public function delete($id = null)
@@ -70,9 +70,14 @@ class SchTeachersController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
+    /**
+     * Returns [$dropdownLabels, $jsonMap] for the employee selector.
+     * $jsonMap is a JSON-encoded object: { id: { employee_no, name } }
+     */
     private function _buildEmployeeList(int $companyId): array
     {
-        $employees = [];
+        $labels = [];
+        $json   = [];
         $list = $this->fetchTable('Employees')
             ->find()
             ->select(['id', 'first_name', 'last_name', 'employee_code'])
@@ -80,8 +85,12 @@ class SchTeachersController extends AppController
             ->orderBy(['Employees.first_name' => 'ASC'])
             ->all();
         foreach ($list as $emp) {
-            $employees[$emp->id] = $emp->first_name . ' ' . $emp->last_name . ' (' . $emp->employee_code . ')';
+            $labels[$emp->id] = $emp->first_name . ' ' . $emp->last_name . ' (' . $emp->employee_code . ')';
+            $json[$emp->id]   = [
+                'employee_no' => $emp->employee_code,
+                'name'        => $emp->first_name . ' ' . $emp->last_name,
+            ];
         }
-        return $employees;
+        return [$labels, json_encode($json)];
     }
 }

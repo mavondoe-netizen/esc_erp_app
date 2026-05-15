@@ -81,9 +81,64 @@ class ZimraReportsController extends AppController
         $inputVat    = $inputTotal  * $vatRate;
         $netVat      = $outputVat - $inputVat;
 
+        // Generate PAYE Report Data
+        $payPeriodId = $this->request->getData('pay_period_id') ?: $this->request->getQuery('pay_period_id');
+        $payPeriod = null;
+        $reportData = [];
+
+        if ($payPeriodId) {
+            $payPeriod = $PayPeriods->get($payPeriodId);
+            $Payslips = TableRegistry::getTableLocator()->get('Payslips');
+            $payslips = $Payslips->find()
+                ->where([
+                    'Payslips.company_id'   => $companyId,
+                    'Payslips.pay_period_id' => $payPeriodId,
+                ])
+                ->contain(['Employees'])
+                ->all();
+
+            foreach ($payslips as $slip) {
+                $reportData[] = [
+                    'Emp Code' => $slip->employee->employee_code,
+                    'Employee Name' => trim($slip->employee->first_name . ' ' . $slip->employee->last_name),
+                    'National ID' => $slip->employee->national_id,
+                    'Current Salary, wages, fees, Commissions etc (regular earnings) USD' => $slip->basic_salary,
+                    'Other Exemptions on Current Salary, Wages, Fees, Commissions Etc (Regular Earnings) USD' => 0.00,
+                    'Current Overtime USD' => 0.00,
+                    'Current Bonus USD' => 0.00,
+                    'Current Irregular Commission USD' => 0.00,
+                    'Current Other Irregular earnings USD' => 0.00,
+                    'Current Severance pay, gratuity or similar benefit, on retrenchment (with exemption) USD' => 0.00,
+                    'Current Gratuity without exemption USD' => 0.00,
+                    'Current Housing Benefit USD' => 0.00,
+                    'Current Vehicle Benefit USD' => 0.00,
+                    'Current Education Benefit USD' => 0.00,
+                    'Current Other Benefits USD' => $slip->allowances,
+                    'Current Non-Taxable Earnings USD' => 0.00,
+                    'Current Pension Contributions USD' => $slip->pension,
+                    'Current NSSA Contributions USD' => $slip->nssa,
+                    'Current Retirement Annuity Fund Contributions USD' => 0.00,
+                    'Current NLC/Subscriptions USD' => 0.00,
+                    'Current Other Deductions USD' => 0.00,
+                    'Current Medical Aid Contributions USD' => $slip->medical_aid,
+                    'Current Medical Expenses USD' => 0.00,
+                    'Current Blind persons credit USD' => 0.00,
+                    'Current Disabled persons credit USD' => 0.00,
+                    'Current Elderly person credit USD' => 0.00,
+                    'Cumulative Bonus (from last tax period) USD' => 0.00,
+                    'Total Taxable Income USD' => $slip->taxable_income,
+                    'PAYE USD' => $slip->paye,
+                    'AIDS Levy USD' => $slip->aids_levy,
+                    'Total Tax USD' => (float)$slip->paye + (float)$slip->aids_levy,
+                    'Net Pay USD' => $slip->net_pay,
+                ];
+            }
+        }
+
         $this->set(compact(
             'periods', 'startDate', 'endDate', 'reportType',
-            'outputTotal', 'inputTotal', 'outputVat', 'inputVat', 'netVat', 'vatRate'
+            'outputTotal', 'inputTotal', 'outputVat', 'inputVat', 'netVat', 'vatRate',
+            'payPeriod', 'reportData'
         ));
     }
 }

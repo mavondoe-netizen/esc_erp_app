@@ -66,28 +66,49 @@ $this->assign('title', 'Statement of Financial Position');
             <?php if (empty($report['Assets'])): ?>
                 <tr><td colspan="2" class="text-center text-muted">No assets recorded</td></tr>
             <?php endif; ?>
-            <?php foreach ($report['Assets'] as $sub => $accounts): ?>
+            <?php foreach ($report['Assets'] as $sectionGroup => $subcategories):
+                // Compute section subtotal
+                $sectionTotal = 0.0;
+                foreach ($subcategories as $subAccounts) {
+                    foreach ($subAccounts as $d) { $sectionTotal += $d['actual']; }
+                }
+            ?>
                 <tr>
-                    <td colspan="2" class="acc-subcategory"><?= h($sub) ?></td>
-                </tr>
-                <?php foreach ($accounts as $accName => $data): ?>
-                <?php if (round($data['actual'], 2) != 0): ?>
-                <tr>
-                    <td class="acc-item">
-                        <?= $this->Html->link(h($accName), [
-                            'action' => 'ledger',
-                            '?' => [
-                                'account_id' => $data['account_id'],
-                                'start_date' => date('Y-01-01', strtotime($endDate)),
-                                'end_date' => $endDate,
-                                'currency' => current($this->getRequest()->getQueryParams())['currency'] ?? 'USD'
-                            ]
-                        ], ['target' => '_blank']) ?>
+                    <td colspan="2" style="font-weight:bold; padding-left:10px; background:#f0f8ff; color:#1a5276; border-top:2px solid #aed6f1;">
+                        <?= h($sectionGroup) ?>
                     </td>
-                    <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
+                </tr>
+                <?php foreach ($subcategories as $subLabel => $accounts): ?>
+                    <?php if ($subLabel !== $sectionGroup): ?>
+                    <tr>
+                        <td colspan="2" class="acc-subcategory"><?= h($subLabel) ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php foreach ($accounts as $accName => $data): ?>
+                    <?php if (round($data['actual'], 2) != 0): ?>
+                    <tr>
+                        <td class="acc-item">
+                            <?= $this->Html->link(h($accName), [
+                                'action' => 'ledger',
+                                '?' => [
+                                    'account_id' => $data['account_id'],
+                                    'start_date' => date('Y-01-01', strtotime($endDate)),
+                                    'end_date'   => $endDate,
+                                    'currency'   => $this->getRequest()->getQuery('currency') ?? 'USD'
+                                ]
+                            ], ['target' => '_blank']) ?>
+                        </td>
+                        <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+                <?php if (round($sectionTotal, 2) != 0): ?>
+                <tr>
+                    <td style="padding-left:15px; color:#555; font-style:italic;">Total <?= h($sectionGroup) ?></td>
+                    <td class="acc-subtotal"><?= $this->Number->format($sectionTotal, ['places' => 2]) ?></td>
                 </tr>
                 <?php endif; ?>
-                <?php endforeach; ?>
             <?php endforeach; ?>
             <tr>
                 <td style="font-size: 1.1em;"><strong>TOTAL ASSETS</strong></td>
@@ -104,28 +125,48 @@ $this->assign('title', 'Statement of Financial Position');
             <?php if (empty($report['Liabilities'])): ?>
                 <tr><td colspan="2" class="text-center text-muted">No liabilities recorded</td></tr>
             <?php endif; ?>
-            <?php foreach ($report['Liabilities'] as $sub => $accounts): ?>
+            <?php foreach ($report['Liabilities'] as $sectionGroup => $subcategories):
+                $sectionTotal = 0.0;
+                foreach ($subcategories as $subAccounts) {
+                    foreach ($subAccounts as $d) { $sectionTotal += $d['actual']; }
+                }
+            ?>
                 <tr>
-                    <td colspan="2" class="acc-subcategory"><?= h($sub) ?></td>
-                </tr>
-                <?php foreach ($accounts as $accName => $data): ?>
-                <?php if (round($data['actual'], 2) != 0): ?>
-                <tr>
-                    <td class="acc-item">
-                        <?= $this->Html->link(h($accName), [
-                            'action' => 'ledger',
-                            '?' => [
-                                'account_id' => $data['account_id'],
-                                'start_date' => date('Y-01-01', strtotime($endDate)),
-                                'end_date' => $endDate,
-                                'currency' => current($this->getRequest()->getQueryParams())['currency'] ?? 'USD'
-                            ]
-                        ], ['target' => '_blank']) ?>
+                    <td colspan="2" style="font-weight:bold; padding-left:10px; background:#fff5f5; color:#922b21; border-top:2px solid #f1948a;">
+                        <?= h($sectionGroup) ?>
                     </td>
-                    <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
+                </tr>
+                <?php foreach ($subcategories as $subLabel => $accounts): ?>
+                    <?php if ($subLabel !== $sectionGroup): ?>
+                    <tr>
+                        <td colspan="2" class="acc-subcategory"><?= h($subLabel) ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php foreach ($accounts as $accName => $data): ?>
+                    <?php if (round($data['actual'], 2) != 0): ?>
+                    <tr>
+                        <td class="acc-item">
+                            <?= $this->Html->link(h($accName), [
+                                'action' => 'ledger',
+                                '?' => [
+                                    'account_id' => $data['account_id'],
+                                    'start_date' => date('Y-01-01', strtotime($endDate)),
+                                    'end_date'   => $endDate,
+                                    'currency'   => $this->getRequest()->getQuery('currency') ?? 'USD'
+                                ]
+                            ], ['target' => '_blank']) ?>
+                        </td>
+                        <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+                <?php if (round($sectionTotal, 2) != 0): ?>
+                <tr>
+                    <td style="padding-left:15px; color:#555; font-style:italic;">Total <?= h($sectionGroup) ?></td>
+                    <td class="acc-subtotal"><?= $this->Number->format($sectionTotal, ['places' => 2]) ?></td>
                 </tr>
                 <?php endif; ?>
-                <?php endforeach; ?>
             <?php endforeach; ?>
             <tr>
                 <td><strong>Total Liabilities</strong></td>
@@ -136,27 +177,36 @@ $this->assign('title', 'Statement of Financial Position');
             <tr>
                 <td colspan="2" class="acc-header" style="background:#f4fce8; padding-top:20px;">EQUITY</td>
             </tr>
-            <?php foreach ($report['Equity'] as $sub => $accounts): ?>
+            <?php foreach ($report['Equity'] as $sectionGroup => $subcategories): ?>
                 <tr>
-                    <td colspan="2" class="acc-subcategory"><?= h($sub) ?></td>
-                </tr>
-                <?php foreach ($accounts as $accName => $data): ?>
-                <?php if (round($data['actual'], 2) != 0): ?>
-                <tr>
-                    <td class="acc-item">
-                        <?= $this->Html->link(h($accName), [
-                            'action' => 'ledger',
-                            '?' => [
-                                'account_id' => $data['account_id'],
-                                'start_date' => date('Y-01-01', strtotime($endDate)),
-                                'end_date' => $endDate,
-                                'currency' => current($this->getRequest()->getQueryParams())['currency'] ?? 'USD'
-                            ]
-                        ], ['target' => '_blank']) ?>
+                    <td colspan="2" style="font-weight:bold; padding-left:10px; background:#f9fef0; color:#1e8449; border-top:2px solid #a9dfbf;">
+                        <?= h($sectionGroup) ?>
                     </td>
-                    <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
                 </tr>
-                <?php endif; ?>
+                <?php foreach ($subcategories as $subLabel => $accounts): ?>
+                    <?php if ($subLabel !== $sectionGroup): ?>
+                    <tr>
+                        <td colspan="2" class="acc-subcategory"><?= h($subLabel) ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php foreach ($accounts as $accName => $data): ?>
+                    <?php if (round($data['actual'], 2) != 0): ?>
+                    <tr>
+                        <td class="acc-item">
+                            <?= $this->Html->link(h($accName), [
+                                'action' => 'ledger',
+                                '?' => [
+                                    'account_id' => $data['account_id'],
+                                    'start_date' => date('Y-01-01', strtotime($endDate)),
+                                    'end_date'   => $endDate,
+                                    'currency'   => $this->getRequest()->getQuery('currency') ?? 'USD'
+                                ]
+                            ], ['target' => '_blank']) ?>
+                        </td>
+                        <td class="acc-amount"><?= $this->Number->format($data['actual'] ?? 0.0, ['places' => 2]) ?></td>
+                    </tr>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
             <?php endforeach; ?>
             <tr>
@@ -170,7 +220,7 @@ $this->assign('title', 'Statement of Financial Position');
 
             <!-- TOTAL LIABILITIES & EQUITY -->
             <tr style="background: #fafafa;">
-                <td style="font-size: 1.1em; padding-top: 20px; padding-bottom: 20px;"><strong>TOTAL LIABILITIES & EQUITY</strong></td>
+                <td style="font-size: 1.1em; padding-top: 20px; padding-bottom: 20px;"><strong>TOTAL LIABILITIES &amp; EQUITY</strong></td>
                 <td class="acc-grand-total" style="padding-top: 20px; padding-bottom: 20px; <?= round($totals['total_assets'],2) !== round($totals['total_liabilities_equity'],2) ? 'color:red; background:#ffe6e6;' : 'color: #38761d;' ?>">
                     <?= $this->Number->format($totals['total_liabilities_equity'] ?? 0.0, ['places' => 2]) ?>
                 </td>

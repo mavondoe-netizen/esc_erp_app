@@ -44,6 +44,7 @@ class ApprovalLevelsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('TenantAware');
 
         $this->belongsTo('Roles', [
             'foreignKey' => 'role_id',

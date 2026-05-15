@@ -12,7 +12,8 @@
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
-                    <th><?= $this->Paginator->sort('supplier_id') ?></th>
+                    <th><?= $this->Paginator->sort('customer_id') ?></th>
+                    <th><?= $this->Paginator->sort('invoice_id', 'Invoice') ?></th>
                     <th><?= $this->Paginator->sort('currency') ?></th>
                     <th><?= $this->Paginator->sort('amount') ?></th>
                     <th><?= $this->Paginator->sort('account_id') ?></th>
@@ -23,7 +24,8 @@
                 <?php foreach ($receipts as $receipt): ?>
                 <tr>
                     <td><?= $this->Number->format($receipt->id) ?></td>
-                    <td><?= $this->Number->format($receipt->supplier_id) ?></td>
+                    <td><?= $receipt->hasValue('customer') ? $this->Html->link($receipt->customer->name, ['controller' => 'Customers', 'action' => 'view', $receipt->customer->id]) : '—' ?></td>
+                    <td><?= $receipt->invoice_id ? $this->Html->link('INV-' . $receipt->invoice_id, ['controller' => 'Invoices', 'action' => 'view', $receipt->invoice_id]) : '—' ?></td>
                     <td><?= h($receipt->currency) ?></td>
                     <td><?= $this->Number->format($receipt->amount) ?></td>
                     <td><?= $receipt->hasValue('account') ? $this->Html->link($receipt->account->name, ['controller' => 'Accounts', 'action' => 'view', $receipt->account->id]) : '' ?></td>

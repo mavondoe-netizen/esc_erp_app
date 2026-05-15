@@ -45,6 +45,8 @@ class Company extends Entity
         'logo' => true,
         'reporting_currency' => true,
         'license_expiry_date' => true,
+        'tin' => true,
+        'vat_number' => true,
         'created' => true,
         'modified' => true,
         'accounts' => true,

@@ -4,63 +4,31 @@ declare(strict_types=1);
 namespace App\Controller;
 
 /**
- * SchFees Controller
+ * SchFees Controller — DEPRECATED
+ *
+ * School fee payments are now handled by the Receipts (Accounts Receivable) module.
+ * This controller redirects all traffic there to prevent duplicate entry.
  */
 class SchFeesController extends AppController
 {
-    use \App\Controller\Traits\ImportExportTrait;
-
-    public function index()
+    /**
+     * Redirect every action to the Receipts module with an informational message.
+     */
+    public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
-        $schFees = $this->paginate($this->SchFees->find()->contain(['SchStudents']));
-        $this->set(compact('schFees'));
+        parent::beforeFilter($event);
+        $this->Flash->set(
+            __('The School Fees module has been replaced by <strong>Receipts</strong>. '
+             . 'Please record fee payments there — it posts correctly to the Accounts Receivable ledger.'),
+            ['element' => 'default', 'params' => ['class' => 'warning'], 'escape' => false]
+        );
+        $this->redirect(['controller' => 'Receipts', 'action' => 'index']);
     }
 
-    public function view($id = null)
-    {
-        $schFee = $this->SchFees->get($id, contain: ['SchStudents']);
-        $this->set(compact('schFee'));
-    }
-
-    public function add()
-    {
-        $schFee = $this->SchFees->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $schFee = $this->SchFees->patchEntity($schFee, $this->request->getData());
-            if ($this->SchFees->save($schFee)) {
-                $this->Flash->success(__('The fee record has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The fee record could not be saved. Please, try again.'));
-        }
-        $schStudents = $this->SchFees->SchStudents->find('list', limit: 200)->all();
-        $this->set(compact('schFee', 'schStudents'));
-    }
-
-    public function edit($id = null)
-    {
-        $schFee = $this->SchFees->get($id);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $schFee = $this->SchFees->patchEntity($schFee, $this->request->getData());
-            if ($this->SchFees->save($schFee)) {
-                $this->Flash->success(__('The fee record has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The fee record could not be saved. Please, try again.'));
-        }
-        $schStudents = $this->SchFees->SchStudents->find('list', limit: 200)->all();
-        $this->set(compact('schFee', 'schStudents'));
-    }
-
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $schFee = $this->SchFees->get($id);
-        if ($this->SchFees->delete($schFee)) {
-            $this->Flash->success(__('The fee record has been deleted.'));
-        } else {
-            $this->Flash->error(__('The fee record could not be deleted. Please, try again.'));
-        }
-        return $this->redirect(['action' => 'index']);
-    }
+    // Stub actions required by CakePHP routing (execution never reaches them).
+    public function index()  {}
+    public function view($id = null) {}
+    public function add()    {}
+    public function edit($id = null) {}
+    public function delete($id = null) {}
 }

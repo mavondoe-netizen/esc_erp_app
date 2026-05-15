@@ -68,6 +68,9 @@ class ReceiptsTable extends Table
         $this->belongsTo('SchStudents', [
             'foreignKey' => 'student_id',
         ]);
+        $this->belongsTo('Invoices', [
+            'foreignKey' => 'invoice_id',
+        ]);
     }
 
     /**
@@ -120,9 +123,8 @@ class ReceiptsTable extends Table
             ->allowEmptyString('account_id');
 
         $validator
-            ->scalar('manual_reference')
-            ->maxLength('manual_reference', 100)
-            ->allowEmptyString('manual_reference');
+            ->integer('invoice_id')
+            ->allowEmptyString('invoice_id');
 
         return $validator;
     }
@@ -138,6 +140,7 @@ class ReceiptsTable extends Table
     {
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+        $rules->add($rules->existsIn(['invoice_id'], 'Invoices'), ['errorField' => 'invoice_id']);
 
         return $rules;
     }

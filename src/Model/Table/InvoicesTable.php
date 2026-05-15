@@ -161,15 +161,22 @@ class InvoicesTable extends Table
         $rateVal = $rate ? (float)$rate->rate_to_base : 1.0;
 
         $arAccount = $Accounts->find()
-            ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Receivable%'])
+            ->where(['Accounts.company_id' => $companyId])
+            ->where(function ($exp) {
+                return $exp->or([
+                    'Accounts.name'     => 'Accounts Receivable',
+                    'Accounts.category LIKE' => '%Receivable%',
+                ]);
+            })
+            ->orderBy(['Accounts.id' => 'ASC'])
             ->first();
 
         if (!$arAccount) {
             $arAccount = $Accounts->newEntity([
-                'name' => 'Accounts Receivable',
+                'name'     => 'Accounts Receivable',
                 'category' => 'Accounts Receivable',
-                'type' => 'Asset',
-                'company_id' => $companyId
+                'type'     => 'Asset',
+                'company_id' => $companyId,
             ]);
             $Accounts->save($arAccount);
         }
@@ -296,15 +303,22 @@ class InvoicesTable extends Table
         $Accounts     = \Cake\ORM\TableRegistry::getTableLocator()->get('Accounts');
 
         $arAccount = $Accounts->find()
-            ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Receivable%'])
+            ->where(['Accounts.company_id' => $companyId])
+            ->where(function ($exp) {
+                return $exp->or([
+                    'Accounts.name'          => 'Accounts Receivable',
+                    'Accounts.category LIKE' => '%Receivable%',
+                ]);
+            })
+            ->orderBy(['Accounts.id' => 'ASC'])
             ->first();
 
         if (!$arAccount) {
             $arAccount = $Accounts->newEntity([
-                'name' => 'Accounts Receivable',
+                'name'     => 'Accounts Receivable',
                 'category' => 'Accounts Receivable',
-                'type' => 'Asset',
-                'company_id' => $companyId
+                'type'     => 'Asset',
+                'company_id' => $companyId,
             ]);
             $Accounts->save($arAccount);
         }

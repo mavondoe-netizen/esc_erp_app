@@ -21,7 +21,7 @@ class ReceiptsController extends AppController
         $Receipts = $this->fetchTable('Receipts');
         $query    = $Receipts->find()
             ->where(['Receipts.company_id' => $companyId])
-            ->contain(['Customers', 'Accounts'])
+            ->contain(['Customers', 'Accounts', 'Invoices'])
             ->order(['Receipts.date' => 'DESC']);
 
         $receipts = $this->paginate($query, ['limit' => 50]);
@@ -100,8 +100,8 @@ class ReceiptsController extends AppController
             $this->Flash->error(__('Could not save receipt.'));
         }
 
-        [$customers, $accounts] = $this->_dropdowns($companyId);
-        $this->set(compact('receipt', 'customers', 'accounts', 'studentId', 'prefilledCustomerId'));
+        [$customers, $accounts, $invoices] = $this->_dropdowns($companyId);
+        $this->set(compact('receipt', 'customers', 'accounts', 'invoices', 'studentId', 'prefilledCustomerId'));
     }
 
     public function edit(int $id)
@@ -120,8 +120,8 @@ class ReceiptsController extends AppController
             $this->Flash->error(__('Could not update receipt.'));
         }
 
-        [$customers, $accounts] = $this->_dropdowns($companyId);
-        $this->set(compact('receipt', 'customers', 'accounts'));
+        [$customers, $accounts, $invoices] = $this->_dropdowns($companyId, (int)$receipt->customer_id);
+        $this->set(compact('receipt', 'customers', 'accounts', 'invoices'));
     }
 
     public function delete(int $id)
@@ -260,7 +260,14 @@ class ReceiptsController extends AppController
         $rateVal = $rate ? (float)$rate->rate_to_base : 1.0;
 
         $arAccount = $Accounts->find()
-            ->where(['Accounts.company_id' => $companyId, 'Accounts.category LIKE' => '%Receivable%'])
+            ->where(['Accounts.company_id' => $companyId])
+            ->where(function ($exp) {
+                return $exp->or([
+                    'Accounts.name'          => 'Accounts Receivable',
+                    'Accounts.category LIKE' => '%Receivable%',
+                ]);
+            })
+            ->orderBy(['Accounts.id' => 'ASC'])
             ->first();
 
         if (!$arAccount) {
@@ -297,6 +304,7 @@ class ReceiptsController extends AppController
                 'type'              => 'Debit',
                 'account_id'        => $bankAccountId,
                 'customer_id'       => $receipt->customer_id ?? null,
+                'invoice_id'        => $receipt->invoice_id ?? null,
                 'transaction_group' => $groupId,
             ], ['validate' => false]);
             $Transactions->save($dr, ['check_balance' => false]);
@@ -312,6 +320,7 @@ class ReceiptsController extends AppController
                 'type'              => 'Credit',
                 'account_id'        => $arAccount->id,
                 'customer_id'       => $receipt->customer_id ?? null,
+                'invoice_id'        => $receipt->invoice_id ?? null,
                 'transaction_group' => $groupId,
             ], ['validate' => false]);
             $Transactions->save($cr, ['check_balance' => false]);
@@ -336,7 +345,7 @@ class ReceiptsController extends AppController
         }
     }
 
-    private function _dropdowns(int $companyId): array
+    private function _dropdowns(int $companyId, ?int $customerId = null): array
     {
         $customers = $this->fetchTable('Customers')
             ->find('list', keyField: 'id', valueField: 'name')
@@ -347,6 +356,31 @@ class ReceiptsController extends AppController
             ->where(['Accounts.company_id' => $companyId])
             ->order(['Accounts.type', 'Accounts.name'])->all();
 
-        return [$customers, $accounts];
+        $invoices = [];
+        if ($customerId) {
+            $invoices = $this->fetchTable('Invoices')
+                ->find('list', keyField: 'id', valueField: 'id') // Or some descriptive label
+                ->where(['customer_id' => $customerId, 'company_id' => $companyId])
+                ->all();
+        }
+
+        return [$customers, $accounts, $invoices];
+    }
+
+    public function apiFetchCustomerInvoices(int $customerId)
+    {
+        $this->request->allowMethod(['get']);
+        $companyId = $this->request->getAttribute('company_id');
+
+        $invoices = $this->fetchTable('Invoices')
+            ->find()
+            ->select(['id', 'reference', 'total', 'date'])
+            ->where(['customer_id' => $customerId, 'company_id' => $companyId])
+            ->order(['date' => 'DESC'])
+            ->all();
+
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($invoices));
     }
 }

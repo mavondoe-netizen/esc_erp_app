@@ -29,6 +29,8 @@
                     echo $this->Form->control('logo');
                     echo $this->Form->control('reporting_currency');
                     echo $this->Form->control('license_expiry_date', ['empty' => true]);
+                    echo $this->Form->control('tin', ['label' => 'TIN (Tax Identification Number)', 'placeholder' => 'e.g. 12345678']);
+                    echo $this->Form->control('vat_number', ['label' => 'VAT Registration Number', 'placeholder' => 'e.g. V12345678']);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

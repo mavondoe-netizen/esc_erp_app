@@ -16,20 +16,48 @@
             <div class="card-body p-4">
                 <?= $this->Form->create($schStudent) ?>
                 <fieldset class="border-0 p-0 m-0">
-                    <div class="row">
+
+                    <!-- Student Name -->
+                    <div class="row mb-0">
                         <div class="col-md-6 mb-4">
-                            <?= $this->Form->control('admission_no', [
-                                'class' => 'form-control form-control-lg bg-light border-0',
-                                'placeholder' => 'e.g. ADM-2024-001',
-                                'label' => ['text' => 'Admission Number', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
+                            <?= $this->Form->control('first_name', [
+                                'class'       => 'form-control form-control-lg bg-light border-0',
+                                'placeholder' => 'e.g. John',
+                                'label'       => ['text' => 'First Name', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
                             ]) ?>
                         </div>
                         <div class="col-md-6 mb-4">
+                            <?= $this->Form->control('last_name', [
+                                'class'       => 'form-control form-control-lg bg-light border-0',
+                                'placeholder' => 'e.g. Doe',
+                                'label'       => ['text' => 'Last Name', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
+                            ]) ?>
+                        </div>
+                    </div>
+
+                    <div class="row mb-0">
+                        <div class="col-md-4 mb-4">
+                            <?= $this->Form->control('gender', [
+                                'type'    => 'select',
+                                'options' => ['Male' => 'Male', 'Female' => 'Female', 'Other' => 'Other'],
+                                'empty'   => '— Gender —',
+                                'class'   => 'form-select form-select-lg bg-light border-0',
+                                'label'   => ['text' => 'Gender', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
+                            ]) ?>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <?= $this->Form->control('admission_no', [
+                                'class'       => 'form-control form-control-lg bg-light border-0',
+                                'placeholder' => 'e.g. ADM-2024-001',
+                                'label'       => ['text' => 'Admission Number', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
+                            ]) ?>
+                        </div>
+                        <div class="col-md-4 mb-4">
                             <?= $this->Form->control('class_id', [
                                 'options' => $schClasses,
-                                'empty' => 'Select a Class',
-                                'class' => 'form-select form-select-lg bg-light border-0',
-                                'label' => ['text' => 'Class / Grade', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
+                                'empty'   => 'Select a Class',
+                                'class'   => 'form-select form-select-lg bg-light border-0',
+                                'label'   => ['text' => 'Class / Grade', 'class' => 'form-label fw-bold small text-muted text-uppercase mb-2']
                             ]) ?>
                         </div>
                     </div>

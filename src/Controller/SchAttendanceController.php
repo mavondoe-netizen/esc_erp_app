@@ -12,7 +12,20 @@ class SchAttendanceController extends AppController
 
     public function index()
     {
-        $schAttendance = $this->paginate($this->SchAttendance->find()->contain(['SchStudents', 'SchStudents.SchClasses']));
+        $conditions = [];
+
+        $date   = $this->request->getQuery('date');
+        $status = $this->request->getQuery('status');
+
+        if ($date)   $conditions['SchAttendance.date']   = $date;
+        if ($status) $conditions['SchAttendance.status'] = $status;
+
+        $query = $this->SchAttendance->find()
+            ->where($conditions)
+            ->contain(['SchStudents' => ['SchClasses']])
+            ->orderBy(['SchAttendance.date' => 'DESC', 'SchAttendance.id' => 'DESC']);
+
+        $schAttendance = $this->paginate($query, ['limit' => 50]);
         $this->set(compact('schAttendance'));
     }
 

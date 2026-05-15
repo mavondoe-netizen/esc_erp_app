@@ -13,7 +13,7 @@
         <div class="d-flex gap-2">
             <?= $this->Html->link(__('<i class="fas fa-file-excel me-2"></i>Template'), ['action' => 'downloadTemplate'], ['class' => 'btn btn-outline-success btn-sm shadow-sm', 'escape' => false]) ?>
             <button class="btn btn-outline-secondary btn-sm shadow-sm" onclick="$('#global-import-input').click();"><i class="fas fa-upload me-2"></i>Bulk Import</button>
-            <?= $this->Html->link(__('<i class="fas fa-download me-2"></i>Export All'), ['action' => 'export'], ['class' => 'btn btn-outline-info btn-sm shadow-sm', 'escape' => false]) ?>
+            <?= $this->Html->link(__('<i class="fas fa-download me-2"></i>Export All'), ['action' => 'export'], ['class' => 'btn btn-outline-primary btn-sm shadow-sm', 'escape' => false]) ?>
             <?= $this->Html->link(__('Admit Student'), ['action' => 'add'], ['class' => 'btn btn-primary shadow-sm']) ?>
         </div>
     </div>
@@ -36,21 +36,33 @@
                         <?php foreach ($schStudents as $student): ?>
                         <tr>
                             <td class="ps-4">
-                                <span class="fw-bold text-primary">#<?= h($student->admission_no) ?></span>
+                                <span class="fw-bold text-dark">#<?= h($student->admission_no) ?></span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar-circle me-3">
-                                        <?= strtoupper(substr($student->user->name ?? 'S', 0, 1)) ?>
+                                        <?php
+                                            $displayName = trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? ''))
+                                                ?: ($student->user->name ?? 'S');
+                                        ?>
+                                        <?= strtoupper(substr($displayName, 0, 1)) ?>
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-dark"><?= $student->hasValue('user') ? h($student->user->name) : 'Unlinked User' ?></div>
+                                        <div class="fw-bold text-dark">
+                                            <?php if ($student->first_name || $student->last_name): ?>
+                                                <?= h(trim($student->first_name . ' ' . $student->last_name)) ?>
+                                            <?php elseif ($student->hasValue('user')): ?>
+                                                <?= h($student->user->name) ?>
+                                            <?php else: ?>
+                                                <span class="text-muted fst-italic">No Name Set</span>
+                                            <?php endif; ?>
+                                        </div>
                                         <div class="text-muted small">DOB: <?= $student->date_of_birth ? $student->date_of_birth->format('d M Y') : 'N/A' ?></div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-soft-info text-info rounded-pill px-3">
+                                <span class="badge bg-soft-info rounded-pill px-3">
                                     <?= $student->hasValue('sch_class') ? h($student->sch_class->name) : 'Pending' ?>
                                 </span>
                             </td>

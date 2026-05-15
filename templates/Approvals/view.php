@@ -12,6 +12,11 @@
             <?= $this->Form->postLink(__('Delete Approval'), ['action' => 'delete', $approval->id], ['confirm' => __('Are you sure you want to delete # {0}?', $approval->id), 'class' => 'side-nav-item']) ?>
             <?= $this->Html->link(__('List Approvals'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
             <?= $this->Html->link(__('New Approval'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+            <?php if ($approval->status === 'Pending'): ?>
+                <hr>
+                <?= $this->Form->postLink(__('Approve'), ['action' => 'approve', $approval->id], ['confirm' => __('Are you sure you want to approve this?'), 'class' => 'side-nav-item', 'style' => 'color: green; font-weight: bold;']) ?>
+                <?= $this->Form->postLink(__('Reject'), ['action' => 'reject', $approval->id], ['confirm' => __('Are you sure you want to reject this?'), 'class' => 'side-nav-item', 'style' => 'color: red; font-weight: bold;']) ?>
+            <?php endif; ?>
         </div>
     </aside>
     <div class="column column-80">

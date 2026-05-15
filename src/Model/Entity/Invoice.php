@@ -52,5 +52,7 @@ class Invoice extends Entity
         'transactions' => true,
         'line_total'=> true,
         'manual_reference' => true,
+        'tin' => true,
+        'vat' => true,
     ];
 }

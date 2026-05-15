@@ -102,11 +102,11 @@ class AccountsController extends AppController
         ];
         $subcategories = [
             'Cash and Cash Equivalents' => 'Cash and Cash Equivalents',
-            'Accounts Receivable' => 'Accounts Receivable',
+            'Trade Receivables' => 'Trade Receivables',
             'Inventory' => 'Inventory',
             'Property, Plant and Equipment' => 'Property, Plant and Equipment',
             'Intangible Assets' => 'Intangible Assets',
-            'Accounts Payable' => 'Accounts Payable',
+            'Trade Payables' => 'TradePayable',
             'Accrued Expenses' => 'Accrued Expenses',
             'Sales' => 'Sales',
             'Cost of Goods Sold' => 'Cost of Goods Sold',
@@ -155,7 +155,7 @@ class AccountsController extends AppController
         ];
         $subcategories = [
             'Cash and Cash Equivalents' => 'Cash and Cash Equivalents',
-            'Accounts Receivable' => 'Accounts Receivable',
+            'Trade Receivables' => 'Trade Receivables',
             'Inventory' => 'Inventory',
             'Property, Plant and Equipment' => 'Property, Plant and Equipment',
             'Intangible Assets' => 'Intangible Assets',

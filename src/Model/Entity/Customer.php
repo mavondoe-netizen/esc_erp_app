@@ -34,6 +34,8 @@ class Customer extends Entity
         'address' => true,
         'contact_id' => true,
         'company_id' => true,
+        'tin' => true,
+        'vat_number' => true,
         'contact' => true,
         'inspections' => true,
         'invoices' => true,

@@ -19,7 +19,8 @@
             <fieldset>
                 <legend><?= __('Add Receipt') ?></legend>
                 <?php
-                    echo $this->Form->control('customer_id', ['options' => $customers, 'empty' => '-- Select Customer --']);
+                    echo $this->Form->control('customer_id', ['options' => $customers, 'empty' => '-- Select Customer --', 'id' => 'customer-id']);
+                    echo $this->Form->control('invoice_id', ['options' => $invoices, 'empty' => '-- Select Invoice (Optional) --', 'id' => 'invoice-id']);
                     echo $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZWG' => 'ZWG', 'ZAR' => 'ZAR']]);
                     echo $this->Form->control('amount');
                     echo $this->Form->control('account_id', ['options' => $accounts, 'empty' => '-- Select Bank/Asset Account --', 'label' => 'Deposited Into Account']);
@@ -35,3 +36,45 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function() {
+    $('#customer-id').on('change', function() {
+        const customerId = $(this).val();
+        const $invoiceDropdown = $('#invoice-id');
+        
+        $invoiceDropdown.html('<option value="">-- Loading Invoices... --</option>');
+        
+        if (!customerId) {
+            $invoiceDropdown.html('<option value="">-- Select Customer First --</option>');
+            return;
+        }
+
+        $.ajax({
+            url: '<?= $this->Url->build(['action' => 'apiFetchCustomerInvoices']) ?>/' + customerId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                $invoiceDropdown.empty();
+                $invoiceDropdown.append('<option value="">-- Select Invoice (Optional) --</option>');
+                
+                if (data.length === 0) {
+                    $invoiceDropdown.append('<option value="">No invoices found for this customer</option>');
+                } else {
+                    data.forEach(function(inv) {
+                        const label = 'Inv #' + inv.id + ' (' + inv.date + ') - Total: ' + inv.total;
+                        $invoiceDropdown.append($('<option>', {
+                            value: inv.id,
+                            text: label
+                        }));
+                    });
+                }
+            },
+            error: function() {
+                $invoiceDropdown.html('<option value="">-- Error loading invoices --</option>');
+            }
+        });
+    });
+});
+</script>

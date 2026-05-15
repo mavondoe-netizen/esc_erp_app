@@ -55,7 +55,7 @@ class ReportsController extends AppController
 
         // Build a map: account_id => running balance
         // For Balance Sheet: use ALL transactions up to endDate
-        $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+        $balanceField = $currency === 'USD' ? 'zwg' : 'amount';
 
         // Actually use a simpler raw aggregate approach
         $conn = $Transactions->getConnection();
@@ -82,6 +82,28 @@ class ReportsController extends AppController
             $balances[$aid] += (float)($acc->opening_balance ?? 0);
         }
 
+        // Friendly display labels for category values stored in DB
+        $categoryLabels = [
+            'current asset'   => 'Current Assets',
+            'fixed asset'     => 'Fixed Assets',
+            'non-current asset' => 'Non-Current Assets',
+            'other asset'     => 'Other Assets',
+            'accounts receivable' => 'Current Assets',
+            'cash & bank'     => 'Current Assets',
+            'trade receivables' => 'Current Assets',
+            // Liabilities
+            'current liability'  => 'Current Liabilities',
+            'non-current liability' => 'Non-Current Liabilities',
+            'long-term liability'   => 'Non-Current Liabilities',
+            'trade payables'        => 'Current Liabilities',
+            'tax payables'          => 'Current Liabilities',
+            'payroll payables'      => 'Current Liabilities',
+            // Equity
+            'capital'         => 'Capital',
+            "owner's equity"  => 'Capital',
+            'retained earnings' => 'Retained Earnings',
+        ];
+
         $report = [
             'Assets'      => [],
             'Liabilities' => [],
@@ -100,30 +122,39 @@ class ReportsController extends AppController
         $expenseTotal = 0.0;
 
         foreach ($accounts as $acc) {
-            $aid     = (int)$acc->id;
-            $balance = $balances[$aid] ?? 0.0;
-            $type    = strtolower($acc->type ?? '');
-            $sub     = $acc->subcategory ?: $acc->category;
+            $aid      = (int)$acc->id;
+            $balance  = $balances[$aid] ?? 0.0;
+            $type     = strtolower($acc->type ?? '');
+            $rawCat   = $acc->category ?? '';
+            $rawSub   = $acc->subcategory ?? '';
+            $cat      = strtolower($rawCat);
 
-            $cat     = strtolower($acc->category ?? '');
+            // Resolve the section group (e.g. "Current Assets", "Fixed Assets")
+            $sectionGroup = $categoryLabels[$cat] ?? ucwords($rawCat);
 
-            $isAsset = (strpos($type, 'asset') !== false || $cat === 'asset');
+            // The line-item label uses subcategory if available, else the section group
+            $lineLabel = $rawSub ?: $sectionGroup;
+
+            $isAsset     = (strpos($type, 'asset') !== false || $cat === 'asset');
             $isLiability = (strpos($type, 'liability') !== false || $cat === 'liability');
-            $isEquity = (strpos($type, 'equity') !== false || $cat === 'equity');
-            $isRevenue = (strpos($type, 'income') !== false || strpos($type, 'revenue') !== false || $cat === 'revenue' || $cat === 'income');
-            $isExpense = (strpos($type, 'expense') !== false || strpos($type, 'cost') !== false || $cat === 'expense' || $cat === 'cost of sales');
+            $isEquity    = (strpos($type, 'equity') !== false || $cat === 'equity');
+            $isRevenue   = (strpos($type, 'income') !== false || strpos($type, 'revenue') !== false || $cat === 'revenue' || $cat === 'income');
+            $isExpense   = (strpos($type, 'expense') !== false || strpos($type, 'cost') !== false || $cat === 'expense' || $cat === 'cost of sales');
 
             if ($isAsset) {
-                if (!isset($report['Assets'][$sub])) $report['Assets'][$sub] = [];
-                $report['Assets'][$sub][$acc->name] = ['account_id' => $aid, 'actual' => $balance];
+                if (!isset($report['Assets'][$sectionGroup])) $report['Assets'][$sectionGroup] = [];
+                if (!isset($report['Assets'][$sectionGroup][$lineLabel])) $report['Assets'][$sectionGroup][$lineLabel] = [];
+                $report['Assets'][$sectionGroup][$lineLabel][$acc->name] = ['account_id' => $aid, 'actual' => $balance];
                 $totals['total_assets'] += $balance;
             } elseif ($isLiability) {
-                if (!isset($report['Liabilities'][$sub])) $report['Liabilities'][$sub] = [];
-                $report['Liabilities'][$sub][$acc->name] = ['account_id' => $aid, 'actual' => -$balance];
+                if (!isset($report['Liabilities'][$sectionGroup])) $report['Liabilities'][$sectionGroup] = [];
+                if (!isset($report['Liabilities'][$sectionGroup][$lineLabel])) $report['Liabilities'][$sectionGroup][$lineLabel] = [];
+                $report['Liabilities'][$sectionGroup][$lineLabel][$acc->name] = ['account_id' => $aid, 'actual' => -$balance];
                 $totals['total_liabilities'] += -$balance;
             } elseif ($isEquity) {
-                if (!isset($report['Equity'][$sub])) $report['Equity'][$sub] = [];
-                $report['Equity'][$sub][$acc->name] = ['account_id' => $aid, 'actual' => -$balance];
+                if (!isset($report['Equity'][$sectionGroup])) $report['Equity'][$sectionGroup] = [];
+                if (!isset($report['Equity'][$sectionGroup][$lineLabel])) $report['Equity'][$sectionGroup][$lineLabel] = [];
+                $report['Equity'][$sectionGroup][$lineLabel][$acc->name] = ['account_id' => $aid, 'actual' => -$balance];
                 $totals['total_equity'] += -$balance;
             } elseif ($isRevenue) {
                 $incomeTotal += -$balance;
@@ -135,6 +166,25 @@ class ReportsController extends AppController
         $totals['retained_earnings']        = $incomeTotal - $expenseTotal;
         $totals['total_equity']             += $totals['retained_earnings'];
         $totals['total_liabilities_equity'] = $totals['total_liabilities'] + $totals['total_equity'];
+
+        // Sort sections into canonical accounting order
+        $assetOrder      = ['Fixed Assets', 'Non-Current Assets', 'Current Assets', 'Other Assets'];
+        $liabilityOrder  = ['Current Liabilities', 'Non-Current Liabilities'];
+        $equityOrder     = ['Capital', 'Retained Earnings'];
+
+        $sortByOrder = function (array &$section, array $order): void {
+            uksort($section, function ($a, $b) use ($order) {
+                $posA = array_search($a, $order);
+                $posB = array_search($b, $order);
+                $posA = ($posA === false) ? 999 : $posA;
+                $posB = ($posB === false) ? 999 : $posB;
+                return $posA <=> $posB;
+            });
+        };
+
+        $sortByOrder($report['Assets'],      $assetOrder);
+        $sortByOrder($report['Liabilities'], $liabilityOrder);
+        $sortByOrder($report['Equity'],      $equityOrder);
 
         $this->set(compact('report', 'totals', 'endDate', 'currency'));
     }
@@ -169,7 +219,7 @@ class ReportsController extends AppController
         $endDate   = $parseDate('end_date', date('Y-m-d'));
 
         $conn = TableRegistry::getTableLocator()->get('Transactions')->getConnection();
-        $balanceField = $currency === 'ZWG' ? 't.zwg' : 't.amount';
+        $balanceField = $currency === 'USD' ? 't.zwg' : 't.amount';
         $ytdStart = date('Y-01-01', strtotime($endDate));
 
         $safeStart = sprintf("'%s'", $startDate);
@@ -301,7 +351,7 @@ class ReportsController extends AppController
                 $openingBalance = (float)($account->opening_balance ?? 0);
 
                 $Transactions = TableRegistry::getTableLocator()->get('Transactions');
-                $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+                $balanceField = $currency === 'USD' ? 'zwg' : 'amount';
 
                 $transactions = $Transactions->find()
                     ->where([
@@ -317,7 +367,7 @@ class ReportsController extends AppController
                 $runningBalance = $openingBalance;
                 foreach ($transactions as $tx) {
                     $isDebit = in_array(strtolower(trim((string)$tx->type)), ['debit', '1']);
-                    $amount  = (float)($currency === 'ZWG' ? $tx->zwg : $tx->amount);
+                    $amount  = (float)($currency === 'USD' ? $tx->zwg : $tx->amount);
                     
                     $debit = $isDebit ? $amount : 0;
                     $credit = $isDebit ? 0 : $amount;
@@ -361,7 +411,7 @@ class ReportsController extends AppController
         $endDate   = $this->request->getQuery('end_date', date('Y-m-d'));
 
         $conn = TableRegistry::getTableLocator()->get('Transactions')->getConnection();
-        $balanceField = $currency === 'ZWG' ? 't.zwg' : 't.amount';
+        $balanceField = $currency === 'USD' ? 't.zwg' : 't.amount';
 
         $sql = "SELECT a.name, a.type, a.subcategory, a.category, a.id as account_id,
                        SUM(CASE WHEN t.type IN ('Debit','1') THEN $balanceField ELSE 0 END) as debits,
@@ -441,7 +491,7 @@ class ReportsController extends AppController
 
         $Accounts = TableRegistry::getTableLocator()->get('Accounts');
         $conn = $Accounts->getConnection();
-        $balanceField = $currency === 'ZWG' ? 't.zwg' : 't.amount';
+        $balanceField = $currency === 'USD' ? 't.zwg' : 't.amount';
 
         // Query to get total debits and credits for every account
         $sql = "SELECT a.id, a.name, a.type, a.opening_balance,
@@ -552,7 +602,7 @@ class ReportsController extends AppController
         $payPeriods = $PayPeriods->find('list', keyField: 'id', valueField: 'name')
             ->where(['PayPeriods.company_id' => $companyId])
             ->order(['PayPeriods.start_date' => 'DESC'])
-            ->all();
+            ->toArray();
 
         $payPeriodId = $this->request->getQuery('pay_period_id');
         $payslips = [];
@@ -732,7 +782,7 @@ class ReportsController extends AppController
 
         foreach ($invoices as $inv) {
             $customerName = "[Customer] " . ($inv->customer->name ?? 'Unknown');
-            $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+            $balanceField = $currency === 'USD' ? 'zwg' : 'amount';
             
             $txs = $Transactions->find()
                 ->where(['invoice_id' => $inv->id, 'company_id' => $companyId, 'date <=' => $asOfDate])
@@ -816,7 +866,7 @@ class ReportsController extends AppController
             
             // Calculate balance for this specific bill
             // Total Credits - Total Debits on this bill_id (Payables are Credits)
-            $balanceField = $currency === 'ZWG' ? 'zwg' : 'amount';
+            $balanceField = $currency === 'USD' ? 'zwg' : 'amount';
             $txs = $Transactions->find()
                 ->where(['bill_id' => $bill->id, 'company_id' => $companyId, 'date <=' => $asOfDate])
                 ->all();

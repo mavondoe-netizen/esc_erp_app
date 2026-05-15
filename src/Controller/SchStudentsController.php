@@ -32,6 +32,7 @@ class SchStudentsController extends AppController
             'SchClasses',
             'Contacts',
             'SchResults.SchSubjects',
+            'SchResults.SchExams',
             'SchAttendance',
             'Invoices.InvoiceItems',
             'Receipts',
@@ -49,23 +50,46 @@ class SchStudentsController extends AppController
     public function add()
     {
         $schStudent = $this->SchStudents->newEmptyEntity();
+
+        // ── Auto-generate next Admission Number ──────────────────────────
+        $year = date('Y');
+        $prefix = 'ADM-' . $year . '-';
+        $last = $this->SchStudents->find()
+            ->where(['admission_no LIKE' => $prefix . '%'])
+            ->orderBy(['admission_no' => 'DESC'])
+            ->select(['admission_no'])
+            ->first();
+
+        if ($last) {
+            $seq = (int)substr($last->admission_no, strlen($prefix));
+            $nextSeq = $seq + 1;
+        } else {
+            $nextSeq = 1;
+        }
+        $nextAdmNo = $prefix . str_pad((string)$nextSeq, 4, '0', STR_PAD_LEFT);
+        // ─────────────────────────────────────────────────────────────────
+
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            
+
+            // Ensure admission_no is always set to the auto-generated value
+            if (empty($data['admission_no'])) {
+                $data['admission_no'] = $nextAdmNo;
+            }
+
             // Quick Add Contact Logic
             if (empty($data['contact_id']) && !empty($data['guardian_name'])) {
                 $contact = $this->SchStudents->Contacts->newEmptyEntity();
-                $contact->name = $data['guardian_name'];
-                $contact->mobile = $data['guardian_phone'] ?? 'N/A';
-                $contact->email = 'pending' . time() . '@example.com';
+                $contact->name      = $data['guardian_name'];
+                $contact->mobile    = $data['guardian_phone'] ?? 'N/A';
+                $contact->email     = 'pending' . time() . '@example.com';
                 $contact->company_id = \Cake\Core\Configure::read('Tenant.company_id') ?? 1;
-                
+
                 if ($this->SchStudents->Contacts->save($contact)) {
                     $data['contact_id'] = $contact->id;
                 }
             }
 
-            // Admission Logic: If no user_id, we can create a placeholder user or ask to select one
             $schStudent = $this->SchStudents->patchEntity($schStudent, $data);
             if ($this->SchStudents->save($schStudent)) {
                 $this->Flash->success(__('The student has been admitted.'));
@@ -73,10 +97,11 @@ class SchStudentsController extends AppController
             }
             $this->Flash->error(__('The student could not be admitted. Please, try again.'));
         }
-        $users = $this->SchStudents->Users->find('list', limit: 200)->all();
+
+        $users      = $this->SchStudents->Users->find('list', limit: 200)->all();
         $schClasses = $this->SchStudents->SchClasses->find('list', limit: 200)->all();
-        $contacts = $this->SchStudents->Contacts->find('list', limit: 200)->all();
-        $this->set(compact('schStudent', 'users', 'schClasses', 'contacts'));
+        $contacts   = $this->SchStudents->Contacts->find('list', limit: 200)->all();
+        $this->set(compact('schStudent', 'users', 'schClasses', 'contacts', 'nextAdmNo'));
     }
 
     public function edit($id = null)

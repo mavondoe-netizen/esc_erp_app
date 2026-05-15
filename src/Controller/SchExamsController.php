@@ -12,13 +12,13 @@ class SchExamsController extends AppController
 
     public function index()
     {
-        $schExams = $this->paginate($this->SchExams->find());
+        $schExams = $this->paginate($this->SchExams->find()->contain(['SchSubjects']));
         $this->set(compact('schExams'));
     }
 
     public function view($id = null)
     {
-        $schExam = $this->SchExams->get($id, contain: ['SchResults.SchStudents', 'SchResults.SchSubjects']);
+        $schExam = $this->SchExams->get($id, contain: ['SchSubjects', 'SchResults.SchStudents', 'SchResults.SchSubjects']);
         $this->set(compact('schExam'));
     }
 
@@ -28,17 +28,18 @@ class SchExamsController extends AppController
         if ($this->request->is('post')) {
             $schExam = $this->SchExams->patchEntity($schExam, $this->request->getData());
             if ($this->SchExams->save($schExam)) {
-                $this->Flash->success(__('The exam metadata has been saved.'));
+                $this->Flash->success(__('The exam has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The exam could not be saved. Please, try again.'));
         }
-        $this->set(compact('schExam'));
+        $schSubjects = $this->fetchTable('SchSubjects')->find('list')->all();
+        $this->set(compact('schExam', 'schSubjects'));
     }
 
     public function edit($id = null)
     {
-        $schExam = $this->SchExams->get($id);
+        $schExam = $this->SchExams->get($id, contain: ['SchSubjects']);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $schExam = $this->SchExams->patchEntity($schExam, $this->request->getData());
             if ($this->SchExams->save($schExam)) {
@@ -47,7 +48,8 @@ class SchExamsController extends AppController
             }
             $this->Flash->error(__('The exam could not be updated. Please, try again.'));
         }
-        $this->set(compact('schExam'));
+        $schSubjects = $this->fetchTable('SchSubjects')->find('list')->all();
+        $this->set(compact('schExam', 'schSubjects'));
     }
 
     public function delete($id = null)

@@ -29,7 +29,6 @@ $cakeDescription = 'ESCerp App - Premium ERP';
     <?= $this->Html->meta('icon') ?>
     
     <!-- Premium Design System -->
-    <!-- Premium Design System -->
     <?= $this->Html->css(['premium', 'bulk_actions', 'sales_bot', 'quick-add']) ?>
 
     <!-- DataTables & Buttons CSS -->
@@ -306,7 +305,7 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                     </div>
  
                     <!-- SCHOOL MANAGEMENT -->
-                    <?php $ga = $groupActive(['SchStudents', 'SchAttendance', 'SchClasses', 'SchSubjects', 'SchExams', 'SchResults', 'SchFees', 'SchTeachers']); ?>
+                    <?php $ga = $groupActive(['SchStudents', 'SchAttendance', 'SchClasses', 'SchSubjects', 'SchExams', 'SchResults', 'SchTeachers']); ?>
                     <div class="nav-group <?= $ga ?>">
                         <div class="nav-group-header" onclick="toggleGroup(this)">
                             <span><i class="fas fa-graduation-cap"></i> School Management</span>
@@ -315,10 +314,10 @@ $cakeDescription = 'ESCerp App - Premium ERP';
                         <div class="nav-group-body">
                             <?= $this->Html->link('<i class="fas fa-user-graduate"></i> Students', ['controller' => 'SchStudents', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchStudents' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-chalkboard-teacher"></i> Teachers', ['controller' => 'SchTeachers', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchTeachers' ? ' active' : '')]) ?>
-                            <?= $this->Html->link('<i class="fas fa-calendar-check"></i> Attendance', ['controller' => 'SchAttendance', 'action' => 'mark'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchAttendance' ? ' active' : '')]) ?>
-                            <?= $this->Html->link('<i class="fas fa-school"></i> Classes & Streams', ['controller' => 'SchClasses', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchClasses' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-calendar-check"></i> Attendance', ['controller' => 'SchAttendance', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchAttendance' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-school"></i> Classes &amp; Streams', ['controller' => 'SchClasses', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchClasses' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-book"></i> Subjects', ['controller' => 'SchSubjects', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchSubjects' ? ' active' : '')]) ?>
-                            <?= $this->Html->link('<i class="fas fa-file-invoice-dollar"></i> School Fees', ['controller' => 'SchFees', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchFees' ? ' active' : '')]) ?>
+                            <?= $this->Html->link('<i class="fas fa-clipboard-list"></i> Examinations', ['controller' => 'SchExams', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchExams' ? ' active' : '')]) ?>
                             <?= $this->Html->link('<i class="fas fa-poll-h"></i> Exam Results', ['controller' => 'SchResults', 'action' => 'index'], ['escape' => false, 'class' => 'nav-sub-link' . ($ctrl === 'SchResults' ? ' active' : '')]) ?>
                         </div>
                     </div>

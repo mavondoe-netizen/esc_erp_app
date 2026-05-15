@@ -14,6 +14,30 @@
             <p class="mb-0 opacity-75">Select a class, subject, and exam to record marks for all students.</p>
         </div>
         <div class="card-body p-4">
+
+            <?php if (empty($schExams)): ?>
+            <div class="alert border-0 d-flex align-items-start gap-3 mb-4" style="background:#fff7ed; border-left: 4px solid #f97316 !important; border-radius: 10px;">
+                <i class="bi bi-exclamation-triangle-fill text-warning fs-4 mt-1"></i>
+                <div>
+                    <div class="fw-bold text-dark mb-1">No Exams Found</div>
+                    <p class="mb-2 text-muted small">
+                        The <strong>Exam</strong> dropdown is empty because no exam sessions have been created yet.
+                        You must first define your exams (e.g. <em>Mid-Term 1, Term 2 Final, Mock Exam</em>) before you can enter marks.
+                    </p>
+                    <?= $this->Html->link(
+                        '<i class="bi bi-plus-circle me-1"></i> Create an Exam Now',
+                        ['controller' => 'SchExams', 'action' => 'add'],
+                        ['class' => 'btn btn-sm btn-warning fw-bold', 'escape' => false]
+                    ) ?>
+                    <?= $this->Html->link(
+                        '<i class="bi bi-list me-1"></i> View All Exams',
+                        ['controller' => 'SchExams', 'action' => 'index'],
+                        ['class' => 'btn btn-sm btn-outline-secondary ms-2', 'escape' => false]
+                    ) ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <?= $this->Form->create(null, ['type' => 'get', 'class' => 'row g-3 align-items-end mb-4']) ?>
                 <div class="column column-25">
                     <label class="form-label fw-bold small text-muted text-uppercase"><?= __('Class') ?></label>
@@ -49,7 +73,14 @@
                             <tr>
                                 <td class="ps-4 fw-bold">#<?= h($student->admission_no) ?></td>
                                 <td>
-                                    <div class="fw-medium text-dark"><?= h($student->user->name ?? 'N/A') ?></div>
+                                    <?php
+                                        $fullName = trim(($student->first_name ?? '') . ' ' . ($student->last_name ?? ''));
+                                        if (!$fullName) $fullName = $student->user->name ?? null;
+                                    ?>
+                                    <div class="fw-bold text-dark">
+                                        <?= $fullName ? h($fullName) : '<span class="text-muted fst-italic">No Name Set</span>' ?>
+                                    </div>
+                                    <div class="text-muted small"><?= h($student->admission_no) ?></div>
                                     <?= $this->Form->hidden("results.$index.student_id", ['value' => $student->id]) ?>
                                     <?= $this->Form->hidden("results.$index.subject_id", ['value' => $subjectId]) ?>
                                     <?= $this->Form->hidden("results.$index.exam_id", ['value' => $examId]) ?>

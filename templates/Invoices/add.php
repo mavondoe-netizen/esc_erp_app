@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="column"><?= $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZAR' => 'ZAR']]) ?></div>
+                    <div class="column"><?= $this->Form->control('currency', ['options' => ['USD' => 'USD', 'ZAR' => 'ZAR', 'ZWG'=> 'ZWG']]) ?></div>
                     <div class="column"><?= $this->Form->control('description') ?></div>
                     <div class="column"><?= $this->Form->control('status', ['options' => ['Draft' => 'Draft', 'Pending Approval' => 'Pending Approval', 'Approved' => 'Approved', 'Sent' => 'Sent', 'Paid' => 'Paid']]) ?></div>
                 </div>

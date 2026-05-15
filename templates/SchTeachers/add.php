@@ -4,6 +4,7 @@
  * @var \App\Model\Entity\SchTeacher $schTeacher
  * @var array $users
  * @var array $employees
+ * @var string $employeesJson
  */
 ?>
 <div class="row justify-content-center">
@@ -60,4 +61,31 @@
 <style>
 .bg-primary { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%) !important; }
 .form-control:focus, .form-select:focus { background-color: #fff !important; box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6 !important; }
+@keyframes autofill-pulse {
+    0%   { background-color: #eff6ff; }
+    60%  { background-color: #dbeafe; }
+    100% { background-color: #fff; }
+}
+.autofilled { animation: autofill-pulse 0.7s ease; }
 </style>
+
+<script>
+(function () {
+    const empData   = <?= $employeesJson ?>;
+    const empSelect = document.getElementById('employee-id');
+    const empNoInput = document.getElementById('employee-no');
+
+    if (!empSelect || !empNoInput) return;
+
+    empSelect.addEventListener('change', function () {
+        const selected = empData[this.value];
+        if (selected) {
+            empNoInput.value = selected.employee_no;
+            // visual feedback
+            empNoInput.classList.remove('autofilled');
+            void empNoInput.offsetWidth; // reflow to restart animation
+            empNoInput.classList.add('autofilled');
+        }
+    });
+})();
+</script>
