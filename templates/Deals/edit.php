@@ -28,9 +28,11 @@
                 echo $this->Form->control('name');
                 echo $this->Form->control('description');
                 echo $this->Form->control('date');
-                echo $this->Form->control('type', ['options' => ['New' => 'New', 'Repeat' => 'Repeat']]);
+                echo $this->Form->control('type', ['options' => $dealTypes, 'empty' => 'Select Type']);
 
                 echo $this->Form->control('value');
+                echo $this->Form->control('probability', ['label' => 'Probability (%)', 'min' => 0, 'max' => 100]);
+                echo $this->Form->control('expected_close_date', ['empty' => true]);
                 echo $this->Form->control('stage', ['options' => [
                     'Lead' => 'Lead',
                     'Qualified' => 'Qualified',

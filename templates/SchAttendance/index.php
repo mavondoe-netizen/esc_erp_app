@@ -22,15 +22,15 @@
     <!-- Filter Bar -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body py-3 px-4">
-            <?= $this->Form->create(null, ['type' => 'get', 'class' => 'row g-2 align-items-end']) ?>
-                <div class="col-auto">
+            <?= $this->Form->create(null, ['type' => 'get', 'class' => 'row g-3 align-items-end']) ?>
+                <div class="col-md-3 col-12">
                     <label class="form-label fw-bold small text-muted text-uppercase mb-1">Date</label>
                     <?= $this->Form->date('date', [
                         'value'   => $this->request->getQuery('date', date('Y-m-d')),
                         'class'   => 'form-control form-control-sm bg-light border-0',
                     ]) ?>
                 </div>
-                <div class="col-auto">
+                <div class="col-md-3 col-12">
                     <label class="form-label fw-bold small text-muted text-uppercase mb-1">Status</label>
                     <?= $this->Form->select('status', [
                         'Present' => 'Present',
@@ -42,11 +42,13 @@
                         'class'   => 'form-select form-select-sm bg-light border-0',
                     ]) ?>
                 </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-sm btn-primary">
-                        <i class="fas fa-filter me-1"></i> Filter
-                    </button>
-                    <?= $this->Html->link('Clear', ['action' => 'index'], ['class' => 'btn btn-sm btn-light ms-1']) ?>
+                <div class="col-md-4 col-12">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-primary flex-grow-1" style="height: 38px;">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <?= $this->Html->link('Clear', ['action' => 'index'], ['class' => 'btn btn-sm btn-light flex-grow-1', 'style' => 'height: 38px; display: inline-flex; align-items: center; justify-content: center;']) ?>
+                    </div>
                 </div>
             <?= $this->Form->end() ?>
         </div>

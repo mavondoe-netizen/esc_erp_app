@@ -5,6 +5,18 @@
  * @var \App\Model\Entity\Company $company
  */
 
+$currencyCode = $invoice->currency ?? 'USD';
+$currencySymbols = [
+    'USD' => '$',
+    'EUR' => '€',
+    'GBP' => '£',
+    'ZWG' => 'ZiG',
+    'ZAR' => 'R',
+    'CAD' => 'C$',
+    'AUD' => 'A$',
+];
+$currencySymbol = $currencySymbols[$currencyCode] ?? $currencyCode;
+
 $this->assign('actions', $this->element('document_actions', [
     'entity' => $invoice,
     'controller' => 'Invoices',
@@ -52,7 +64,7 @@ $this->assign('actions', $this->element('document_actions', [
         </div>
         <div style="text-align: right;">
              <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Currency</h4>
-             <h3 style="color: var(--primary-color);"><?= h($invoice->currency) ?></h3>
+             <h3 style="color: var(--primary-color); font-weight: 600;"><?= h($currencyCode) ?> (<?= h($currencySymbol) ?>)</h3>
         </div>
     </div>
 
@@ -83,12 +95,12 @@ $this->assign('actions', $this->element('document_actions', [
                         <small style="color: #64748b;"><?= h($item->description) ?></small>
                     </td>
                     <td class="text-center"><?= $this->Number->format($item->quantity) ?></td>
-                    <td class="text-right"><?= $this->Number->currency($item->unit_price, $invoice->currency) ?></td>
+                    <td class="text-right"><?= $this->formatCurrency($item->unit_price, $currencyCode) ?></td>
                     <td class="text-right">
                         <span style="display: block; font-size: 0.75rem; color: #94a3b8;"><?= $this->Number->format($item->vat_rate) ?>%</span>
-                        <?= $this->Number->currency($item->vat_amount, $invoice->currency) ?>
+                        <?= $this->formatCurrency($item->vat_amount, $currencyCode) ?>
                     </td>
-                    <td class="text-right" style="font-weight: 600; color: #0f172a;"><?= $this->Number->currency($item->line_total, $invoice->currency) ?></td>
+                    <td class="text-right" style="font-weight: 600; color: #0f172a;"><?= $this->formatCurrency($item->line_total, $currencyCode) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -107,9 +119,9 @@ $this->assign('actions', $this->element('document_actions', [
                     $invoice->hasValue('customer') ? $invoice->customer->name : 'N/A',
                     ($invoice->hasValue('customer') && $invoice->customer->tin) ? $invoice->customer->tin : 'N/A',
                     ($invoice->hasValue('customer') && $invoice->customer->vat_number) ? $invoice->customer->vat_number : 'N/A',
-                    $this->Number->currency($subtotal, $invoice->currency),
-                    $this->Number->currency($totalVat, $invoice->currency),
-                    $this->Number->currency($invoice->total, $invoice->currency)
+                    $this->formatCurrency($subtotal, $currencyCode),
+                    $this->formatCurrency($totalVat, $currencyCode),
+                    $this->formatCurrency($invoice->total, $currencyCode)
                 );
 
                 $qrOptions = new \chillerlan\QRCode\QROptions([
@@ -131,15 +143,15 @@ $this->assign('actions', $this->element('document_actions', [
             <div style="width: 300px;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
                     <span>Subtotal</span>
-                    <span><?= $this->Number->currency($subtotal, $invoice->currency) ?></span>
+                    <span><?= $this->formatCurrency($subtotal, $currencyCode) ?></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
                     <span>Tax (VAT)</span>
-                    <span><?= $this->Number->currency($totalVat, $invoice->currency) ?></span>
+                    <span><?= $this->formatCurrency($totalVat, $currencyCode) ?></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 15px 0; border-top: 2px solid #0f172a; margin-top: 10px; font-weight: 800; font-size: 1.25rem; color: #0f172a;">
                     <span>Total</span>
-                    <span><?= $this->Number->currency($invoice->total, $invoice->currency) ?></span>
+                    <span><?= $this->formatCurrency($invoice->total, $currencyCode) ?></span>
                 </div>
             </div>
         </div>
@@ -176,7 +188,7 @@ $this->assign('actions', $this->element('document_actions', [
                     </td>
                     <td><?= $transaction->hasValue('account') ? h($transaction->account->name) : '—' ?></td>
                     <td><span style="color: <?= $transaction->type === 'Debit' ? '#16a34a' : '#dc2626' ?>; font-weight: 600;"><?= h($transaction->type) ?></span></td>
-                    <td class="text-right" style="font-weight: 600;"><?= $this->Number->currency($transaction->amount, $transaction->currency) ?></td>
+                    <td class="text-right" style="font-weight: 600;"><?= $this->formatCurrency($transaction->amount, $transaction->currency) ?></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>

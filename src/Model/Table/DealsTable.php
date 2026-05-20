@@ -91,6 +91,14 @@ class DealsTable extends Table
             ->notEmptyString('value');
 
         $validator
+            ->integer('probability')
+            ->allowEmptyString('probability');
+
+        $validator
+            ->date('expected_close_date')
+            ->allowEmptyDate('expected_close_date');
+
+        $validator
             ->scalar('stage')
             ->maxLength('stage', 151)
             ->requirePresence('stage', 'create')

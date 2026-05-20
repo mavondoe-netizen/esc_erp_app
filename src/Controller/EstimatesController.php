@@ -44,7 +44,7 @@ class EstimatesController extends AppController
         $this->viewBuilder()->setLayout('document');
         $companyId = $this->request->getAttribute('company_id');
         $estimate = $this->fetchTable('Estimates')
-            ->get($id, contain: ['Customers', 'EstimateItems' => ['Accounts']]);
+            ->get($id, contain: ['Customers', 'EstimateItems' => ['Accounts', 'Products']]);
         
         $company = $this->fetchTable('Companies')->get($companyId);
         $this->set(compact('estimate', 'company'));

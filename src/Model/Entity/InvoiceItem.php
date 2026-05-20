@@ -42,6 +42,7 @@ class InvoiceItem extends Entity
         'unit_price' => true,
         'line_total' => true,
         'product_id' => true,
+        'description' => true,
         'vat_rate' => true,
         'vat_amount' => true,
         'hs_code' => true,

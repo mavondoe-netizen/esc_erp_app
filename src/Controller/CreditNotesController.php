@@ -33,7 +33,7 @@ class CreditNotesController extends AppController
      */
     public function view($id = null)
     {
-        $creditNote = $this->CreditNotes->get($id, contain: ['Companies', 'Customers', 'CreditNoteItems']);
+        $creditNote = $this->CreditNotes->get($id, contain: ['Companies', 'Customers', 'CreditNoteItems' => ['Products']]);
         $this->set(compact('creditNote'));
     }
 

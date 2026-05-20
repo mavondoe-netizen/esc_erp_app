@@ -19,18 +19,35 @@
                 <legend><?= __('Add Product') ?></legend>
                 <?php
                     echo $this->Form->control('name');
-                    echo $this->Form->control('account_id', ['options' => $accounts]);
-                    echo $this->Form->control('unit_price', ['step' => '0.01']);
-                    echo $this->Form->control('vat_rate', ['step' => '0.01']);
+                ?>
+                <div class="quick-add-group">
+                    <div class="form-control-wrapper">
+                        <?= $this->Form->control('account_id', ['options' => $accounts, 'id' => 'account-id', 'empty' => true]) ?>
+                    </div>
+                    <button type="button" class="global-quick-add-btn button button-outline" data-url="/accounts/index?popup=1" data-target-dropdown="account-id" title="Search/Pick Account">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <button type="button" class="global-quick-add-btn button button-outline" data-url="/accounts/add?popup=1" data-target-dropdown="account-id" title="Add New Account">
+                        <i class="fa fa-plus"></i>
+                    </button>
+                </div>
+                <?php
+                    echo $this->Form->control('unit_price', ['step' => '0.01', 'id' => 'unit-price']);
+                    echo $this->Form->control('vat_rate', ['step' => '0.01', 'id' => 'vat-rate']);
                     echo $this->Form->control('hs_code', [
                         'options' => [
                             '99001000' => '99001000',
                             '99002000' => '99002000',
                             '99003000' => '99003000'
                         ], 
-                        'empty' => true
+                        'empty' => true,
+                        'id' => 'hs-code'
                     ]);
-                    echo $this->Form->control('vat_type', ['options' => ['Standard' => 'Standard', 'Zero' => 'Zero', 'Exempt' => 'Exempt'], 'empty' => true]);
+                    echo $this->Form->control('vat_type', [
+                        'options' => ['Standard' => 'Standard', 'Zero' => 'Zero', 'Exempt' => 'Exempt'], 
+                        'empty' => true,
+                        'id' => 'vat-type'
+                    ]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('Submit')) ?> <?= $this->Html->link(__("Cancel"), ["action" => "index"], ["class" => "button secondary", "style" => "margin-left: 10px;"]) ?>

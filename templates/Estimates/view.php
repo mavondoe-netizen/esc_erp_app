@@ -4,6 +4,18 @@
  * @var \App\Model\Entity\Company $company
  */
 
+$currencyCode = $company->reporting_currency ?? 'USD';
+$currencySymbols = [
+    'USD' => '$',
+    'EUR' => '€',
+    'GBP' => '£',
+    'ZWG' => 'ZiG',
+    'ZAR' => 'R',
+    'CAD' => 'C$',
+    'AUD' => 'A$',
+];
+$currencySymbol = $currencySymbols[$currencyCode] ?? $currencyCode;
+
 $this->assign('actions', $this->element('document_actions', [
     'entity' => $estimate,
     'controller' => 'Estimates',
@@ -35,7 +47,7 @@ $this->assign('actions', $this->element('document_actions', [
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px;">
         <div>
             <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Estimate For</h4>
             <h3 style="margin-bottom: 5px;"><?= $estimate->hasValue('customer') ? h($estimate->customer->name) : '—' ?></h3>
@@ -45,9 +57,13 @@ $this->assign('actions', $this->element('document_actions', [
                 </p>
             <?php endif; ?>
         </div>
+        <div style="text-align: center;">
+             <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Currency</h4>
+             <h3 style="color: var(--primary-color); font-weight: 600;"><?= h($currencyCode) ?> (<?= h($currencySymbol) ?>)</h3>
+        </div>
         <div style="text-align: right;">
              <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Estimate Total</h4>
-             <h2 style="color: #4b5563; font-size: 2.2rem; margin: 0;"><?= $this->Number->currency($estimate->total) ?></h2>
+             <h2 style="color: #4b5563; font-size: 2.2rem; margin: 0;"><?= $this->formatCurrency($estimate->total, $currencyCode) ?></h2>
         </div>
     </div>
 
@@ -76,12 +92,12 @@ $this->assign('actions', $this->element('document_actions', [
                         <small style="color: #64748b;"><?= h($item->description) ?></small>
                     </td>
                     <td class="text-center"><?= $this->Number->format($item->quantity) ?></td>
-                    <td class="text-right"><?= $this->Number->currency($item->unit_price) ?></td>
+                    <td class="text-right"><?= $this->formatCurrency($item->unit_price, $currencyCode) ?></td>
                     <td class="text-right">
                         <span style="display: block; font-size: 0.75rem; color: #94a3b8;"><?= $this->Number->format($item->vat_rate) ?>%</span>
-                        <?= $this->Number->currency($item->vat_amount) ?>
+                        <?= $this->formatCurrency($item->vat_amount, $currencyCode) ?>
                     </td>
-                    <td class="text-right" style="font-weight: 600; color: #0f172a;"><?= $this->Number->currency($item->line_total) ?></td>
+                    <td class="text-right" style="font-weight: 600; color: #0f172a;"><?= $this->formatCurrency($item->line_total, $currencyCode) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -91,15 +107,15 @@ $this->assign('actions', $this->element('document_actions', [
             <div style="width: 300px;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
                     <span>Subtotal</span>
-                    <span><?= $this->Number->currency($subtotal) ?></span>
+                    <span><?= $this->formatCurrency($subtotal, $currencyCode) ?></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #64748b;">
                     <span>Tax (VAT)</span>
-                    <span><?= $this->Number->currency($totalVat) ?></span>
+                    <span><?= $this->formatCurrency($totalVat, $currencyCode) ?></span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 15px 0; border-top: 2px solid #0f172a; margin-top: 10px; font-weight: 800; font-size: 1.25rem; color: #0f172a;">
                     <span>Total</span>
-                    <span><?= $this->Number->currency($estimate->total) ?></span>
+                    <span><?= $this->formatCurrency($estimate->total, $currencyCode) ?></span>
                 </div>
             </div>
         </div>

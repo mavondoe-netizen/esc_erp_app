@@ -43,26 +43,28 @@
                     echo $this->Form->control('status', ['class' => 'form-control']);
                 ?>
 
-                <h4 style="margin-top: 2rem;">Estimate Items</h4>
-                <table id="items-table" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th style="width: 20%;">Product</th>
-                            <th style="width: 15%;">Account</th>
-                            <th style="width: 5%;">Qty</th>
-                            <th style="width: 10%;">Unit Price</th>
-                            <th style="width: 8%;">HS Code</th>
-                            <th style="width: 8%;">VAT Type</th>
-                            <th style="width: 8%;">VAT %</th>
-                            <th style="width: 10%;">VAT Amt</th>
-                            <th style="width: 10%;">Line Total</th>
-                            <th style="width: 6%;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="items-container">
-                        <!-- JS will inject rows here -->
-                    </tbody>
-                </table>
+                 <h4 style="margin-top: 2rem;">Estimate Items</h4>
+                <div class="table-responsive">
+                    <table id="items-table" style="width: 100%; min-width: 1100px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">Product</th>
+                                <th style="width: 15%;">Account</th>
+                                <th style="width: 5%;">Qty</th>
+                                <th style="width: 10%;">Unit Price</th>
+                                <th style="width: 8%;">HS Code</th>
+                                <th style="width: 8%;">VAT Type</th>
+                                <th style="width: 8%;">VAT %</th>
+                                <th style="width: 10%;">VAT Amt</th>
+                                <th style="width: 10%;">Line Total</th>
+                                <th style="width: 6%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-container">
+                            <!-- JS will inject rows here -->
+                        </tbody>
+                    </table>
+                </div>
                 <button type="button" class="button button-outline" onclick="addRow()" style="margin-top: 1rem;">
                     <i class="fa fa-plus"></i> Add Line Item
                 </button>
@@ -104,8 +106,9 @@
         const vatAmount = data ? data.vat_amount : '0.00';
         const lineTotal = data ? data.line_total : '0.00';
         const itemId = data ? data.id : '';
+        const desc = data && data.description ? data.description : '';
 
-        let productHtml = `<input type="hidden" name="estimate_items[${rowIndex}][id]" value="${itemId}">`;
+        let productHtml = itemId ? `<input type="hidden" name="estimate_items[${rowIndex}][id]" value="${itemId}">` : '';
         productHtml += `<select name="estimate_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
         for (let id in productsOptions) {
             const selected = (id == prodId) ? 'selected' : '';
@@ -122,14 +125,17 @@
 
         tr.innerHTML = `
             <td>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    ${productHtml}
-                    <button type="button" class="global-quick-add-btn" data-url="/products/index?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Search/Pick Product">
-                        <i class="fa fa-search"></i>
-                    </button>
-                    <button type="button" class="global-quick-add-btn" data-url="/products/add?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Add New Product">
-                        <i class="fa fa-plus"></i>
-                    </button>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        ${productHtml}
+                        <button type="button" class="global-quick-add-btn" data-url="/products/index?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Search/Pick Product">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button type="button" class="global-quick-add-btn" data-url="/products/add?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Add New Product">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <input type="text" name="estimate_items[${rowIndex}][description]" id="description-${rowIndex}" class="form-control" placeholder="Item Description / Details" value="${desc.replace(/"/g, '&quot;')}">
                 </div>
             </td>
             <td>${accountHtml}</td>

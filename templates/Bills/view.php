@@ -33,7 +33,12 @@ $this->assign('actions', $this->element('document_actions', [
                     <strong>Reference:</strong> <span style="color: #0f172a;"><?= h($bill->manual_reference) ?></span><br>
                 <?php endif; ?>
                 <strong>Date:</strong> <span style="color: #0f172a;"><?= h($bill->date) ?></span><br>
-                <strong>Currency:</strong> <span style="color: #0f172a;"><?= h($bill->currency) ?></span>
+                <?php
+                    $billCurrencyCode = $bill->currency ?? 'USD';
+                    $billCurrencySymbols = ['USD' => '$', 'EUR' => '€', 'GBP' => '£', 'ZWG' => 'ZiG', 'ZAR' => 'R', 'CAD' => 'C$', 'AUD' => 'A$'];
+                    $billCurrencySymbol = $billCurrencySymbols[$billCurrencyCode] ?? $billCurrencyCode;
+                ?>
+                <strong>Currency:</strong> <span style="color: var(--primary-color); font-weight: 600;"><?= h($billCurrencyCode) ?> (<?= h($billCurrencySymbol) ?>)</span>
             </div>
         </div>
     </div>
@@ -48,7 +53,7 @@ $this->assign('actions', $this->element('document_actions', [
         </div>
         <div style="text-align: right;">
              <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 10px;">Total Amount Due</h4>
-             <h2 style="color: #dc2626; font-size: 2.2rem; margin: 0;"><?= $this->Number->currency($bill->total, $bill->currency) ?></h2>
+             <h2 style="color: #dc2626; font-size: 2.2rem; margin: 0;"><?= $this->formatCurrency($bill->total, $billCurrencyCode) ?></h2>
         </div>
     </div>
 
@@ -69,15 +74,18 @@ $this->assign('actions', $this->element('document_actions', [
                 <?php if (!empty($bill->bill_items)): ?>
                     <?php foreach ($bill->bill_items as $item): ?>
                     <tr>
-                        <td><?= h($item->description ?: 'Line Item') ?></td>
+                        <td>
+                            <strong style="color: #0f172a;"><?= $item->hasValue('product') ? h($item->product->name) : 'Custom Item' ?></strong><br>
+                            <small style="color: #64748b;"><?= h($item->description) ?></small>
+                        </td>
                         <td><?= $item->hasValue('account') ? h($item->account->name) : '—' ?></td>
                         <td class="text-center"><?= $this->Number->format($item->quantity) ?></td>
-                        <td class="text-right"><?= $this->Number->currency($item->unit_price, $bill->currency) ?></td>
+                        <td class="text-right"><?= $this->formatCurrency($item->unit_price, $billCurrencyCode) ?></td>
                         <td class="text-right">
                              <span style="display: block; font-size: 0.75rem; color: #94a3b8;"><?= $this->Number->format($item->vat_rate) ?>%</span>
-                             <?= $this->Number->currency($item->vat_amount, $bill->currency) ?>
+                             <?= $this->formatCurrency($item->vat_amount, $billCurrencyCode) ?>
                         </td>
-                        <td class="text-right" style="font-weight: 600;"><?= $this->Number->currency($item->line_total, $bill->currency) ?></td>
+                        <td class="text-right" style="font-weight: 600;"><?= $this->formatCurrency($item->line_total, $billCurrencyCode) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -116,7 +124,7 @@ $this->assign('actions', $this->element('document_actions', [
                     </td>
                     <td><?= $transaction->hasValue('account') ? h($transaction->account->name) : '—' ?></td>
                     <td><span style="color: <?= $transaction->type === 'Debit' ? '#16a34a' : '#dc2626' ?>; font-weight: 600;"><?= h($transaction->type) ?></span></td>
-                    <td class="text-right" style="font-weight: 600;"><?= $this->Number->currency($transaction->amount, $transaction->currency) ?></td>
+                    <td class="text-right" style="font-weight: 600;"><?= $this->formatCurrency($transaction->amount, $transaction->currency) ?></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>

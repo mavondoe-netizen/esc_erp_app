@@ -52,6 +52,11 @@ class TasksTable extends Table
         $this->belongsTo('Companies', [
             'foreignKey' => 'company_id',
         ]);
+        $this->belongsTo('Deals', [
+            'foreignKey' => 'deal_id',
+        ]);
+            'foreignKey' => 'company_id',
+        ]);
     }
 
     /**
@@ -96,6 +101,7 @@ class TasksTable extends Table
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
+        $rules->add($rules->existsIn(['deal_id'], 'Deals'), ['errorField' => 'deal_id']);
 
         return $rules;
     }

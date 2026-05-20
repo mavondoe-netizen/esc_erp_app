@@ -34,6 +34,7 @@ class CreditNoteItem extends Entity
     protected array $_accessible = [
         'credit_note_id' => true,
         'product_id' => true,
+        'description' => true,
         'account_id' => true,
         'quantity' => true,
         'unit_price' => true,

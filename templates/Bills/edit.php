@@ -50,23 +50,25 @@
                 </div>
 
                 <h3 style="margin-top: 2rem;">Bill Items</h3>
-                <table id="bill-items-table" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">Product</th>
-                            <th style="width: 8%;">Qty</th>
-                            <th style="width: 10%;">Unit Price</th>
-                            <th style="width: 8%;">HS Code</th>
-                            <th style="width: 8%;">VAT Type</th>
-                            <th style="width: 8%;">VAT %</th>
-                            <th style="width: 10%;">Line Total</th>
-                            <th style="width: 5%;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="items-container">
-                        <!-- JS will inject rows here -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table id="bill-items-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Product</th>
+                                <th style="width: 8%;">Qty</th>
+                                <th style="width: 10%;">Unit Price</th>
+                                <th style="width: 8%;">HS Code</th>
+                                <th style="width: 8%;">VAT Type</th>
+                                <th style="width: 8%;">VAT %</th>
+                                <th style="width: 10%;">Line Total</th>
+                                <th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-container">
+                            <!-- JS will inject rows here -->
+                        </tbody>
+                    </table>
+                </div>
                 <button type="button" class="button button-outline" onclick="addRow()" style="margin-top: 1rem;">
                     <i class="fa fa-plus"></i> Add Line Item
                 </button>

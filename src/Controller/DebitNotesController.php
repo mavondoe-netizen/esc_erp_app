@@ -33,7 +33,7 @@ class DebitNotesController extends AppController
      */
     public function view($id = null)
     {
-        $debitNote = $this->DebitNotes->get($id, contain: ['Companies', 'Suppliers', 'DebitNoteItems']);
+        $debitNote = $this->DebitNotes->get($id, contain: ['Companies', 'Suppliers', 'DebitNoteItems' => ['Products']]);
         $this->set(compact('debitNote'));
     }
 

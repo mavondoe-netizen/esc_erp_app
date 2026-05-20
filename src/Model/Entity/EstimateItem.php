@@ -34,6 +34,7 @@ class EstimateItem extends Entity
     protected array $_accessible = [
         'estimate_id' => true,
         'product_id' => true,
+        'description' => true,
         'account_id' => true,
         'quantity' => true,
         'unit_price' => true,

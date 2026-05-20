@@ -45,23 +45,25 @@
                 </div>
 
                 <h3 style="margin-top: 2rem;">Bill Items</h3>
-                <table id="bill-items-table" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">Product</th>
-                            <th style="width: 8%;">Qty</th>
-                            <th style="width: 10%;">Unit Price</th>
-                            <th style="width: 8%;">HS Code</th>
-                            <th style="width: 8%;">VAT Type</th>
-                            <th style="width: 8%;">VAT %</th>
-                            <th style="width: 10%;">Line Total</th>
-                            <th style="width: 5%;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="items-container">
-                        <!-- JS will inject rows here -->
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table id="bill-items-table" style="width: 100%; min-width: 1100px;">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Product</th>
+                                <th style="width: 8%;">Qty</th>
+                                <th style="width: 10%;">Unit Price</th>
+                                <th style="width: 8%;">HS Code</th>
+                                <th style="width: 8%;">VAT Type</th>
+                                <th style="width: 8%;">VAT %</th>
+                                <th style="width: 10%;">Line Total</th>
+                                <th style="width: 5%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="items-container">
+                            <!-- JS will inject rows here -->
+                        </tbody>
+                    </table>
+                </div>
                 <button type="button" class="button button-outline" onclick="addRow()" style="margin-top: 1rem;">
                     <i class="fa fa-plus"></i> Add Line Item
                 </button>
@@ -85,42 +87,60 @@
     const productsInfo = <?= json_encode($productsJson) ?>;
     const productsOptions = <?= json_encode($productsOptions) ?>;
     const accountsOptions = <?= json_encode($accounts) ?>;
+    const existingItems = <?= json_encode($bill->bill_items ?? []) ?>;
     let rowIndex = 0;
 
-    function addRow() {
+    function addRow(data = null) {
         const container = document.getElementById('items-container');
         const tr = document.createElement('tr');
         tr.id = `row-${rowIndex}`;
 
-        let productHtml = `<select name="bill_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
+        const prodId = data ? data.product_id : '';
+        const accId = data ? data.account_id : '';
+        const qty = data ? data.quantity : 1;
+        const price = data ? data.unit_price : '0.00';
+        const vatRate = data ? data.vat_rate : '0.00';
+        const hsCode = data && data.hs_code ? data.hs_code : '';
+        const vatType = data && data.vat_type ? data.vat_type : '';
+        const lineTotal = data ? data.line_total : '0.00';
+        const vatAmount = data ? data.vat_amount : '0.00';
+        const itemId = data ? data.id : '';
+        const desc = data && data.description ? data.description : '';
+
+        let productHtml = itemId ? `<input type="hidden" name="bill_items[${rowIndex}][id]" value="${itemId}">` : '';
+        productHtml += `<select name="bill_items[${rowIndex}][product_id]" id="product-select-${rowIndex}" onchange="updateProduct(${rowIndex}, this.value)" class="form-control"><option value="">Custom/Other</option>`;
         for (let id in productsOptions) {
-            productHtml += `<option value="${id}">${productsOptions[id]}</option>`;
+            const selected = (id == prodId) ? 'selected' : '';
+            productHtml += `<option value="${id}" ${selected}>${productsOptions[id]}</option>`;
         }
         productHtml += `</select>`;
 
-        let defaultAccountId = Object.keys(accountsOptions).length > 0 ? Object.keys(accountsOptions)[0] : '';
+        let defaultAccountId = accId ? accId : (Object.keys(accountsOptions).length > 0 ? Object.keys(accountsOptions)[0] : '');
         let accountHtml = `<input type="hidden" name="bill_items[${rowIndex}][account_id]" id="account-${rowIndex}" value="${defaultAccountId}">`;
 
         tr.innerHTML = `
             <td>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    ${productHtml}${accountHtml}
-                    <button type="button" class="global-quick-add-btn" data-url="/products/index?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Search/Pick Product">
-                        <i class="fa fa-search"></i>
-                    </button>
-                    <button type="button" class="global-quick-add-btn" data-url="/products/add?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Add New Product">
-                        <i class="fa fa-plus"></i>
-                    </button>
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        ${productHtml}${accountHtml}
+                        <button type="button" class="global-quick-add-btn" data-url="/products/index?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Search/Pick Product">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        <button type="button" class="global-quick-add-btn" data-url="/products/add?popup=1" data-target-dropdown="product-select-${rowIndex}" style="padding: 4px 8px; font-size: 0.8rem;" title="Add New Product">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                    <input type="text" name="bill_items[${rowIndex}][description]" id="description-${rowIndex}" class="form-control" placeholder="Item Description / Details" value="${desc.replace(/"/g, '&quot;')}">
                 </div>
             </td>
-            <td><input type="number" name="bill_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="1" onchange="calculateLine(${rowIndex})" class="form-control"></td>
-            <td><input type="number" name="bill_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
-            <td><input type="text" name="bill_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" placeholder="HS Code"></td>
-            <td><input type="text" name="bill_items[${rowIndex}][vat_type]" id="vat-type-${rowIndex}" class="form-control" placeholder="Type"></td>
-            <td><input type="number" name="bill_items[${rowIndex}][vat_rate]" id="vat-rate-${rowIndex}" step="0.01" value="0.00" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="number" name="bill_items[${rowIndex}][quantity]" id="qty-${rowIndex}" step="1" value="${qty}" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="number" name="bill_items[${rowIndex}][unit_price]" id="price-${rowIndex}" step="0.01" value="${price}" onchange="calculateLine(${rowIndex})" class="form-control"></td>
+            <td><input type="text" name="bill_items[${rowIndex}][hs_code]" id="hs-code-${rowIndex}" class="form-control" value="${hsCode}" placeholder="HS Code"></td>
+            <td><input type="text" name="bill_items[${rowIndex}][vat_type]" id="vat-type-${rowIndex}" class="form-control" value="${vatType}" placeholder="Type"></td>
+            <td><input type="number" name="bill_items[${rowIndex}][vat_rate]" id="vat-rate-${rowIndex}" step="0.01" value="${vatRate}" onchange="calculateLine(${rowIndex})" class="form-control"></td>
             <td>
-                <input type="number" name="bill_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="0.00" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;">
-                <input type="hidden" name="bill_items[${rowIndex}][vat_amount]" id="vat-amount-${rowIndex}" value="0.00">
+                <input type="number" name="bill_items[${rowIndex}][line_total]" id="total-${rowIndex}" step="0.01" value="${lineTotal}" readonly class="form-control" style="background: #f8fafc; border: none; font-weight: 600;">
+                <input type="hidden" name="bill_items[${rowIndex}][vat_amount]" id="vat-amount-${rowIndex}" value="${vatAmount}">
             </td>
             <td style="text-align: center;"><button type="button" class="btn-danger" style="padding: 4px 8px;" onclick="removeRow(${rowIndex})"><i class="fa fa-trash"></i></button></td>
         `;
@@ -171,8 +191,12 @@
         document.getElementById('total').value = grandTotal.toFixed(2);
     }
 
-    // Initialize with one row
+    // Initialize with existing rows or one blank row
     document.addEventListener('DOMContentLoaded', function() {
-        addRow();
+        if (existingItems && existingItems.length > 0) {
+            existingItems.forEach(item => addRow(item));
+        } else {
+            addRow();
+        }
     });
 </script>

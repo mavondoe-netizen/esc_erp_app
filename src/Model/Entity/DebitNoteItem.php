@@ -34,6 +34,7 @@ class DebitNoteItem extends Entity
     protected array $_accessible = [
         'debit_note_id' => true,
         'product_id' => true,
+        'description' => true,
         'account_id' => true,
         'quantity' => true,
         'unit_price' => true,

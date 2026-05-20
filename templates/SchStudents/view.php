@@ -17,29 +17,29 @@ $currency       = !empty($schStudent->invoices) ? ($schStudent->invoices[0]->cur
 ?>
 
 <!-- ── PROFILE HERO ─────────────────────────────────────────────────── -->
-<div class="card border-0 shadow-sm mb-4 overflow-hidden">
-    <div style="background: linear-gradient(135deg,#4f46e5,#3b82f6); padding: 2rem 2rem 0;">
+<div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border: 1px solid var(--color-border) !important;">
+    <div style="background: #ffffff; padding: 2rem 2rem 0; border-bottom: 1px solid var(--color-border);">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pb-4">
             <div class="d-flex align-items-center gap-4">
                 <!-- Avatar -->
-                <div style="width:90px;height:90px;background:rgba(255,255,255,0.18);border:3px solid rgba(255,255,255,0.35);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:900;color:#fff;flex-shrink:0;">
+                <div style="width:90px;height:90px;background:var(--color-primary-light);border:3px solid var(--color-primary);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:900;color:var(--color-primary);flex-shrink:0;">
                     <?= $initial ?>
                 </div>
-                <div class="text-white">
-                    <h2 class="fw-bold mb-1"><?= h($displayName) ?></h2>
-                    <div class="d-flex align-items-center gap-3 flex-wrap" style="opacity:.85;font-size:.9rem;">
-                        <span><i class="fas fa-id-badge me-1"></i><?= h($schStudent->admission_no) ?></span>
+                <div style="color: var(--color-text-heading);">
+                    <h2 class="fw-bold mb-1" style="color: var(--color-primary); font-size: 1.8rem;"><?= h($displayName) ?></h2>
+                    <div class="d-flex align-items-center gap-3 flex-wrap" style="color: var(--color-text-muted); font-size:.9rem; font-weight: 500;">
+                        <span><i class="fas fa-id-badge me-1" style="color: var(--color-primary);"></i><?= h($schStudent->admission_no) ?></span>
                         <span>•</span>
-                        <span><i class="fas fa-school me-1"></i><?= $schStudent->hasValue('sch_class') ? h($schStudent->sch_class->name) : 'No Class' ?></span>
+                        <span><i class="fas fa-school me-1" style="color: var(--color-primary);"></i><?= $schStudent->hasValue('sch_class') ? h($schStudent->sch_class->name) : 'No Class' ?></span>
                         <?php if ($schStudent->gender): ?>
                         <span>•</span>
-                        <span><i class="fas fa-venus-mars me-1"></i><?= h($schStudent->gender) ?></span>
+                        <span><i class="fas fa-venus-mars me-1" style="color: var(--color-primary);"></i><?= h($schStudent->gender) ?></span>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <?= $this->Html->link('<i class="fas fa-edit me-1"></i>Edit Profile', ['action' => 'edit', $schStudent->id], ['class' => 'btn btn-light fw-bold', 'escape' => false]) ?>
+                <?= $this->Html->link('<i class="fas fa-edit me-1"></i>Edit Profile', ['action' => 'edit', $schStudent->id], ['class' => 'btn btn-outline-primary fw-bold', 'escape' => false]) ?>
                 <?= $this->Html->link('<i class="fas fa-file-invoice me-1"></i>New Invoice', ['controller' => 'Invoices', 'action' => 'add', '?' => ['student_id' => $schStudent->id]], ['class' => 'btn btn-warning fw-bold', 'escape' => false]) ?>
                 <?= $this->Html->link('<i class="fas fa-receipt me-1"></i>Record Receipt', ['controller' => 'Receipts', 'action' => 'add', '?' => ['student_id' => $schStudent->id]], ['class' => 'btn btn-success fw-bold', 'escape' => false]) ?>
             </div>
@@ -109,7 +109,7 @@ $currency       = !empty($schStudent->invoices) ? ($schStudent->invoices[0]->cur
                     ?>
                     <?php if ($guardianName): ?>
                     <div class="d-flex align-items-center gap-3 mt-2">
-                        <div style="width:50px;height:50px;background:#e0f2fe;color:#0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0;">
+                        <div style="width:50px;height:50px;background:#ffffff;color:var(--color-primary);border:2px solid var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0;">
                             <?= strtoupper(substr($guardianName, 0, 1)) ?>
                         </div>
                         <div>
@@ -372,10 +372,86 @@ $currency       = !empty($schStudent->invoices) ? ($schStudent->invoices[0]->cur
 </div>
 
 <style>
+/* Grid Layout classes to spread the view and avoid squashed cards */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -12px;
+    margin-left: -12px;
+}
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 12px;
+    box-sizing: border-box;
+}
+.col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    padding: 12px;
+    box-sizing: border-box;
+}
+.g-4 {
+    margin-right: -12px;
+    margin-left: -12px;
+}
+.g-4 > [class*="col-"] {
+    padding: 12px;
+}
+@media (max-width: 768px) {
+    .col-md-6, .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Button override styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    line-height: 1.2;
+    text-decoration: none;
+}
+.btn-outline-primary {
+    background-color: #ffffff !important;
+    color: var(--color-primary) !important;
+    border: 1px solid var(--color-primary) !important;
+}
+.btn-outline-primary:hover {
+    background-color: var(--color-primary-light) !important;
+    color: var(--color-primary-hover) !important;
+    border-color: var(--color-primary-hover) !important;
+}
+.btn-warning {
+    background-color: var(--color-warning) !important;
+    color: #ffffff !important;
+}
+.btn-warning:hover {
+    background-color: #d97706 !important;
+    transform: translateY(-1px);
+}
+.btn-success {
+    background-color: var(--color-success) !important;
+    color: #ffffff !important;
+}
+.btn-success:hover {
+    background-color: #059669 !important;
+    transform: translateY(-1px);
+}
+
+/* Tab Navigation (Blue on White Contrast) */
 .profile-tab {
     display: inline-block;
     padding: .8rem 1.6rem;
-    color: rgba(255,255,255,.7);
+    color: var(--color-text-muted);
     font-weight: 700;
     font-size: 1rem;
     text-decoration: none;
@@ -384,13 +460,39 @@ $currency       = !empty($schStudent->invoices) ? ($schStudent->invoices[0]->cur
     cursor: pointer;
 }
 .profile-tab.active, .profile-tab:hover {
-    color: #fff;
-    border-bottom-color: #fff;
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
 }
-.progress { background: #e2e8f0; }
-.card { border-radius: 12px !important; }
+
+/* Badges styling support since Bootstrap CSS isn't loaded */
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff !important;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 50rem !important;
+}
+.bg-success { background-color: #10b981 !important; }
+.bg-danger { background-color: #ef4444 !important; }
+.bg-info { background-color: #3b82f6 !important; }
+.bg-primary { background-color: #4f46e5 !important; }
+.bg-secondary { background-color: #6b7280 !important; }
+.bg-warning { background-color: #f59e0b !important; }
+.bg-light { background-color: #f3f4f6 !important; color: #1f2937 !important; }
+
+/* General utility class alignments */
+.progress { background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+.progress-bar { height: 100%; transition: width 0.6s ease; }
+.card { border-radius: 12px !important; border: 1px solid var(--color-border) !important; }
 .bg-soft-success { background: #f0fdf4; color: #166534; }
-.bg-soft-danger { background: #fef2f2; }
+.bg-soft-danger { background: #fef2f2; color: #991b1b; }
+.border-danger { border-color: #fca5a5 !important; }
+.border-success { border-color: #bbf7d0 !important; }
 </style>
 
 <script>
