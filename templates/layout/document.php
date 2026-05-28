@@ -118,7 +118,7 @@ $cakeDescription = 'ESCerp App - Premium Document';
             </div>
             <div style="display: flex; gap: 12px;">
                 <?= $this->fetch('actions') ?>
-                <button onclick="window.print()" class="btn-doc btn-print"><i class="fa fa-print"></i> Print</button>
+                <button onclick="window.print()" class="btn-doc btn-print"><i class="fa fa-file-pdf"></i> Save as PDF / Print</button>
                 <button onclick="window.history.back()" class="btn-doc btn-back"><i class="fa fa-arrow-left"></i> Back</button>
             </div>
         </div>

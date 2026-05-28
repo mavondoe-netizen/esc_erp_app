@@ -138,9 +138,21 @@ class ReceiptsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
+        $rules->add(function ($entity, $options) use ($rules) {
+            if (empty($entity->account_id)) {
+                return true;
+            }
+            return $rules->existsIn(['account_id'], 'Accounts')($entity, $options);
+        }, 'existsIn', ['errorField' => 'account_id']);
+
         $rules->add($rules->existsIn(['company_id'], 'Companies'), ['errorField' => 'company_id']);
-        $rules->add($rules->existsIn(['invoice_id'], 'Invoices'), ['errorField' => 'invoice_id']);
+
+        $rules->add(function ($entity, $options) use ($rules) {
+            if (empty($entity->invoice_id)) {
+                return true;
+            }
+            return $rules->existsIn(['invoice_id'], 'Invoices')($entity, $options);
+        }, 'existsIn', ['errorField' => 'invoice_id']);
 
         return $rules;
     }

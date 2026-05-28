@@ -55,8 +55,6 @@ class TasksTable extends Table
         $this->belongsTo('Deals', [
             'foreignKey' => 'deal_id',
         ]);
-            'foreignKey' => 'company_id',
-        ]);
     }
 
     /**

@@ -54,7 +54,7 @@ class EstimateItemsTable extends Table
         ]);
         $this->belongsTo('Accounts', [
             'foreignKey' => 'account_id',
-            'joinType' => 'INNER',
+            'joinType' => 'LEFT',
         ]);
     }
 
@@ -113,7 +113,14 @@ class EstimateItemsTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['estimate_id'], 'Estimates'), ['errorField' => 'estimate_id']);
-        $rules->add($rules->existsIn(['product_id'], 'Products'), ['errorField' => 'product_id']);
+        
+        $rules->add(function ($entity, $options) use ($rules) {
+            if (empty($entity->product_id)) {
+                return true;
+            }
+            return $rules->existsIn(['product_id'], 'Products')($entity, $options);
+        }, 'existsIn', ['errorField' => 'product_id']);
+
         $rules->add($rules->existsIn(['account_id'], 'Accounts'), ['errorField' => 'account_id']);
 
         return $rules;

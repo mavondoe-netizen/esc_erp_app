@@ -69,7 +69,7 @@ class InvoicesController extends AppController
         $companyId = $this->request->getAttribute('company_id');
 
         $invoice = $this->fetchTable('Invoices')
-            ->get($id, contain: ['Customers', 'InvoiceItems' => ['Accounts', 'Products'], 'Transactions' => ['Accounts']]);
+            ->get($id, contain: ['Customers', 'InvoiceItems' => ['Accounts', 'Products'], 'Transactions' => ['Accounts'], 'Receipts']);
 
         $company = $this->fetchTable('Companies')->get($companyId);
 

@@ -1142,3 +1142,16 @@ Stack Trace:
 - ROOT\test_sorting.php:6
 - [main]:
 
+2026-05-20 16:25:13 error: [Error] Call to undefined method Cake\View\View::viewBuilder() in C:\xampp\htdocs\esc_erp_app3\test_render_view.php on line 27
+Stack Trace:
+- [main]:
+
+2026-05-20 16:25:29 error: [Error] Cannot access protected property Cake\View\View::$layout in C:\xampp\htdocs\esc_erp_app3\test_render_view.php on line 27
+Stack Trace:
+- [main]:
+
+2026-05-20 16:25:46 error: [TypeError] Cake\View\ViewBuilder::build(): Argument #1 ($request) must be of type ?Cake\Http\ServerRequest, array given, called in C:\xampp\htdocs\esc_erp_app3\test_render_view.php on line 27 in C:\xampp\htdocs\esc_erp_app3\vendor\cakephp\cakephp\src\View\ViewBuilder.php on line 565
+Stack Trace:
+- ROOT\test_render_view.php:27
+- [main]:
+

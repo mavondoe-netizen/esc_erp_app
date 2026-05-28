@@ -17,6 +17,16 @@ $currencySymbols = [
 ];
 $currencySymbol = $currencySymbols[$currencyCode] ?? $currencyCode;
 
+$totalPaid = 0;
+if (!empty($invoice->receipts)) {
+    foreach ($invoice->receipts as $receipt) {
+        if ($receipt->status === 'Approved') {
+            $totalPaid += (float)$receipt->amount;
+        }
+    }
+}
+$balanceDue = max(0.0, (float)$invoice->total - $totalPaid);
+
 $this->assign('actions', $this->element('document_actions', [
     'entity' => $invoice,
     'controller' => 'Invoices',
@@ -153,9 +163,51 @@ $this->assign('actions', $this->element('document_actions', [
                     <span>Total</span>
                     <span><?= $this->formatCurrency($invoice->total, $currencyCode) ?></span>
                 </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; color: #16a34a; font-weight: 600;">
+                    <span>Amount Paid</span>
+                    <span><?= $this->formatCurrency($totalPaid, $currencyCode) ?></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid #e2e8f0; font-weight: 800; font-size: 1.1rem; color: <?= $balanceDue > 0.01 ? '#dc2626' : '#16a34a' ?>;">
+                    <span>Balance Due</span>
+                    <span><?= $this->formatCurrency($balanceDue, $currencyCode) ?></span>
+                </div>
             </div>
         </div>
     </div>
+
+    <?php if (!empty($invoice->receipts)) : ?>
+    <div class="related no-print" style="margin-top: 40px; border-top: 1px dashed #e2e8f0; padding-top: 30px;">
+        <h4 style="color: #64748b; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 15px;">Payments Received</h4>
+        <div class="table-responsive">
+            <table class="table" style="font-size: 0.85rem;">
+                <thead>
+                    <tr style="background: #f8fafc;">
+                        <th style="border-bottom: 1px solid #e2e8f0;">Receipt ID</th>
+                        <th style="border-bottom: 1px solid #e2e8f0;">Date</th>
+                        <th style="border-bottom: 1px solid #e2e8f0;">Reference / Method</th>
+                        <th style="border-bottom: 1px solid #e2e8f0;">Status</th>
+                        <th class="text-right" style="border-bottom: 1px solid #e2e8f0;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($invoice->receipts as $receipt) : ?>
+                <tr>
+                    <td><?= $this->Html->link("RCT-{$receipt->id}", ['controller' => 'Receipts', 'action' => 'view', $receipt->id]) ?></td>
+                    <td><?= h($receipt->date) ?></td>
+                    <td><?= h($receipt->reference ?: '—') ?></td>
+                    <td>
+                        <span style="background: <?= $receipt->status === 'Approved' ? '#f0fdf4' : '#f1f5f9' ?>; padding: 2px 8px; border-radius: 12px; color: <?= $receipt->status === 'Approved' ? '#16a34a' : '#0f172a' ?>; font-size: 0.75rem; font-weight: 600;">
+                            <?= h($receipt->status) ?>
+                        </span>
+                    </td>
+                    <td class="text-right" style="font-weight: 600;"><?= $this->formatCurrency($receipt->amount, $currencyCode) ?></td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <?php if (!empty($invoice->transactions)) : ?>
     <div class="related no-print" style="margin-top: 60px; border-top: 1px dashed #e2e8f0; padding-top: 40px;">

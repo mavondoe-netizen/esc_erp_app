@@ -63,7 +63,7 @@ $(function() {
                     $invoiceDropdown.append('<option value="">No invoices found for this customer</option>');
                 } else {
                     data.forEach(function(inv) {
-                        const label = 'Inv #' + inv.id + ' (' + inv.date + ') - Total: ' + inv.total;
+                        const label = 'Inv #' + inv.id + ' (' + inv.date + ') - Balance: ' + inv.balance + ' (Total: ' + inv.total + ')';
                         $invoiceDropdown.append($('<option>', {
                             value: inv.id,
                             text: label

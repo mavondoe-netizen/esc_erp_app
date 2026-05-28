@@ -76,6 +76,9 @@ class InvoicesTable extends Table
         $this->belongsTo('SchStudents', [
             'foreignKey' => 'student_id',
         ]);
+        $this->hasMany('Receipts', [
+            'foreignKey' => 'invoice_id',
+        ]);
     }
 
     /**

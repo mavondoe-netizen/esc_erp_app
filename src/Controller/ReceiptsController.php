@@ -371,16 +371,44 @@ class ReceiptsController extends AppController
     {
         $this->request->allowMethod(['get']);
         $companyId = $this->request->getAttribute('company_id');
+        $excludeReceiptId = $this->request->getQuery('exclude_receipt_id');
+        $currentInvoiceId = $this->request->getQuery('current_invoice_id');
 
         $invoices = $this->fetchTable('Invoices')
             ->find()
-            ->select(['id', 'reference', 'total', 'date'])
-            ->where(['customer_id' => $customerId, 'company_id' => $companyId])
-            ->order(['date' => 'DESC'])
+            ->contain(['Receipts'])
+            ->where(['Invoices.customer_id' => $customerId, 'Invoices.company_id' => $companyId])
+            ->where(['Invoices.status IN' => ['Approved', 'Sent', 'Paid']])
+            ->order(['Invoices.date' => 'DESC'])
             ->all();
+
+        $result = [];
+        foreach ($invoices as $inv) {
+            $paid = 0.0;
+            if (!empty($inv->receipts)) {
+                foreach ($inv->receipts as $r) {
+                    if ($r->status === 'Approved' && (!$excludeReceiptId || $r->id != (int)$excludeReceiptId)) {
+                        $paid += (float)$r->amount;
+                    }
+                }
+            }
+            $balance = (float)$inv->total - $paid;
+
+            // Only include unpaid invoices, or if it is the current invoice of the receipt being edited
+            if ($balance > 0 || ($currentInvoiceId && $inv->id == (int)$currentInvoiceId)) {
+                $result[] = [
+                    'id' => $inv->id,
+                    'reference' => $inv->reference ?? "INV-{$inv->id}",
+                    'total' => (float)$inv->total,
+                    'date' => $inv->date ? $inv->date->format('Y-m-d') : null,
+                    'paid' => $paid,
+                    'balance' => $balance
+                ];
+            }
+        }
 
         return $this->response
             ->withType('application/json')
-            ->withStringBody(json_encode($invoices));
+            ->withStringBody(json_encode($result));
     }
 }
